@@ -1,0 +1,25 @@
+{
+  "name": "viajes-corte-andaluh",
+  "version": "1.0.0",
+  "description": "ACME-Explorer for ASS - Master IS",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrManoloDG/ASS-ACME-Explorer-2020.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrManoloDG/ASS-ACME-Explorer-2020/issues"
+  },
+  "homepage": "https://github.com/MrManoloDG/ASS-ACME-Explorer-2020#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.8.11"
+  }
+}
