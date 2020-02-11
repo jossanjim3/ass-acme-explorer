@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var actorSchema = new Schema({
+var ActorSchema = new Schema({
     name: {
         type: String,
         required: 'Kindly enter the name of the actor'
@@ -51,4 +51,9 @@ var actorSchema = new Schema({
 
 }, {strict:false});
 
-module.exports = mongoose.model('Actors', actorSchema)
+// Execute before each item.save() call
+ActorSchema.pre('save', function(callback) {
+    // do nothing at the moment
+});
+
+module.exports = mongoose.model('Actors', ActorSchema)
