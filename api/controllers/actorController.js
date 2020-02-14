@@ -3,26 +3,41 @@
 var mongoose = require('mongoose'),
     Actor = mongoose.model('Actors');
 
+//este metodo creo que no existe
 exports.list_all_actors = function(req,res){
     //Check if the role param exist
     var roleName;
 
     if(req.query.role){
         roleName=req.query.role;
+        //Adapt to find the actors with the specified role
+        Actor.find({role: roleName},function(err, actors){
+            if(err){
+                //cambiar el error?
+                res.status(500).send(err);
+            } else {
+                res.json(actors);
+            }
+        });
+    }else{
+
+        Actor.find({},function(err, actors){
+            if(err){
+                //cambiar el error?
+                res.status(500).send(err);
+            } else {
+                res.json(actors);
+            }
+        });
+
     }
-    //Adapt to find the actors with the specified role
-    Actor.find({},function(err, actors){
-        if(err){
-            res.status(500).send(err);
-        } else {
-            res.json(actors);
-        }
-    });
+
 };
 
 exports.create_an_actor = function(req,res){
     var new_actor = new Actor(req.body);
 
+    
     new_actor.save(function(err, actor) {
         if (err){
             if(err.name=='ValidationError') {
@@ -36,6 +51,7 @@ exports.create_an_actor = function(req,res){
             res.json(actor);
         }
     });
+    
 };
 
 exports.read_an_actor = function(req,res){
