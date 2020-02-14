@@ -3,7 +3,6 @@
 var mongoose = require('mongoose'),
     Actor = mongoose.model('Actors');
 
-//este metodo creo que no existe
 exports.list_all_actors = function(req,res){
     //Check if the role param exist
     var roleName;
@@ -23,7 +22,7 @@ exports.list_all_actors = function(req,res){
 
         Actor.find({},function(err, actors){
             if(err){
-                //cambiar el error?
+
                 res.status(500).send(err);
             } else {
                 res.json(actors);
@@ -37,7 +36,6 @@ exports.list_all_actors = function(req,res){
 exports.create_an_actor = function(req,res){
     var new_actor = new Actor(req.body);
 
-    
     new_actor.save(function(err, actor) {
         if (err){
             if(err.name=='ValidationError') {
@@ -55,7 +53,7 @@ exports.create_an_actor = function(req,res){
 };
 
 exports.read_an_actor = function(req,res){
-    Actor.findById(req.params.actorId, function(err, actor){
+    Actor.findById({_id:req.params.actorId}, function(err, actor){
         if(err){
             res.status(500).send(err);
         } else {
@@ -94,6 +92,7 @@ exports.validate_an_actor = function(req, res) {
     });
 };
 
+/*
 exports.delete_an_actor = function(req,res){
     Actor.deleteOne({_id: req.params.actorId}, function(err, actor) {
         if (err){
@@ -103,4 +102,6 @@ exports.delete_an_actor = function(req,res){
             res.json({ message: 'Actor successfully deleted' });
         }
     });
+    
 }
+*/

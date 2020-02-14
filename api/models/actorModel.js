@@ -12,7 +12,9 @@ var ActorSchema = new Schema({
     },
     email:  {
         type: String,
-        required: 'Kindly enter the email of the actor'
+        required: 'Kindly enter the email of the actor',
+        unique:true,
+        match:[/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
     password:{
         type: String,
@@ -21,7 +23,7 @@ var ActorSchema = new Schema({
     },
     address:  {
         type: String,
-        required: 'Kindly enter the adress of the actor'
+        required: 'Kindly enter the address of the actor'
     },
     language:  {
         type: String,
@@ -53,7 +55,32 @@ var ActorSchema = new Schema({
 
 // Execute before each item.save() call
 ActorSchema.pre('save', function(callback) {
-    // do nothing at the moment
+    var actor = this;
+  // Break out if the password hasn't changed
+  if (!actor.isModified('password')) return callback();
+
+  // Password changed so we need to hash it
+  bcrypt.genSalt(5, function(err, salt) {
+    if (err) return callback(err);
+
+    bcrypt.hash(actor.password, salt, function(err, hash) {
+      if (err) return callback(err);
+      actor.password = hash;
+      callback();
+    });
+  });
+
+  ActorSchema.methods.verifyPassword = function(password, cb) {
+    bcrypt.compare(password, this.password, function(err, isMatch) {
+    console.log('verifying password in actorModel: '+password);
+    if (err) return cb(err);
+    console.log('iMatch: '+isMatch);
+    cb(null, isMatch);
+  });
+};
+
+
+    
 });
 
 module.exports = mongoose.model('Actors', ActorSchema)

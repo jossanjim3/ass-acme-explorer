@@ -34,7 +34,7 @@ module.exports = function(app) {
     //.delete(actors.delete_an_actor);
 
   /**
-	 * Put to Validate a clerk by actorId
+	 * Put to Validate a manager by actorId
    *    RequiredRole: Administrator
 	 *
 	 * @section actors
