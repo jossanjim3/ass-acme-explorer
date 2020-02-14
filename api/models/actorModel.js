@@ -35,7 +35,7 @@ var ActorSchema = new Schema({
         data: Buffer,
         contentType: String
     },
-    validated: {
+    activated: {
         type: Boolean,
         default: false
     },
