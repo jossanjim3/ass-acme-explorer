@@ -27,8 +27,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
  
 var routesActors = require('./api/routes/actorRoutes');
-//var routesItems = require('./api/routes/itemRoutes'); 
-//var routesOrders = require('./api/routes/orderRoutes');
+//var routesTrips = require('./api/routes/tripRoutes'); 
+var routesApplications = require('./api/routes/applicationRoutes');
  
 routesActors(app);
 //routesItems(app);
