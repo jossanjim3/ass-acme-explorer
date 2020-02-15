@@ -21,25 +21,24 @@ var ActorSchema = new Schema({
         minlength: 5,
         required: true
     },
+    
+    //address, language and phone are not mandatory therefore, they are not required
     address:  {
         type: String,
-        required: 'Kindly enter the address of the actor'
     },
     language:  {
         type: String,
         default: 'en'
     },
+
     phone:  {
         type: String,
-        required: 'Kindly enter the phone of the actor'
     },
-    photo:  {
-        data: Buffer,
-        contentType: String
-    },
+    
+    //all actors are validated initially, only an admin can modify this property
     validated: {
         type: Boolean,
-        default: false
+        default:true
     },
     role:[{
         type: String,
@@ -80,7 +79,6 @@ ActorSchema.pre('save', function(callback) {
 };
 
 
-    
 });
 
 module.exports = mongoose.model('Actors', ActorSchema)

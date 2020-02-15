@@ -3,39 +3,22 @@
 var mongoose = require('mongoose'),
     Actor = mongoose.model('Actors');
 
-exports.list_all_actors = function(req,res){
-    //Check if the role param exist
-    var roleName;
-
-    if(req.query.role){
-        roleName=req.query.role;
-        //Adapt to find the actors with the specified role
-        Actor.find({role: roleName},function(err, actors){
-            if(err){
-                //cambiar el error?
-                res.status(500).send(err);
-            } else {
-                res.json(actors);
-            }
-        });
-    }else{
+exports.list_all_trips = function(req,res){
 
         Actor.find({},function(err, actors){
             if(err){
-
                 res.status(500).send(err);
             } else {
                 res.json(actors);
             }
         });
-
-    }
 
 };
 
 exports.create_an_actor = function(req,res){
     var new_actor = new Actor(req.body);
 
+    //checks that the user can register as explorer, manager (only an admin can create it) or sponsor
     new_actor.save(function(err, actor) {
         if (err){
             if(err.name=='ValidationError') {
@@ -79,7 +62,7 @@ exports.update_an_actor = function(req,res){
       });
 };
 
-exports.validate_an_actor = function(req, res) {
+exports.reactivate_an_actor = function(req, res) {
     //Check that the user is an Administrator and if not: res.status(403); "an access token is valid, but requires more privileges"
     console.log("Validating an actor with id: "+req.params.actorId)
     Actor.findOneAndUpdate({_id: req.params.actorId},  { $set: {"validated": "true" }}, {new: true}, function(err, actor) {
@@ -92,16 +75,22 @@ exports.validate_an_actor = function(req, res) {
     });
 };
 
-/*
-exports.delete_an_actor = function(req,res){
-    Actor.deleteOne({_id: req.params.actorId}, function(err, actor) {
+exports.deactivate_an_actor = function(req, res) {
+    //Check that the user is an Administrator and if not: res.status(403); "an access token is valid, but requires more privileges"
+    console.log("Validating an actor with id: "+req.params.actorId)
+    Actor.findOneAndUpdate({_id: req.params.actorId},  { $set: {"validated": "false" }}, {new: true}, function(err, actor) {
         if (err){
-            res.status(500).send(err);
+        res.status(500).send(err);
         }
         else{
-            res.json({ message: 'Actor successfully deleted' });
+        res.json(actor);
         }
     });
+};
+
+
+exports.delete_an_actor = function(req,res){
+
+    console.log("It is not possible to delete an actor")
     
 }
-*/
