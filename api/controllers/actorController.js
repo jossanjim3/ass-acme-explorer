@@ -1,20 +1,8 @@
 'use strict';
-useFindAndModify: false
 /*---------------ACTOR----------------------*/
 var mongoose = require('mongoose'),
     Actor = mongoose.model('Actors');
 
-exports.list_all_trips = function(req,res){
-
-        Actor.find({},function(err, actors){
-            if(err){
-                res.status(500).send(err);
-            } else {
-                res.json(actors);
-            }
-        });
-
-};
 
 exports.create_an_actor = function(req,res){
     var new_actor = new Actor(req.body);
@@ -23,17 +11,22 @@ exports.create_an_actor = function(req,res){
     if(new_actor.role.includes('ADMINISTRATOR')){
         res.status(422).send("No se puede crear un administrador")
     }else if (new_actor.role.includes('MANAGER')){
-        //auth admin
-
+        /*
+        if(auth admin){
+            new_actor.save(function(err, actor){
+                if (err){
+                    res.status(500).send(err);
+                }else{
+                    res.json(actor)
+                }
+            }
+        }
+        */  
     }else{
         new_actor.save(function(err, actor) {
             if (err){
-                if(err.name=='ValidationError') {
-                    res.status(422).send(err);
-                }
-                else{
+
                 res.status(500).send(err);
-                }
             }
             else{
                 res.json(actor);
@@ -43,15 +36,6 @@ exports.create_an_actor = function(req,res){
 
 };
 
-exports.read_an_actor = function(req,res){
-    Actor.findById({_id:req.params.actorId}, function(err, actor){
-        if(err){
-            res.status(500).send(err);
-        } else {
-            res.json(actor)
-        }
-    })
-};
 
 exports.update_an_actor = function(req,res){
     //Check that the user is the proper actor and if not: res.status(403); "an access token is valid, but requires more privileges"
@@ -70,10 +54,10 @@ exports.update_an_actor = function(req,res){
       });
 };
 
-exports.reactivate_an_actor = function(req, res) {
+exports.modify_activate_an_actor = function(req, res) {
     //Check that the user is an Administrator and if not: res.status(403); "an access token is valid, but requires more privileges"
-    console.log("Validating an actor with id: "+req.params.actorId)
-    Actor.findOneAndUpdate({_id: req.params.actorId},  { $set: {"validated": "true" }}, {new: true}, function(err, actor) {
+    console.log("Banning an actor with id: "+req.params.actorId)
+    Actor.findOneAndUpdate({_id: req.params.actorId},  { $set: {"validated":req.body.validated }}, {new: true}, function(err, actor) {
         if (err){
         res.status(500).send(err);
         }
@@ -83,18 +67,6 @@ exports.reactivate_an_actor = function(req, res) {
     });
 };
 
-exports.deactivate_an_actor = function(req, res) {
-    //Check that the user is an Administrator and if not: res.status(403); "an access token is valid, but requires more privileges"
-    console.log("Validating an actor with id: "+req.params.actorId)
-    Actor.findOneAndUpdate({_id: req.params.actorId},  { $set: {"validated": "false" }}, {new: true}, function(err, actor) {
-        if (err){
-        res.status(500).send(err);
-        }
-        else{
-        res.json(actor);
-        }
-    });
-};
 
 
 

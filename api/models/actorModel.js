@@ -35,7 +35,7 @@ var ActorSchema = new Schema({
         type: String,
     },
     
-    //all actors are validated initially, only an admin can modify this property
+    //all actors are validated initially, only an admin can modify this property an ban or unban an actor
     validated: {
         type: Boolean,
         default:true
@@ -44,32 +44,31 @@ var ActorSchema = new Schema({
         type: String,
         required: 'Kindly enter the role(s) of the actor',
         enum: ['EXPLORER', 'MANAGER', 'ADMINISTRATOR', 'SPONSOR']
-    }],
-    createdAt:{
-        type: Date,
-        default: Date.now
-    }
+    }]
 
 }, {strict:false});
 
+
+
 /*
-// Execute before each item.save() call
 ActorSchema.pre('save', function(callback) {
     var actor = this;
   // Break out if the password hasn't changed
   if (!actor.isModified('password')) return callback();
 
   // Password changed so we need to hash it
-  bcrypt.genSalt(5, function(err, salt) {
+    bcrypt.genSalt(5, function(err, salt) {
     if (err) return callback(err);
 
     bcrypt.hash(actor.password, salt, function(err, hash) {
       if (err) return callback(err);
       actor.password = hash;
-      callback();
+      //callback();
+  
     });
   });
-
+});
+/*
   ActorSchema.methods.verifyPassword = function(password, cb) {
     bcrypt.compare(password, this.password, function(err, isMatch) {
     console.log('verifying password in actorModel: '+password);
