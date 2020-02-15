@@ -32,4 +32,4 @@ ApplicationSchema.pre('save', function(callback) {
     // do nothing at the moment
 });
 
-module.exports = mongoose.model('Applications', applicationSchema)
+module.exports = mongoose.model('Applications', ApplicationSchema)

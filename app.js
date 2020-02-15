@@ -4,7 +4,7 @@ var express = require('express'),
  mongoose = require('mongoose'),
  Actor = require('./api/models/actorModel'),
  //Item = require('./api/models/itemModel'),
- //Order = require('./api/models/orderModel'),
+ Application = require('./api/models/applicationModel'),
  bodyParser = require('body-parser');
  
 // MongoDB URI building
@@ -32,7 +32,7 @@ var routesApplications = require('./api/routes/applicationRoutes');
  
 routesActors(app);
 //routesItems(app);
-//routesOrders(app);
+routesApplications(app);
  
 console.log("Connecting DB to: " + mongoDBURI);
 mongoose.connection.on("open", function (err, conn) {
