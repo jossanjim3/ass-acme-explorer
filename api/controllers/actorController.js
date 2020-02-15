@@ -55,8 +55,15 @@ exports.update_an_actor = function(req,res){
 };
 
 exports.modify_activate_an_actor = function(req, res) {
+    
+    if (req.body.validated.includes("true")){
+        console.log("Unbanning an actor with id: "+req.params.actorId)
+    }else{
+        console.log("Banning an actor with id: "+req.params.actorId)
+    }
+    
     //Check that the user is an Administrator and if not: res.status(403); "an access token is valid, but requires more privileges"
-    console.log("Banning an actor with id: "+req.params.actorId)
+    //if(auth admin){
     Actor.findOneAndUpdate({_id: req.params.actorId},  { $set: {"validated":req.body.validated }}, {new: true}, function(err, actor) {
         if (err){
         res.status(500).send(err);
@@ -65,6 +72,7 @@ exports.modify_activate_an_actor = function(req, res) {
         res.json(actor);
         }
     });
+    //}else{: res.status(403).send("You are not authenticated as an administrator therefore this operation is invalid")}
 };
 
 

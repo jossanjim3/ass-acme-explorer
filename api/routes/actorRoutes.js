@@ -4,8 +4,7 @@ module.exports = function(app) {
 
 
   app.route('/v1/actors')
-
-    //create an actor as explorer or manager (it must do it an admin)
+    //create an actor as an explorer or  as a manager (it must do it an admin)
     .post(actors.create_an_actor);
     
   app.route('/v1/actors/:actorId')
@@ -14,6 +13,7 @@ module.exports = function(app) {
 	  .put(actors.update_an_actor);
 
   app.route('/v1/actors/:actorId/validated')
+    //ban or unban an actor 
     .put(actors.modify_activate_an_actor);
   
  
