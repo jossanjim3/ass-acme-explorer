@@ -52,6 +52,7 @@ var ActorSchema = new Schema({
 
 }, {strict:false});
 
+/*
 // Execute before each item.save() call
 ActorSchema.pre('save', function(callback) {
     var actor = this;
@@ -80,5 +81,6 @@ ActorSchema.pre('save', function(callback) {
 
 
 });
+*/
 
 module.exports = mongoose.model('Actors', ActorSchema)

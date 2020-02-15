@@ -6,6 +6,8 @@ var express = require('express'),
  //Item = require('./api/models/itemModel'),
  //Order = require('./api/models/orderModel'),
  bodyParser = require('body-parser');
+
+mongoose.set('useFindAndModify', false);
  
 // MongoDB URI building
 var mongoDBHostname = process.env.mongoDBHostname || "localhost";
@@ -13,6 +15,7 @@ var mongoDBPort = process.env.mongoDBPort || "27017";
 var mongoDBName = process.env.mongoDBName || "ACME-Explorer";
 var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
  
+//mongodb://localhost:27017/ACME-Explorer
 mongoose.connect(mongoDBURI, {
  reconnectTries: 10,
  reconnectInterval: 500,
