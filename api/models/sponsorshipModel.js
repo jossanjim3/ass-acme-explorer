@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 
-var SponsorshipSchema = new Schema({
+var sponsorshipSchema = new Schema({
     banner: {
         type: Buffer,
         required: 'Kindly add the banner of the sponsorship'
@@ -24,8 +24,8 @@ var SponsorshipSchema = new Schema({
     }]
 });
 
-SponsorshipSchema.pre('save', function(callback) {
+sponsorshipSchema.pre('save', function(callback) {
     callback();
 });
 
-module.exports = mongoose.model('Sponsorships', SponsorshipSchema);
+module.exports = mongoose.model('Sponsorships', sponsorshipSchema);

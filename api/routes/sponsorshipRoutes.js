@@ -1,6 +1,6 @@
 'use strict';
 module.exports = function(app) {
-    var sponsorship = require('../controllers/sponsorshipController');
+    var sponsorships = require('../controllers/sponsorshipController');
 
     /**
      * Get all the sponsorships belonging to a sponsor.
@@ -29,8 +29,8 @@ module.exports = function(app) {
      * @type get, put, delete
      * @url /v1/sponsorship/:sponsorshipId
      */
-    app.route('/v1/sponsorship/:sponsorshipId')
-        .get(sponsorships.get_sponsorship)
-        .put(sponsorships.update_sponsorship)
-        .delete(sponsorships.remove_sponsorship);
+    app.route('/v1/sponsorships/:sponsorshipId')
+        .get(sponsorships.find_a_sponsorship)
+        .put(sponsorships.update_a_sponsorship)
+        .delete(sponsorships.delete_a_sponsorship);
 };

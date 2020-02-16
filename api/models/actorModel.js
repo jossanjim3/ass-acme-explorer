@@ -1,7 +1,9 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var trips_schema = require('./tripModel')
+var trips = require('./tripModel');
+
+var trips_schema = trips.tripSchema;
 
 var FinderSchema = new Schema({
     keyword: {
@@ -31,7 +33,7 @@ var FinderSchema = new Schema({
     timestamp: {
         type: Date
     }
-})
+}, {strict: false});
 
 var ActorSchema = new Schema({
     name: {

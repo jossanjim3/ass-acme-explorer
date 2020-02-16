@@ -26,5 +26,5 @@ module.exports = function(app) {
    * @param {string} actorId
    */
   app.route('/v1/actors/:actorId/finder')
-  .put(actors.finderUpdate);
+  .put(actors.updateFinder);
 };

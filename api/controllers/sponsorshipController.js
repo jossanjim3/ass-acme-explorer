@@ -1,8 +1,8 @@
 'use strict';
 /*---------------SPONSORSHIP----------------------*/
 
-var mongoose = require('mongoose');
-    Sponsorship = mongoose.model('Sponsorships');
+var mongoose = require('mongoose'),
+    Sponsorship = require('../models/sponsorshipModel')
 
 exports.list_all_sponsorships = function(req, res){
     //Check if the role param exist
