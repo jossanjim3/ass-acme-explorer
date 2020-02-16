@@ -40,7 +40,10 @@ var ActorSchema = new Schema({
         contentType: String,
         default : ''
     },
-    
+    photo:  {
+        data: Buffer,
+        contentType: String
+    },
     //all actors are validated initially, only an admin can modify this property an ban or unban an actor
     validated: {
         type: Boolean,

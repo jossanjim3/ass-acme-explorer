@@ -3,8 +3,9 @@ var express = require('express'),
  port = process.env.PORT || 8080,
  mongoose = require('mongoose'),
  Actor = require('./api/models/actorModel'),
- //Item = require('./api/models/itemModel'),
  Application = require('./api/models/applicationModel'),
+ Trip = require('./api/models/tripModel')
+
  bodyParser = require('body-parser');
 
 mongoose.set('useFindAndModify', false);
@@ -30,13 +31,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
  
 var routesActors = require('./api/routes/actorRoutes');
-//var routesTrips = require('./api/routes/tripRoutes'); 
+var routesTrips = require('./api/routes/tripRoutes')
 var routesApplications = require('./api/routes/applicationRoutes');
  
 routesActors(app);
-//routesItems(app);
 routesApplications(app);
- 
+routesTrips(app); 
+
 console.log("Connecting DB to: " + mongoDBURI);
 mongoose.connection.on("open", function (err, conn) {
  app.listen(port, function () {
