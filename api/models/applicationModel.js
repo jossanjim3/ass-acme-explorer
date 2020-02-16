@@ -30,6 +30,7 @@ var ApplicationSchema = new Schema({
 // Execute before each item.save() call
 ApplicationSchema.pre('save', function(callback) {
     // do nothing at the moment
+    callback();
 });
 
 module.exports = mongoose.model('Applications', ApplicationSchema)
