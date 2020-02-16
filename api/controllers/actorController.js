@@ -88,3 +88,24 @@ exports.delete_an_actor = function(req,res){
         }
     });
 }
+
+exports.updateFinder = function(req, res) {
+    if(!req.params.role.contains('EXPLORER')){
+        res.status(422).json({message: 'The actor must be an explorer.'})
+    }
+    else{
+        Actor.findOneAndUpdate({_id: req.params.actorId}, {finder: req.body}, {new: true}, function(err, actor){
+            if(err){
+                if(err.name=='ValidationError') {
+                    res.status(422).send(err);
+                }
+                else{
+                    res.status(500).send(err);
+                }
+            }
+            else{
+                res.json(actor);
+            }
+        });
+    }
+}

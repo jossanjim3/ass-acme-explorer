@@ -1,6 +1,38 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var trips_schema = require('./tripModel')
+
+var FinderSchema = new Schema({
+    keyword: {
+        type: String,
+        default: null
+    },
+    startingDate: {
+        type: Date,
+        default: null
+    },
+    endingDate: {
+        type: Date,
+        default: null
+    },
+    minPrice: {
+        type: Number,
+        default: null
+    },
+    maxPrice: {
+        type: String,
+        default: null
+    },
+    results: {
+        type: [trips_schema],
+        default: null
+    },
+    timestamp: {
+        type: Date
+    }
+})
+
 var ActorSchema = new Schema({
     name: {
         type: String,
@@ -47,13 +79,17 @@ var ActorSchema = new Schema({
     createdAt:{
         type: Date,
         default: Date.now
+    },
+    finder: {
+        type: FinderSchema,
+        default: null
     }
 
 }, {strict:false});
 
 // Execute before each item.save() call
 ActorSchema.pre('save', function(callback) {
-    // do nothing at the moment
+    callback();
 });
 
 module.exports = mongoose.model('Actors', ActorSchema)
