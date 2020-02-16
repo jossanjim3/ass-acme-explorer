@@ -40,7 +40,7 @@ routesApplications(app);
 console.log("Connecting DB to: " + mongoDBURI);
 mongoose.connection.on("open", function (err, conn) {
  app.listen(port, function () {
- console.log('ACME-Market RESTful API server started on: ' + port);
+ console.log('ACME-Explorer RESTful API server started on: ' + port);
  });
 });
  

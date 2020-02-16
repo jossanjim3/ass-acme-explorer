@@ -33,7 +33,6 @@ exports.create_an_actor = function(req,res){
             }
         });
     }
-
 };
 
 

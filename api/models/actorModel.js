@@ -33,6 +33,12 @@ var ActorSchema = new Schema({
 
     phone:  {
         type: String,
+        required: 'Kindly enter the phone of the actor'
+    },
+    photo:  {
+        data: Buffer,
+        contentType: String,
+        default : ''
     },
     
     //all actors are validated initially, only an admin can modify this property an ban or unban an actor
