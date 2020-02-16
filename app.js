@@ -3,8 +3,12 @@ var express = require('express'),
  port = process.env.PORT || 8080,
  mongoose = require('mongoose'),
  Actor = require('./api/models/actorModel'),
+ Application = require('./api/models/applicationModel'),
  Trip = require('./api/models/tripModel')
+
  bodyParser = require('body-parser');
+
+mongoose.set('useFindAndModify', false);
  
 // MongoDB URI building
 var mongoDBHostname = process.env.mongoDBHostname || "localhost";
@@ -12,6 +16,7 @@ var mongoDBPort = process.env.mongoDBPort || "27017";
 var mongoDBName = process.env.mongoDBName || "ACME-Explorer";
 var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
  
+//mongodb://localhost:27017/ACME-Explorer
 mongoose.connect(mongoDBURI, {
  reconnectTries: 10,
  reconnectInterval: 500,
@@ -26,16 +31,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
  
 var routesActors = require('./api/routes/actorRoutes');
-var routesApplications = require('./api/routes/applicationRoutes');
 var routesTrips = require('./api/routes/tripRoutes')
-routesActors(app);
-routesTrips(app);
+var routesApplications = require('./api/routes/applicationRoutes');
 
- 
+routesActors(app);
+routesApplications(app);
+routesTrips(app); 
+
 console.log("Connecting DB to: " + mongoDBURI);
 mongoose.connection.on("open", function (err, conn) {
  app.listen(port, function () {
- console.log('ACME-Market RESTful API server started on: ' + port);
+ console.log('ACME-Explorer RESTful API server started on: ' + port);
  });
 });
  
