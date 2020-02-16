@@ -5,6 +5,8 @@ var express = require('express'),
  Actor = require('./api/models/actorModel'),
  Trip = require('./api/models/tripModel')
  bodyParser = require('body-parser');
+
+mongoose.set('useFindAndModify', false);
  
 // MongoDB URI building
 var mongoDBHostname = process.env.mongoDBHostname || "localhost";
@@ -12,6 +14,7 @@ var mongoDBPort = process.env.mongoDBPort || "27017";
 var mongoDBName = process.env.mongoDBName || "ACME-Explorer";
 var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
  
+//mongodb://localhost:27017/ACME-Explorer
 mongoose.connect(mongoDBURI, {
  reconnectTries: 10,
  reconnectInterval: 500,
@@ -27,7 +30,7 @@ app.use(bodyParser.json());
  
 var routesActors = require('./api/routes/actorRoutes');
 var routesTrips = require('./api/routes/tripRoutes')
-
+var routesApplications = require('./api/routes/applicationRoutes');
  
 routesActors(app);
 routesTrips(app);
