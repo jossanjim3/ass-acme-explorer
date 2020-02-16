@@ -9,11 +9,11 @@ module.exports = function (app){
         // create an applicaction
         .post(applications.create_an_application);
     
-    app.route('/v1/applications/:userId')
+    app.route('/v1/applications/user/:userId')
         // list applications that explorers made
         .get(applications.list_my_applications)
 
-    app.route('/v1/applications/:applicationId')
+    app.route('/v1/applications/appli/:applicationId')
         // read an application
         .get(applications.read_an_application)
         // update an application status
@@ -21,11 +21,11 @@ module.exports = function (app){
         // delete an application. Currently an application cannot be deleted!
         .delete(applications.delete_an_application);
     
-    app.route('/v1/applications/:managerId')
+    app.route('/v1/applications/manager/:managerId')
         // list application that manager manages
         .get(applications.list_all_manager_applications)
 
-    app.route('/v1/applications/:managerId/:applicationId')
+    app.route('/v1/applications/manager/:managerId/user/:applicationId')
         // read an applicaction that manager manages
         .get(applications.read_an_application_by_manager)
         // update an applicaction status that manager manages
