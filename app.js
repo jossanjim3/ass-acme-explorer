@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 var routesActors = require('./api/routes/actorRoutes');
 var routesTrips = require('./api/routes/tripRoutes')
 var routesApplications = require('./api/routes/applicationRoutes');
- 
+
 routesActors(app);
 routesApplications(app);
 routesTrips(app); 
