@@ -1,7 +1,7 @@
 'use strict';
 
 var mongoose = require('mongoose'),
-    Application = mongoose.model('applications');
+    Application = mongoose.model('Applications');
 
     // list all the applications
 exports.list_all_applications = function(req,res){
