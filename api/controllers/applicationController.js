@@ -3,7 +3,11 @@
 var mongoose = require('mongoose'),
     Application = mongoose.model('Applications');
 
-    // list all the applications
+//----------------------------
+// /v1/applications
+//----------------------------
+
+// list all the applications
 exports.list_all_applications = function(req,res){
     Application.find({},function(err, applis){
         if(err){
@@ -17,7 +21,6 @@ exports.list_all_applications = function(req,res){
 // create an applicaction
 exports.create_an_application = function(req,res){
     //Check that user is a Explorer and if not: res.status(403); "an access token is valid, but requires more privileges"
-    
     var new_appli = new Application(req.body);
 
     new_appli.save(function(err, appli) {
@@ -35,20 +38,9 @@ exports.create_an_application = function(req,res){
     });
 }
 
-// list applications that explorers made
-exports.list_my_applications = function(req, res) {
-    // retieve the id from the explorer
-    var user_id = req.params.userId;
-    // TODO find by user_id
-    Application.find(function(err, appis) {
-      if (err){
-        res.status(500).send(err);
-      }
-      else{
-        res.json(appis);
-      }
-    });
-  };
+//----------------------------
+// /v1/applications/:applicationId
+//----------------------------
 
 // read an application  
 exports.read_an_application = function(req,res){
@@ -96,30 +88,47 @@ exports.delete_an_application = function(req,res){
     res.status(403).send("An application cannot be deleted!");
 }
 
-// list application that manager manages
-exports.list_all_manager_applications = function(req,res){
-    // check the manager_id
-    var manager_id = req.params.applicationId;
+//----------------------------
+// /v1/applications/user/:userId
+//----------------------------
 
-    res.send('Retrieve all the manager applicactions');
-}
+// list applications that explorers/manager have made
+exports.list_all_my_applications = function(req, res) {
+    // retieve the user id
+    // check if the user is explorer or manager
 
-// read an applicaction that manager manages
-exports.read_an_application_by_manager = function(req,res){
+    var user_id = req.params.userId;
+    // TODO find by user_id
+    Application.find(function(err, appis) {
+      if (err){
+        res.status(500).send(err);
+      }
+      else{
+        res.json(appis);
+      }
+    });
+  };
+
+//----------------------------
+// /v1/applications/user/:userId/appli/:applicationId
+//----------------------------
+
+// read an applicaction that explorer/manager manages
+exports.read_an_application_by = function(req,res){
     // check the manager_id
     var manager_id = req.params.applicationId;
     // check the application id
     var app_id = req.params.applicationId;
 
-    res.send('Retrieve an applicaction that manager manages');
+    res.send('Retrieve an applicaction that explorer/manager manages');
 }
 
 // update an applicaction status that manager manages
-exports.update_an_application_by_manager = function(req,res){
+exports.update_an_application_by = function(req,res){
     // check the manager_id
     var manager_id = req.params.applicationId;
     // check the application id
     var app_id = req.params.applicationId;
 
-    res.send('Retrieve and update an applicaction status that manager manages');
+    res.send('Retrieve and update an applicaction status that explorer/manager manages');
 }
