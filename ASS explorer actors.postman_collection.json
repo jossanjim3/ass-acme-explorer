@@ -201,7 +201,7 @@
 			"response": []
 		},
 		{
-			"name": "Reactivate an actor Copy",
+			"name": "Reactivate an actor",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -233,6 +233,28 @@
 						"5e48200bf6af4e2958478963",
 						"validated"
 					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve an actor",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve an actor but the id doesn't exist",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
 				}
 			},
 			"response": []
