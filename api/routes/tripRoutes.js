@@ -14,7 +14,7 @@ module.exports = function (app){
         .post(trips.create_an_trip);
 
     /** 
-    * Search trips
+     * Search trips
      *   
      * @section trips
      * @type get
