@@ -26,6 +26,10 @@ module.exports = function (app){
         // delete an application. Currently an application cannot be deleted!
         .delete(applications.delete_an_application);
     
+    app.route('/v1/applications/:applicationId/pay')
+        // update an application status to payed
+        .put(applications.pay_an_application);
+
     app.route('/v1/applications/users/:userId')
         // list applications that explorers/manager have made
         .get(applications.list_all_my_applications);
