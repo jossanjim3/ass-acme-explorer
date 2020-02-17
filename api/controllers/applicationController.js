@@ -89,6 +89,14 @@ exports.delete_an_application = function(req,res){
 };
 
 //----------------------------
+// /v1/applications/:applicationId/pay
+//----------------------------
+exports.pay_an_application = function(req, res) {
+    // pay a trip
+    res.send('applications payed by explorer');
+};
+
+//----------------------------
 // /v1/applications/users/:userId
 //----------------------------
 
