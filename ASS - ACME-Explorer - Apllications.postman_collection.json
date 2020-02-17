@@ -1,0 +1,264 @@
+{
+	"info": {
+		"_postman_id": "42e40905-4df3-465d-bee7-9f82aefb4778",
+		"name": "ACME-Explorer",
+		"description": "ASS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "list_all_applications",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/applications",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_an_application",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"status\": \"PENDING\",\n\t\"comment\": \"Third application with initial status pending.\",\n\t\"explorer\": \"5e47fcb3aed9531440793153\",\n\t\"trip\": \"5e47fcb3aed9531440793175\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/v1/applications",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "read_an_application",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682?",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications",
+						"5e4920447748661cb0e41682"
+					],
+					"query": [
+						{
+							"key": "applicationId",
+							"value": "5e4920447748661cb0e41682",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_an_application",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682?",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications",
+						"5e4920447748661cb0e41682"
+					],
+					"query": [
+						{
+							"key": "applicationId",
+							"value": "5e4920447748661cb0e41682",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pay_an_application",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682?",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications",
+						"5e4920447748661cb0e41682"
+					],
+					"query": [
+						{
+							"key": "applicationId",
+							"value": "5e4920447748661cb0e41682",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_an_application",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"status\": \"PENDING\",\n\t\"comment\": \"Second application UPDATED with initial status pending.\",\n\t\"explorer\": \"5e47fcb3aed9531440793152\",\n\t\"trip\": \"5e47fcb3aed9531440793174\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682?",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications",
+						"5e4920447748661cb0e41682"
+					],
+					"query": [
+						{
+							"key": "applicationId",
+							"value": "5e4920447748661cb0e41682",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list_all_my_applications",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/applications/users/5e47fcb3aed9531440793152",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications",
+						"users",
+						"5e47fcb3aed9531440793152"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "read_an_application_by",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682/users/5e47fcb3aed9531440793152",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications",
+						"5e4920447748661cb0e41682",
+						"users",
+						"5e47fcb3aed9531440793152"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_an_application_by",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/applications/user/5e47fcb3aed9531440793152/appli/5e4920447748661cb0e41682",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications",
+						"user",
+						"5e47fcb3aed9531440793152",
+						"appli",
+						"5e4920447748661cb0e41682"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search_applications",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/applications/search?",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications",
+						"search"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": "hola",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
