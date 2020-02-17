@@ -19,11 +19,23 @@ module.exports = function (app){
     
     app.route('/v1/applications/user/:userId')
         // list applications that explorers/manager have made
-        .get(applications.list_all_my_applications)
+        .get(applications.list_all_my_applications);
 
+    // TODO revisar si se podria incluir en otras rutas con foreach    
     app.route('/v1/applications/user/:userId/appli/:applicationId')
-        // read an applicaction that explorer/manager manages
+        // read an applications that explorer/manager manages
         .get(applications.read_an_application_by)
-        // update an applicaction status that explorer/manager manages
-        .put(applications.update_an_application_by)
+        // update an applications status that explorer/manager manages
+        .put(applications.update_an_application_by);
+
+    /**
+     * Search engine for applications
+     * Get applications depending on params
+     *    RequiredRoles: Explorer o Manager
+     */
+    app.route('/v1/applications/search')
+        // get application depends on parameters of search
+        .get(applications.search_applications);
+
+    
 }
