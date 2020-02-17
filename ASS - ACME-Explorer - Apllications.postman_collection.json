@@ -38,7 +38,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"status\": \"PENDING\",\n\t\"comment\": \"Second application with initial status pending.\",\n\t\"explorer\": \"5e47fcb3aed9531440793152\",\n\t\"trip\": \"5e47fcb3aed9531440793174\"\n}"
+					"raw": "{\n\t\"status\": \"PENDING\",\n\t\"comment\": \"Third application with initial status pending.\",\n\t\"explorer\": \"5e47fcb3aed9531440793153\",\n\t\"trip\": \"5e47fcb3aed9531440793175\"\n}"
 				},
 				"url": {
 					"raw": "localhost:8080/v1/applications",
@@ -201,6 +201,32 @@
 						"5e47fcb3aed9531440793152",
 						"appli",
 						"5e4920447748661cb0e41682"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search_applications",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/applications/search?keyword=hola",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications",
+						"search"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": "hola"
+						}
 					]
 				}
 			},
