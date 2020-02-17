@@ -27,10 +27,51 @@ module.exports = function(app) {
      * 
      * @section sponsorships
      * @type get, put, delete
-     * @url /v1/sponsorship/:sponsorshipId
+     * @url /v1/sponsorships/:sponsorshipId
      */
     app.route('/v1/sponsorships/:sponsorshipId')
         .get(sponsorships.find_a_sponsorship)
         .put(sponsorships.update_a_sponsorship)
         .delete(sponsorships.delete_a_sponsorship);
+
+    /**
+     * Get all the sponsorships belonging to a sponsor
+     *     Required role: Sponsor
+     * 
+     * @section sponsorships
+     * @type get
+     * @url /v1/sponsorships/:sponsorId
+     */
+    app.route('/v1/sponsorships/:sponsorId')
+        .get(sponsorships.list_sponsorships_sponsor);
+    
+    /**
+     * Get all the sponsorships belonging to a trip.
+     * 
+     * @section sponsorships
+     * @type get
+     * @url /v1/sponsorships/:tripId
+     */
+    app.route('/v1/sponsorships/:tripId')
+        .get(sponsorships.find_sponsorships_trip);
+
+    /**
+     * Pay a sponsorship for a trip.
+     * 
+     * @section sponsorships
+     * @type put
+     * @url /v1/sponsorships/:sponsorshipId/:tripId/pay
+     */
+    app.route('/v1/sponsorships/:sponsorshipId/:tripId/pay')
+        .put(sponsorships.pay_sponsorships_trip);
+
+    /**
+     * Cancel a sponsorship for a trip.
+     * 
+     * @section sponsorships
+     * @type put
+     * @url /v1/sponsorships/:sponsorshipId/:tripId/cancel
+     */
+    app.route('/v1/sponsorships/:sponsorshipId/:tripId/cancel')
+        .put(sponsorships.cancel_sponsorships_trip);
 };

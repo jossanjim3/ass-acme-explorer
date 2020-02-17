@@ -111,8 +111,6 @@ exports.updateFinder = function(req, res) {
         var newFinder = req.body;
         newFinder.timestamp = new Date();
 
-        newFinder.results = getTripsByFinder(newFinder);
-
         Actor.findOneAndUpdate({_id: req.params.actorId}, {finder: newFinder}, {new: true}, function(err, sponsorship){
             if(err){
                 res.status(500).send(err);
