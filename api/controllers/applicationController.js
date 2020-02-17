@@ -89,7 +89,7 @@ exports.delete_an_application = function(req,res){
 };
 
 //----------------------------
-// /v1/applications/user/:userId
+// /v1/applications/users/:userId
 //----------------------------
 
 // list applications that explorers/manager have made
@@ -110,7 +110,7 @@ exports.list_all_my_applications = function(req, res) {
 };
 
 //----------------------------
-// /v1/applications/user/:userId/appli/:applicationId
+// /v1/applications/:applicationId/users/:userId
 //----------------------------
 
 // read an applicaction that explorer/manager manages
@@ -139,7 +139,7 @@ exports.update_an_application_by = function(req,res){
 exports.search_applications = function(req, res) {
     //check if explorer or manager param exists
     //Search depending on params
-    console.log('Searching applications depending on params');
+    //console.log('Searching applications depending on params');
     res.send('applications returned from the applications search');
 };
 
