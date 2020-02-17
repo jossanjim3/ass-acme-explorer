@@ -145,7 +145,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/v1/applications/user/5e47fcb3aed9531440793152",
+					"raw": "localhost:8080/v1/applications/users/5e47fcb3aed9531440793152",
 					"host": [
 						"localhost"
 					],
@@ -153,7 +153,7 @@
 					"path": [
 						"v1",
 						"applications",
-						"user",
+						"users",
 						"5e47fcb3aed9531440793152"
 					]
 				}
@@ -166,7 +166,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/v1/applications/user/5e47fcb3aed9531440793152/appli/5e4920447748661cb0e41682",
+					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682/users/5e47fcb3aed9531440793152",
 					"host": [
 						"localhost"
 					],
@@ -174,10 +174,9 @@
 					"path": [
 						"v1",
 						"applications",
-						"user",
-						"5e47fcb3aed9531440793152",
-						"appli",
-						"5e4920447748661cb0e41682"
+						"5e4920447748661cb0e41682",
+						"users",
+						"5e47fcb3aed9531440793152"
 					]
 				}
 			},
@@ -212,7 +211,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/v1/applications/search?keyword=hola",
+					"raw": "localhost:8080/v1/applications/search?",
 					"host": [
 						"localhost"
 					],
@@ -225,7 +224,8 @@
 					"query": [
 						{
 							"key": "keyword",
-							"value": "hola"
+							"value": "hola",
+							"disabled": true
 						}
 					]
 				}
