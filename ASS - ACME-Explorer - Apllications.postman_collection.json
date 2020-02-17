@@ -109,6 +109,33 @@
 			"response": []
 		},
 		{
+			"name": "pay_an_application",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682?",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications",
+						"5e4920447748661cb0e41682"
+					],
+					"query": [
+						{
+							"key": "applicationId",
+							"value": "5e4920447748661cb0e41682",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "update_an_application",
 			"request": {
 				"method": "PUT",
