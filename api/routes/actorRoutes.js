@@ -15,7 +15,16 @@ module.exports = function(app) {
   app.route('/v1/actors/:actorId/validated')
     //ban or unban an actor 
     .put(actors.modify_activate_an_actor);
-  
- 
 
+  /**
+   * Put to change the finder of an actor.
+   *    RequiredRole: Explorer
+   * 
+   * @section actors
+   * @type put
+   * @url /v1/actors/:actorId/finder
+   * @param {string} actorId
+   */
+  app.route('/v1/actors/:actorId/finder')
+  .put(actors.updateFinder);
 };
