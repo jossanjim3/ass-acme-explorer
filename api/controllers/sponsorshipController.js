@@ -67,3 +67,35 @@ exports.delete_a_sponsorship = function(req, res){
         }
     });
 }
+
+//Por terminar
+exports.list_sponsorships_sponsor = function(req, res){
+    Sponsorship.find({actor: req.params.sponsorId}, function(req, res) {
+        if(err){
+            res.status(500).send(err);
+        }
+        else{
+            res.json(actor);
+        }
+    });
+}
+
+//Por terminar.
+exports.find_sponsorships_trip = function(req, res){
+    Sponsorship.find({id: req.params.tripId}, function(req, res) {
+        if(err){
+            res.status(500).send(err);
+        }
+        else{
+            res.json(actor);
+        }
+    });
+}
+
+exports.pay_sponsorships_trip = function(req, res){
+    res.send("Sponsorship, payed");
+}
+
+exports.cancel_sponsorships_trip = function(req, res){
+    res.send("Sponsorship, canceled");
+}
