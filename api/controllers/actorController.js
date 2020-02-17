@@ -102,6 +102,7 @@ exports.modify_activate_an_actor = function(req, res) {
     });
 }*/
 
+
 exports.updateFinder = function(req, res) {
     if(!req.params.role.contains('EXPLORER')){
         res.status(422).json({message: 'The actor must be an explorer.'})
@@ -109,6 +110,9 @@ exports.updateFinder = function(req, res) {
     else{
         var newFinder = req.body;
         newFinder.timestamp = new Date();
+
+        newFinder.results = getTripsByFinder(newFinder);
+
         Actor.findOneAndUpdate({_id: req.params.actorId}, {finder: newFinder}, {new: true}, function(err, sponsorship){
             if(err){
                 res.status(500).send(err);
