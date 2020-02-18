@@ -20,7 +20,8 @@ exports.list_all_applications = function(req,res){
 
 // create an applicaction
 exports.create_an_application = function(req,res){
-    //Check that user is a Explorer and if not: res.status(403); "an access token is valid, but requires more privileges"
+    // Check that user is a Explorer and if not: res.status(403); "an access token is valid, but requires more privileges"
+    // Check if the trip has been published and is not started or cancelled
     var new_appli = new Application(req.body);
 
     new_appli.save(function(err, appli) {
@@ -58,6 +59,7 @@ exports.update_an_application = function(req,res){
     //Check if the appliction has been previously assigned or not to a trip
     //Check if the trip has a manager assigned
     //Check the current status of the application
+    // if the status is Pending and the user is a manager -> status 
     //Update the apllication depending on the status
     Application.findById(req.params.applicationId, function(err, appli) {
         if (err){
