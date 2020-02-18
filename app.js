@@ -37,12 +37,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
  
 var routesActors = require('./api/routes/actorRoutes');
-var routesTrips = require('./api/routes/tripRoutes')
+var routesTrips = require('./api/routes/tripRoutes');
 var routesApplications = require('./api/routes/applicationRoutes');
+var routesSponsorships = require('./api/routes/sponsorshipRoutes');
 
 routesActors(app);
 routesApplications(app);
-routesTrips(app); 
+routesTrips(app);
+routesSponsorships(app);
 
 console.log("Connecting DB to: " + mongoDBURI);
 mongoose.connection.on("open", function (err, conn) {

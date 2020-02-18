@@ -35,6 +35,23 @@ exports.create_an_actor = function(req,res){
     }
 };
 
+exports.read_an_actor=function(req,res){
+    
+    Actor.findById(req.body.id, function(err,actor){
+
+        if(err){
+            res.status(500).send(err);
+
+        }else if(actor === null){
+
+            res.status(404).send("No existe ese actor");
+
+        }else{
+            res.json(actor);
+        }
+    })
+}
+
 
 exports.update_an_actor = function(req,res){
     //Check that the user is the proper actor and if not: res.status(403); "an access token is valid, but requires more privileges"
@@ -74,6 +91,33 @@ exports.modify_activate_an_actor = function(req, res) {
     //}else{: res.status(403).send("You are not authenticated as an administrator therefore this operation is invalid")}
 };
 
+/*exports.delete_an_actor = function(req,res){
+    Actor.deleteOne({_id: req.params.actorId}, function(err, actor) {
+        if (err){
+            res.status(500).send(err);
+        }
+        else{
+            res.json({ message: 'Actor successfully deleted' });
+        }
+    });
+}*/
 
 
+exports.updateFinder = function(req, res) {
+    if(!req.params.role.contains('EXPLORER')){
+        res.status(422).json({message: 'The actor must be an explorer.'})
+    }
+    else{
+        var newFinder = req.body;
+        newFinder.timestamp = new Date();
 
+        Actor.findOneAndUpdate({_id: req.params.actorId}, {finder: newFinder}, {new: true}, function(err, sponsorship){
+            if(err){
+                res.status(500).send(err);
+            }
+            else{
+                res.status(200).json(sponsorship);
+            }
+        });
+    }
+}

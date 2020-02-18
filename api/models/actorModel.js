@@ -1,6 +1,40 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var trips = require('./tripModel');
+
+var trips_schema = trips.tripSchema;
+
+var FinderSchema = new Schema({
+    keyword: {
+        type: String,
+        default: null
+    },
+    startingDate: {
+        type: Date,
+        default: null
+    },
+    endingDate: {
+        type: Date,
+        default: null
+    },
+    minPrice: {
+        type: Number,
+        default: null
+    },
+    maxPrice: {
+        type: String,
+        default: null
+    },
+    results: {
+        type: [trips_schema],
+        default: null
+    },
+    timestamp: {
+        type: Date
+    }
+}, {strict: false});
+
 var ActorSchema = new Schema({
     name: {
         type: String,
@@ -53,7 +87,15 @@ var ActorSchema = new Schema({
         type: String,
         required: 'Kindly enter the role(s) of the actor',
         enum: ['EXPLORER', 'MANAGER', 'ADMINISTRATOR', 'SPONSOR']
-    }]
+    }],
+    createdAt:{
+        type: Date,
+        default: Date.now
+    },
+    finder: {
+        type: FinderSchema,
+        default: null
+    }
 
 }, {strict:false});
 
