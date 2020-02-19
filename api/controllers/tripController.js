@@ -14,8 +14,58 @@ exports.list_all_trips = function(req,res){
     });
 }
 
+exports.list_all_trips_of_manager = function(req,res){
+    var manager_id = req.params.managerId;
+    Trip.find({manager:manager_id},function(err,trips){
+        if(err){
+            res.status(500).send(err);
+        } else {
+            res.json(trips);
+        }
+    });
+}
+
 exports.search_trips = function(req,res){
-    res.send("Trips returned from the trips search");
+    var query = {};
+    
+    if (req.query.keyword) {
+      query.$text = {$search: req.query.keyword ,$language: "es"};
+    }
+  
+    var skip=0;
+    if(req.query.startFrom){
+      skip = parseInt(req.query.startFrom);
+    }
+    var limit=0;
+    if(req.query.pageSize){
+      limit=parseInt(req.query.pageSize);
+    }
+  
+    var sort="";
+    if(req.query.reverse=="true"){
+      sort="-";
+    }
+    if(req.query.sortedBy){
+      sort+=req.query.sortedBy;
+    }
+  
+    console.log("Query: "+query+" Skip:" + skip+" Limit:" + limit+" Sort:" + sort);
+  
+    Trip.find(query)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec(function(err, trips){
+      console.log('Start searching trips');
+      if (err){
+        res.send(err);
+      }
+      else{
+        res.json(trips);
+      }
+      console.log('End searching trips');
+    });
 }
 
 exports.create_an_trip = function(req,res){
