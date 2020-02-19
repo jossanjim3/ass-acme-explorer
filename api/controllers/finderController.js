@@ -4,13 +4,21 @@ var mongoose = require('mongoose'),
     Finder = mongoose.model('Finders');
 
 
-exports.all_finders
+exports.all_finders = function(req, res){
 
-exports.create_finder
+}
 
-exports.remove_finder
+exports.create_finder = function(req, res){
+    
+}
 
-exports.finder_of_actor
+exports.remove_finder = function(req, res){
+    
+}
+
+exports.finder_of_actor = function(req, res){
+    
+}
 
 exports.update_finder = function(req, res) {
     if(!req.params.role.contains('EXPLORER')){
