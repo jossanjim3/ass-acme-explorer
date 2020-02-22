@@ -1,3 +1,4 @@
+require('dotenv').config()
 var express = require('express'),
  app = express(),
  port = process.env.PORT || 8080,
@@ -11,14 +12,19 @@ var express = require('express'),
 mongoose.set('useFindAndModify', false);
  
 // MongoDB URI building
+var mongoDBUser = process.env.mongoDBUser || "myUser";
+var mongoDBPass = process.env.mongoDBPass || "myUserPassword";
+var mongoDBCredentials = (mongoDBUser && mongoDBPass) ? mongoDBUser + ":" + mongoDBPass + "@" : "";
+
 var mongoDBHostname = process.env.mongoDBHostname || "localhost";
 var mongoDBPort = process.env.mongoDBPort || "27017";
 var mongoDBName = process.env.mongoDBName || "ACME-Explorer";
-var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
 
+//var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
+//mongoose.set('useCreateIndex', true)
 
-mongoose.set('useCreateIndex', true)
-
+var mongoDBURI = "mongodb://" + mongoDBCredentials + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
+ 
 //mongodb://localhost:27017/ACME-Explorer
 mongoose.connect(mongoDBURI, {
  //reconnectTries: 10,
