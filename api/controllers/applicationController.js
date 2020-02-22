@@ -3,6 +3,9 @@
 var mongoose = require('mongoose'),
     Application = mongoose.model('Applications');
 
+var Actor = mongoose.model('Actors');
+var Trip = mongoose.model('Trips');
+
 //----------------------------
 // /v1/applications
 //----------------------------
@@ -20,23 +23,51 @@ exports.list_all_applications = function(req,res){
 
 // create an applicaction
 exports.create_an_application = function(req,res){
-    // Check that user is a Explorer and if not: res.status(403); "an access token is valid, but requires more privileges"
-    // Check if the trip has been published and is not started or cancelled
     var new_appli = new Application(req.body);
+    var explorer = undefined;
+    var trip = undefined;
+    // Check that user is a Explorer and if not: res.status(403); "an access token is valid, but requires more privileges"    
+    Actor.findById(req.body.explorer, function(err, actor){
+        if(err){
+            res.status(500).send(err);
+        } else {
+            explorer = actor;
+            console.log(explorer);
+            
+            if (explorer.role.includes("EXPLORER")) {
+                // Check if the trip has been published and is not started or cancelled
+                Trip.findById(req.body.trip, function(err, tripp){
+                    if(err){
+                        res.status(500).send(err);
+                    } else {
+                        trip = tripp;
+                        console.log(trip);
+                        if (trip.isPublished){
+                            new_appli.save(function(err, appli) {
+                                if (err){
+                                    if(err.name=='ValidationError') {
+                                        res.status(422).send(err);
+                                    }
+                                    else{
+                                        res.status(500).send(err);
+                                    }
+                                }
+                                else{
+                                    res.json(appli);
+                                }
+                            });
+                        } else {
+                            res.json("Trip is not publised yet.")
+                        }
 
-    new_appli.save(function(err, appli) {
-        if (err){
-            if(err.name=='ValidationError') {
-                res.status(422).send(err);
-            }
-            else{
-                res.status(500).send(err);
+                    }
+                })
+
+            } else {
+                res.json("User is not an explorer.");
             }
         }
-        else{
-            res.json(appli);
-        }
-    });
+    })        
 };
 
 //----------------------------

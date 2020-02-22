@@ -3,7 +3,7 @@
 module.exports = function (app){
     var applications = require('../controllers/applicationController');
 
-     app.route('/v1/applications')
+    app.route('/v1/applications')
         // list all the applications
         .get(applications.list_all_applications)        
         // create an applicaction
