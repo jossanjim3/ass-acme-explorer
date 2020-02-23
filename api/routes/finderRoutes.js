@@ -13,8 +13,7 @@ module.exports = function(req, res){
      * @url /v1/finders
      */
     app.route('/v1/finders')
-        .get(applications.all_finders)
-        .post(applications.create_finder);
+        .get(applications.all_finders);
     
     /**
      * Get a finder by _id.
