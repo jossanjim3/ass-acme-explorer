@@ -16,7 +16,7 @@ exports.list_all_applications = function(req,res){
             res.json(applis);
         }
     });
-}
+};
 
 // create an applicaction
 exports.create_an_application = function(req,res){
@@ -36,7 +36,7 @@ exports.create_an_application = function(req,res){
             res.json(appli);
         }
     });
-}
+};
 
 //----------------------------
 // /v1/applications/:applicationId
@@ -51,7 +51,7 @@ exports.read_an_application = function(req,res){
             res.json(application);
         }
     })
-}
+};
 
 // update an application status
 exports.update_an_application = function(req,res){
@@ -80,16 +80,24 @@ exports.update_an_application = function(req,res){
             });
         }
     });
-}
+};
 
 // delete an application. Currently an application cannot be deleted!
 exports.delete_an_application = function(req,res){
     // an application cannot be deleted
     res.status(403).send("An application cannot be deleted!");
-}
+};
 
 //----------------------------
-// /v1/applications/user/:userId
+// /v1/applications/:applicationId/pay
+//----------------------------
+exports.pay_an_application = function(req, res) {
+    // pay a trip
+    res.send('applications payed by explorer');
+};
+
+//----------------------------
+// /v1/applications/users/:userId
 //----------------------------
 
 // list applications that explorers/manager have made
@@ -107,10 +115,10 @@ exports.list_all_my_applications = function(req, res) {
         res.json(appis);
       }
     });
-  };
+};
 
 //----------------------------
-// /v1/applications/user/:userId/appli/:applicationId
+// /v1/applications/:applicationId/users/:userId
 //----------------------------
 
 // read an applicaction that explorer/manager manages
@@ -121,7 +129,7 @@ exports.read_an_application_by = function(req,res){
     var app_id = req.params.applicationId;
 
     res.send('Retrieve an applicaction that explorer/manager manages');
-}
+};
 
 // update an applicaction status that manager manages
 exports.update_an_application_by = function(req,res){
@@ -131,4 +139,15 @@ exports.update_an_application_by = function(req,res){
     var app_id = req.params.applicationId;
 
     res.send('Retrieve and update an applicaction status that explorer/manager manages');
-}
+};
+
+//----------------------------
+// /v1/applications/search
+//----------------------------
+exports.search_applications = function(req, res) {
+    //check if explorer or manager param exists
+    //Search depending on params
+    //console.log('Searching applications depending on params');
+    res.send('applications returned from the applications search');
+};
+

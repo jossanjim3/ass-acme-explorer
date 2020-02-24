@@ -38,7 +38,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"status\": \"PENDING\",\n\t\"comment\": \"Second application with initial status pending.\",\n\t\"explorer\": \"5e47fcb3aed9531440793152\",\n\t\"trip\": \"5e47fcb3aed9531440793174\"\n}"
+					"raw": "{\n\t\"status\": \"PENDING\",\n\t\"comment\": \"Third application with initial status pending.\",\n\t\"explorer\": \"5e47fcb3aed9531440793153\",\n\t\"trip\": \"5e47fcb3aed9531440793175\"\n}"
 				},
 				"url": {
 					"raw": "localhost:8080/v1/applications",
@@ -109,6 +109,33 @@
 			"response": []
 		},
 		{
+			"name": "pay_an_application",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682?",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications",
+						"5e4920447748661cb0e41682"
+					],
+					"query": [
+						{
+							"key": "applicationId",
+							"value": "5e4920447748661cb0e41682",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "update_an_application",
 			"request": {
 				"method": "PUT",
@@ -145,7 +172,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/v1/applications/user/5e47fcb3aed9531440793152",
+					"raw": "localhost:8080/v1/applications/users/5e47fcb3aed9531440793152",
 					"host": [
 						"localhost"
 					],
@@ -153,7 +180,7 @@
 					"path": [
 						"v1",
 						"applications",
-						"user",
+						"users",
 						"5e47fcb3aed9531440793152"
 					]
 				}
@@ -166,7 +193,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/v1/applications/user/5e47fcb3aed9531440793152/appli/5e4920447748661cb0e41682",
+					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682/users/5e47fcb3aed9531440793152",
 					"host": [
 						"localhost"
 					],
@@ -174,10 +201,9 @@
 					"path": [
 						"v1",
 						"applications",
-						"user",
-						"5e47fcb3aed9531440793152",
-						"appli",
-						"5e4920447748661cb0e41682"
+						"5e4920447748661cb0e41682",
+						"users",
+						"5e47fcb3aed9531440793152"
 					]
 				}
 			},
@@ -201,6 +227,33 @@
 						"5e47fcb3aed9531440793152",
 						"appli",
 						"5e4920447748661cb0e41682"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search_applications",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/applications/search?",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"applications",
+						"search"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": "hola",
+							"disabled": true
+						}
 					]
 				}
 			},

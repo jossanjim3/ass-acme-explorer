@@ -92,6 +92,8 @@ tripSchema.pre('save', function(callback) {
     callback();
 });
 
+tripSchema.index({ ticker: 'text', title: 'text', description: 'text' });
+
 exports.tripSchema = tripSchema;
 
 exports.tripModel = mongoose.model('Trips', tripSchema);
