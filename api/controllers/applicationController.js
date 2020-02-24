@@ -26,23 +26,35 @@ exports.create_an_application = function(req,res){
     var new_appli = new Application(req.body);
     var explorer = undefined;
     var trip = undefined;
-    // Check that user is a Explorer and if not: res.status(403); "an access token is valid, but requires more privileges"    
+    
+    // check if the actor exists
     Actor.findById(req.body.explorer, function(err, actor){
         if(err){
-            res.status(500).send(err);
+            //res.status(500).send(err);
+            res.status(403);
+            res.json("Application cannot be created. Actor does not exist!");
         } else {
             explorer = actor;
-            console.log(explorer);
+            //console.log(explorer);
             
+            // Check if the actor is an Explorer  
             if (explorer.role.includes("EXPLORER")) {
-                // Check if the trip has been published and is not started or cancelled
+
+                // check if the trip exists
                 Trip.findById(req.body.trip, function(err, tripp){
                     if(err){
-                        res.status(500).send(err);
+                        //res.status(500).send(err);
+                        res.status(403);
+                        res.json("Application cannot be created. Trips does not exist!");
+
                     } else {
                         trip = tripp;
-                        console.log(trip);
-                        if (trip.isPublished){
+                        //console.log(trip);
+
+                        // Check if the trip has been published and is not started or cancelled
+                        if (trip.isPublished && trip.reasonCancel == undefined && trip.startDate > new Date()){
+
+                            // create the application
                             new_appli.save(function(err, appli) {
                                 if (err){
                                     if(err.name=='ValidationError') {
@@ -56,15 +68,23 @@ exports.create_an_application = function(req,res){
                                     res.json(appli);
                                 }
                             });
-                        } else {
-                            res.json("Trip is not publised yet.")
+                        } else if (!trip.isPublished) {
+                            res.status(403);
+                            res.json("Application cannot be created. The trip is not published yet!");
+                        } else if (trip.reasonCancel != undefined){
+                            res.status(403);
+                            res.json("Application cannot be created. The trip has been cancelled!");
+                        } else if (trip.startDate <= new Date()){
+                            res.status(403);
+                            res.json("Application cannot be created. The trip has already started!");
                         }
 
                     }
                 })
 
             } else {
-                res.json("User is not an explorer.");
+                res.status(403);
+                res.json("Application cannot be created. The actor is not an explorer!");
             }
         }
     })        
