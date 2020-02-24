@@ -144,9 +144,39 @@ exports.delete_an_application = function(req,res){
 //----------------------------
 // /v1/applications/:applicationId/pay
 //----------------------------
-exports.pay_an_application = function(req, res) {
-    // pay a trip
-    res.send('applications payed by explorer');
+// explorer pays an application
+exports.pay_an_application = function(req, res) {    
+    Application.findById(req.params.applicationId, function(err, appli) {
+        if (err){
+            if(err.name=='ValidationError') {
+                res.status(422).send(err);
+            }
+            else{
+                res.status(500).send(err);
+            }
+            
+        } else if (appli.status.includes("DUE")){
+            appli.status = "ACCEPTED";
+            appli.save(function(err, appli) {
+                if (err){
+                    if(err.name=='ValidationError') {
+                        res.status(422).send(err);
+                    }
+                    else{
+                        res.status(500).send(err);
+                    }
+                }
+                else{
+                    res.status(201);
+                    res.json(appli);
+                }
+            });            
+
+        } else {
+            res.status(403);
+            res.json("Application has not the status DUE!");
+        }
+    });
 };
 
 //----------------------------
