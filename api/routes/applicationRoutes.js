@@ -25,23 +25,21 @@ module.exports = function (app){
         .put(applications.update_an_application)
         // delete an application. Currently an application cannot be deleted!
         .delete(applications.delete_an_application);
-    
+
     app.route('/v1/applications/:applicationId/pay')
         // update an application status to payed
-        .put(applications.pay_an_application);
+        .put(applications.pay_an_application);   
+
+    app.route('/v1/applications/:applicationId/cancel')
+        // update an application status to rejected by manager or cancelled by explorer
+        .put(applications.cancel_an_application);
 
     app.route('/v1/applications/users/:userId')
-        // list applications that explorers/manager have made
+        // list applications that explorers have made
         .get(applications.list_all_my_applications);
 
-    // TODO revisar si se podria incluir en otras rutas con foreach    
-    app.route('/v1/applications/:applicationId/users/:userId')
-        // read an applications that explorer/manager manages
-        .get(applications.read_an_application_by)
-        // update an applications status that explorer/manager manages
-        .put(applications.update_an_application_by);
-
-    
-
-    
+    app.route('/v1/applications/trips/:tripId')
+        // list applications from a trip
+        .get(applications.list_all_trip_applications);
+   
 }

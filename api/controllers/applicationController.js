@@ -107,8 +107,6 @@ exports.read_an_application = function(req,res){
 
 // update an application status
 exports.update_an_application = function(req,res){
-    //Check if the appliction has been previously assigned or not to a trip
-    //Check if the trip has a manager assigned
     //Check the current status of the application
     // if the status is Pending and the user is a manager -> status 
     //Update the apllication depending on the status
@@ -154,7 +152,7 @@ exports.pay_an_application = function(req, res) {
             else{
                 res.status(500).send(err);
             }
-            
+
         } else if (appli.status.includes("DUE")){
             appli.status = "ACCEPTED";
             appli.save(function(err, appli) {
@@ -180,17 +178,91 @@ exports.pay_an_application = function(req, res) {
 };
 
 //----------------------------
+// /v1/applications/:applicationId/cancel
+//----------------------------
+// update an application status to rejected by manager or cancelled by explorer
+exports.cancel_an_application = function(req, res) {    
+
+    // check the application status
+    Application.findById(req.params.applicationId, function(err, appli) {
+        if (err){
+            if(err.name=='ValidationError') {
+                res.status(422).send(err);
+            }
+            else{
+                res.status(403); 
+                res.send("Application cannot be rejected/cancelled. Application does not exist!");
+            }
+
+        } else {
+            var statusApp = appli.status;
+            // if the application status is Accepted -> Cancelled 
+            // if the application status is Pending -> Rejected
+            // en el frontend se controla si es la vista de manager o de explorer
+            
+            if (statusApp == "ACCEPTED") {
+                appli.status = "CANCELLED";
+
+                // save the new status
+                appli.save(function(err, appli) {
+                    if (err){
+                        if(err.name=='ValidationError') {
+                            res.status(422).send(err);
+                        }
+                        else{
+                            res.status(500).send(err);
+                        }
+                    }
+                    else{
+                        res.status(201);
+                        res.json(appli);
+                    }
+                });  
+                
+            } else if (statusApp == "PENDING"){
+                appli.status = "REJECTED";
+
+                if(req.body.comment != undefined && req.body.comment != ""){
+                    appli.comment = req.body.comment;
+                    // save the new status
+                    appli.save(function(err, appli) {
+                        if (err){
+                            if(err.name=='ValidationError') {
+                                res.status(422).send(err);
+                            }
+                            else{
+                                res.status(500).send(err);
+                            }
+                        }
+                        else{
+                            res.status(201);
+                            res.json(appli);
+                        }
+                    });  
+                    
+                } else {
+                    res.status(403);
+                    res.json("Sorry, you must include the reason why!");
+                }
+                
+            } else {
+                res.status(403);
+                res.json("It is not possible to reject or cancel the application!");
+                
+            }               
+        }       
+    });
+};
+
+//----------------------------
 // /v1/applications/users/:userId
 //----------------------------
 
-// list applications that explorers/manager have made
+// list applications that explorers have made
 exports.list_all_my_applications = function(req, res) {
-    // retieve the user id
-    // check if the user is explorer or manager
-
     var user_id = req.params.userId;
-    // TODO find by user_id
-    Application.find(function(err, appis) {
+
+    Application.find({explorer : user_id}, function(err, appis) {
       if (err){
         res.status(500).send(err);
       }
@@ -201,27 +273,20 @@ exports.list_all_my_applications = function(req, res) {
 };
 
 //----------------------------
-// /v1/applications/:applicationId/users/:userId
+// /v1/applications/trips/:tripId
 //----------------------------
+// list applications from a trip
+exports.list_all_trip_applications = function(req, res) {
+    var trip_id = req.params.tripId;
 
-// read an applicaction that explorer/manager manages
-exports.read_an_application_by = function(req,res){
-    // check the manager_id
-    var manager_id = req.params.applicationId;
-    // check the application id
-    var app_id = req.params.applicationId;
-
-    res.send('Retrieve an applicaction that explorer/manager manages');
-};
-
-// update an applicaction status that manager manages
-exports.update_an_application_by = function(req,res){
-    // check the manager_id
-    var manager_id = req.params.applicationId;
-    // check the application id
-    var app_id = req.params.applicationId;
-
-    res.send('Retrieve and update an applicaction status that explorer/manager manages');
+    Application.find({trip : trip_id}, function(err, appis) {
+      if (err){
+        res.status(500).send(err);
+      }
+      else{
+        res.json(appis);
+      }
+    });
 };
 
 //----------------------------
