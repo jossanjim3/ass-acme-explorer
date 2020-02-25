@@ -24,11 +24,7 @@ module.exports = function (app){
         // update an application status
         .put(applications.update_an_application)
         // delete an application. Currently an application cannot be deleted!
-        .delete(applications.delete_an_application);
-
-    app.route('/v1/applications/:applicationId/pay')
-        // update an application status to payed
-        .put(applications.pay_an_application);   
+        .delete(applications.delete_an_application);  
 
     app.route('/v1/applications/:applicationId/cancel')
         // update an application status to rejected by manager or cancelled by explorer

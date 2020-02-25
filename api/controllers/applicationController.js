@@ -107,28 +107,67 @@ exports.read_an_application = function(req,res){
 
 // update an application status
 exports.update_an_application = function(req,res){
-    //Check the current status of the application
-    // if the status is Pending and the user is a manager -> status 
-    //Update the apllication depending on the status
-    Application.findById(req.params.applicationId, function(err, appli) {
+
+    console.log(req.params.applicationId);
+    Application.findById({_id : req.params.applicationId}, function(err, appli) {
         if (err){
             if(err.name=='ValidationError') {
                 res.status(422).send(err);
             }
             else{
-                res.status(500).send(err);
+                res.status(403); 
+                res.send("Application cannot be updated. Application does not exist!");
             }
-        }
-        else{
-            Application.findOneAndUpdate({_id: req.params.applicationId}, req.body, {new: true}, function(err, appli) {
-            if (err){
-                res.status(500).send(err);
-            }
-            else{
-                // do the check
-                res.json(appli);
-            }
-            });
+
+        } else {
+            var statusApp = appli.status;
+            // if the application status is Pending -> DUE 
+            // if the application status is Due -> Accepted
+            // en el frontend se controla si es la vista de manager o de explorer
+            
+            if (statusApp == "PENDING") {
+                appli.status = "DUE";
+
+                // save the new status
+                appli.save(function(err, appli) {
+                    if (err){
+                        if(err.name=='ValidationError') {
+                            res.status(422).send(err);
+                        }
+                        else{
+                            res.status(500).send(err);
+                        }
+                    }
+                    else{
+                        res.status(201);
+                        res.json(appli);
+                    }
+                });  
+                
+            } else if (statusApp == "DUE"){
+                appli.status = "ACCEPTED";
+
+                // save the new status
+                appli.save(function(err, appli) {
+                    if (err){
+                        if(err.name=='ValidationError') {
+                            res.status(422).send(err);
+                        }
+                        else{
+                            res.status(500).send(err);
+                        }
+                    }
+                    else{
+                        res.status(201);
+                        res.json(appli);
+                    }
+                });  
+                
+            } else {
+                res.status(403);
+                res.json("It is not possible to update the application status!");
+                
+            } 
         }
     });
 };
@@ -137,44 +176,6 @@ exports.update_an_application = function(req,res){
 exports.delete_an_application = function(req,res){
     // an application cannot be deleted
     res.status(403).send("An application cannot be deleted!");
-};
-
-//----------------------------
-// /v1/applications/:applicationId/pay
-//----------------------------
-// explorer pays an application
-exports.pay_an_application = function(req, res) {    
-    Application.findById(req.params.applicationId, function(err, appli) {
-        if (err){
-            if(err.name=='ValidationError') {
-                res.status(422).send(err);
-            }
-            else{
-                res.status(500).send(err);
-            }
-
-        } else if (appli.status.includes("DUE")){
-            appli.status = "ACCEPTED";
-            appli.save(function(err, appli) {
-                if (err){
-                    if(err.name=='ValidationError') {
-                        res.status(422).send(err);
-                    }
-                    else{
-                        res.status(500).send(err);
-                    }
-                }
-                else{
-                    res.status(201);
-                    res.json(appli);
-                }
-            });            
-
-        } else {
-            res.status(403);
-            res.json("Application has not the status DUE!");
-        }
-    });
 };
 
 //----------------------------
