@@ -8,15 +8,6 @@ module.exports = function (app){
         .get(applications.list_all_applications)        
         // create an applicaction
         .post(applications.create_an_application);
-    
-    /**
-     * Search engine for applications
-     * Get applications depending on params
-     *    RequiredRoles: Explorer o Manager
-     */
-    app.route('/v1/applications/search')
-        // get application depends on parameters of search
-        .get(applications.search_applications);
 
     app.route('/v1/applications/:applicationId')
         // read an application
@@ -36,6 +27,5 @@ module.exports = function (app){
 
     app.route('/v1/applications/trips/:tripId')
         // list applications from a trip
-        .get(applications.list_all_trip_applications);
-   
+        .get(applications.list_all_trip_applications);   
 }

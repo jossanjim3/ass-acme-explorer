@@ -289,14 +289,3 @@ exports.list_all_trip_applications = function(req, res) {
       }
     });
 };
-
-//----------------------------
-// /v1/applications/search
-//----------------------------
-exports.search_applications = function(req, res) {
-    //check if explorer or manager param exists
-    //Search depending on params
-    //console.log('Searching applications depending on params');
-    res.send('applications returned from the applications search');
-};
-
