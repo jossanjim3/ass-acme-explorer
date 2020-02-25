@@ -5,7 +5,7 @@ var trips = require('./tripModel');
 
 var trips_schema = trips.tripSchema;
 
-var FinderSchema = new Schema({
+var finderSchema = new Schema({
     explorer: {
         type: Schema.Types.ObjectId,
         required: true,
@@ -32,13 +32,19 @@ var FinderSchema = new Schema({
         default: null
     },
     results: {
-        type: [trips_schema],
-        default: null
+        type: [trips_schema]
     },
     timestamp: {
         type: Date
     }
 }, {strict: false});
 
+finderSchema.pre('save', function(callback){
+    var timestamp = new Date();
+    var newFinder = this;
+    newFinder.timestamp = timestamp;
 
-module.exports = mongoose.model('Finders', FinderSchema)
+    callback();
+});
+
+module.exports = mongoose.model('Finders', finderSchema);

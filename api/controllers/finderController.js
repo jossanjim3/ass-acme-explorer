@@ -1,7 +1,9 @@
 'use strict';
 /*---------------FINDER----------------------*/
 var mongoose = require('mongoose'),
-    Finder = mongoose.model('Finders');
+    Finder = require('../models/finderModel');
+
+const tripController = require('./tripController')
 
 exports.all_finders = function(req, res){
     Finder.find({}, function(err, finders){
@@ -36,22 +38,23 @@ exports.finder_of_actor = function(req, res){
 }
 
 exports.update_finder = function(req, res) {
-    Finder.find({actor: req.params.actorId}, function(err, finder){
+    Finder.findOne({explorer: req.params.actorId}, function(err, finder){
 
-        if(!req.params.actorId.role.includes('EXPLORER')){
+        /*if(!req.params.actorId.role.includes('EXPLORER')){
             res.status(422).json({message: 'The actor must be an explorer.'})
         }
 
-        else if(err){
+        else*/ if(err){
             res.status(500).send(err);
         }
         else{
-            var newFinder = req.body;
-            newFinder.timestamp = new Date();
-            
-            finder.trips = 
+            /*tripController.search_trips(newFinder).then((trips) => {
+                newFinder.trips = trips;
+            });*/
+            if(finder === null){
+                var newFinder = new Finder(req.body);
+                newFinder.explorer = req.params.actorId;
 
-            if(finder.length < 1){
                 newFinder.save(function(err, finder){
                     if(err){
                         res.status(500).send(err);
@@ -62,11 +65,11 @@ exports.update_finder = function(req, res) {
                 });
             }
             else {
-                Finder.findOneAndUpdate({_id: finder._id}, newFinder, {new: true}, function(err, finderToUpdate){
+                Finder.findOneAndUpdate({explorer: req.params.actorId}, finder, {new: true}, function(err, finderToUpdate){
                     if(err){
                         res.status(500).send(err);
                     }
-                    res.status(204).json(finderToUpdate);
+                    res.status(202).json(finderToUpdate);
                 });
             }
         }   
