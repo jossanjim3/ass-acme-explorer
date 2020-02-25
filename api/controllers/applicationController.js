@@ -108,7 +108,8 @@ exports.read_an_application = function(req,res){
 // update an application status
 exports.update_an_application = function(req,res){
 
-    console.log(req.params.applicationId);
+    //console.log(req.params.applicationId);
+    // TODO: check if the user logged has role Explorer or Manager
     Application.findById({_id : req.params.applicationId}, function(err, appli) {
         if (err){
             if(err.name=='ValidationError') {
@@ -125,7 +126,7 @@ exports.update_an_application = function(req,res){
             // if the application status is Due -> Accepted
             // en el frontend se controla si es la vista de manager o de explorer
             
-            if (statusApp == "PENDING") {
+            if (statusApp == "PENDING") { // TODO check if the user logged has role manager
                 appli.status = "DUE";
 
                 // save the new status
@@ -144,7 +145,7 @@ exports.update_an_application = function(req,res){
                     }
                 });  
                 
-            } else if (statusApp == "DUE"){
+            } else if (statusApp == "DUE"){ // TODO check if the user logged has role explorer
                 appli.status = "ACCEPTED";
 
                 // save the new status
