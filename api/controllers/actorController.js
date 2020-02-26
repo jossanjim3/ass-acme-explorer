@@ -1,7 +1,8 @@
 'use strict';
 /*---------------ACTOR----------------------*/
 var mongoose = require('mongoose'),
-    Actor = mongoose.model('Actors');
+bcrypt = require('bcrypt'),
+Actor = mongoose.model('Actors');
 
 
 exports.create_an_actor = function(req,res){
@@ -11,7 +12,7 @@ exports.create_an_actor = function(req,res){
     if(new_actor.role.includes('ADMINISTRATOR')){
         res.status(422).send("No se puede crear un administrador")
     }else if (new_actor.role.includes('MANAGER')){
-        /*
+        /* implementar manager por ahora sin restriccion
         if(auth admin){
             new_actor.save(function(err, actor){
                 if (err){
@@ -55,19 +56,49 @@ exports.read_an_actor=function(req,res){
 
 exports.update_an_actor = function(req,res){
     //Check that the user is the proper actor and if not: res.status(403); "an access token is valid, but requires more privileges"
-    Actor.findOneAndUpdate({_id: req.params.actorId}, req.body, {new: true}, function(err, actor) {
-        if (err){
-          if(err.name=='ValidationError') {
-              res.status(422).send(err);
-          }
-          else{
-            res.status(500).send(err);
-          }
-        }
-        else{
-            res.json(actor);
-        }
-      });
+    var actor_body=req.body;
+    var promise_hash = new Promise((resolve,reject)=>{
+        if(actor_body.password!=undefined){
+            console.log("Estoy dentro corto y cambio")
+            bcrypt.genSalt(5, function(err, salt) {
+                if (err) reject(err);
+            
+                bcrypt.hash(actor_body.password, salt, function(err, hash) {
+                  if (err) reject(err);
+                  console.log(hash);
+                  actor_body.password = hash;
+                  resolve(actor_body)
+                });
+              });
+         }else{
+             resolve(actor_body)
+         }
+    })
+    
+
+
+    console.log(actor_body.password)
+    promise_hash.then((actor_body)=>{
+
+        Actor.findOneAndUpdate({_id: req.params.actorId}, actor_body, {new: true}, function(err, actor) {
+            if (err){
+              if(err.name=='ValidationError') {
+                  res.status(422).send(err);
+              }
+              else{
+    
+                 res.status(500).send(err);
+              }
+              
+            }
+            else{
+                res.json(actor);
+            }
+          });
+    }).catch(function(err){
+        res.status(err).send(err);
+    })
+
 };
 
 exports.modify_activate_an_actor = function(req, res) {
@@ -90,18 +121,6 @@ exports.modify_activate_an_actor = function(req, res) {
     });
     //}else{: res.status(403).send("You are not authenticated as an administrator therefore this operation is invalid")}
 };
-
-/*exports.delete_an_actor = function(req,res){
-    Actor.deleteOne({_id: req.params.actorId}, function(err, actor) {
-        if (err){
-            res.status(500).send(err);
-        }
-        else{
-            res.json({ message: 'Actor successfully deleted' });
-        }
-    });
-}*/
-
 
 exports.updateFinder = function(req, res) {
     if(!req.params.role.contains('EXPLORER')){
