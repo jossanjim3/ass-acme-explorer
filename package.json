@@ -22,8 +22,8 @@
     "body-parser": "^1.19.0",
     "dateformat": "^3.0.3",
     "express": "^4.17.1",
+    "git": "^0.1.5",
     "mongoose": "^5.8.11",
-    "nanoid": "^2.1.11",
-    "git": "^0.1.5"
+    "nanoid": "^2.1.11"
   }
 }

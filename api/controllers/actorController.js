@@ -59,13 +59,11 @@ exports.update_an_actor = function(req,res){
     var actor_body=req.body;
     var promise_hash = new Promise((resolve,reject)=>{
         if(actor_body.password!=undefined){
-            console.log("Estoy dentro corto y cambio")
             bcrypt.genSalt(5, function(err, salt) {
                 if (err) reject(err);
             
                 bcrypt.hash(actor_body.password, salt, function(err, hash) {
                   if (err) reject(err);
-                  console.log(hash);
                   actor_body.password = hash;
                   resolve(actor_body)
                 });
@@ -75,9 +73,6 @@ exports.update_an_actor = function(req,res){
          }
     })
     
-
-
-    console.log(actor_body.password)
     promise_hash.then((actor_body)=>{
 
         Actor.findOneAndUpdate({_id: req.params.actorId}, actor_body, {new: true}, function(err, actor) {
