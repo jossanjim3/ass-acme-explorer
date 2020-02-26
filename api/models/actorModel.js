@@ -125,6 +125,6 @@ ActorSchema.methods.verifyPassword = function(password, cb) {
 ActorSchema.index({email:1});
 
 //indice de los actores que solo esten baneados (validated=false):
-ActorSchema.index({Validated:1},{ partialFilterExpression: {$eq:false}});
+ActorSchema.index({validated:1},{ partialFilterExpression: {$eq:false}});
 
 module.exports = mongoose.model('Actors', ActorSchema)
