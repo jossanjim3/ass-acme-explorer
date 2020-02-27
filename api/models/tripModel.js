@@ -31,7 +31,7 @@ var tripSchema = new Schema({
                 return /\d{6}-[A-Z]{4}/.test(v);
             },
             message: 'ticker is not valid!, Pattern("\d(6)-[A-Z](4)")'
-            }
+        }
     },
     title: {
         type: String,

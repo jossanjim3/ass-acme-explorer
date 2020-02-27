@@ -1,9 +1,49 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var trips = require('./tripModel');
-
-var trips_schema = trips.tripSchema;
+var trips_schema_for_finder = new Schema({
+    ticker: {
+        type: String,
+        //This validation does not run after middleware pre-save
+        validate: {
+            validator: function(v) {
+                return /\d{6}-[A-Z]{4}/.test(v);
+            },
+            message: 'ticker is not valid!, Pattern("\d(6)-[A-Z](4)")'
+        }
+    },
+    title: {
+        type: String,
+        required: 'Kindly enter the title of the trip'
+    },
+    description: {
+        type: String,
+        required: 'Kindly enter the description of the trip'
+    },
+    price: {
+        type: Number,
+        min: 0
+    },
+    startDate:{
+        type: Date
+    },
+    endDate:{
+        type: Date
+    },
+    pictures: [{
+        data: Buffer,
+        contentType: String
+    }],
+    reasonCancel: {
+        type: String,
+        validate: {
+            validator: function() {
+                return this.startDate > new Date();
+            },
+            message: 'Can\'t cancel a started trip'
+        }
+    }
+});
 
 var finderSchema = new Schema({
     explorer: {
@@ -28,11 +68,11 @@ var finderSchema = new Schema({
         default: null
     },
     maxPrice: {
-        type: String,
+        type: Number,
         default: null
     },
     results: {
-        type: [trips_schema]
+        type: [trips_schema_for_finder]
     },
     timestamp: {
         type: Date
@@ -47,4 +87,6 @@ finderSchema.pre('save', function(callback){
     callback();
 });
 
-module.exports = mongoose.model('Finders', finderSchema);
+exports.TripsSchemaFinder = trips_schema_for_finder;
+
+exports.FinderModel = mongoose.model('Finders', finderSchema);
