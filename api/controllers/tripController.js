@@ -31,6 +31,28 @@ exports.search_trips = function(req,res){
     if (req.query.keyword) {
       query.$text = {$search: req.query.keyword ,$language: "es"};
     }
+
+    if(req.query.minPrice && req.query.maxPrice){
+        //TODO - Validar que max no sea menor que min
+        query.price = {$gte: req.query.minPrice, $lte: req.query.maxPrice};
+    } else {
+        if(req.query.minPrice){
+            query.price = {$gte: req.query.minPrice};
+        }
+        if(req.query.maxPrice){
+            query.price = {$lte: req.query.maxPrice};
+        }
+    }
+
+    //TODO - Validar que max no sea inferior a min 
+    if(req.query.minDate){
+        query.startDate = {$gte: req.query.minDate};
+    }
+    if(req.query.maxDate){
+        query.endDate = {$lte: req.query.maxDate};
+    }
+
+    
   
     var skip=0;
     if(req.query.startFrom){
