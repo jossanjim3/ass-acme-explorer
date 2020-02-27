@@ -53,6 +53,17 @@ exports.read_an_actor=function(req,res){
     })
 }
 
+exports.delete_an_actor = function(req, res) {
+    Actor.deleteOne({_id: req.params.actorId}, function(err, actor) {
+        if (err){
+            res.status(500).send(err);
+        }
+        else{
+            res.json({ message: 'Actor successfully deleted' });
+        }
+    });
+};
+
 
 exports.update_an_actor = function(req,res){
     //Check that the user is the proper actor and if not: res.status(403); "an access token is valid, but requires more privileges"

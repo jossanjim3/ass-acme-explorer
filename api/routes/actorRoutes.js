@@ -10,7 +10,8 @@ module.exports = function(app) {
     //Retrieve an actor 
     .get(actors.read_an_actor)
     //edit the personal data of the actor
-	  .put(actors.update_an_actor);
+    .put(actors.update_an_actor)
+    .delete(actors.delete_an_actor);
 
   app.route('/v1/actors/:actorId/validated')
     //ban or unban an actor 
