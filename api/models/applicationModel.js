@@ -16,6 +16,9 @@ var ApplicationSchema = new Schema({
     comment:  {
         type: String,
     },
+    reasonCancel: {
+        type: String,
+    },
     explorer: {
         type: Schema.Types.ObjectId,
         required: 'explorer id required'

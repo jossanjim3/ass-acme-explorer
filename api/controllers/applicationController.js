@@ -225,8 +225,8 @@ exports.cancel_an_application = function(req, res) {
             } else if (statusApp == "PENDING"){
                 appli.status = "REJECTED";
 
-                if(req.body.comment != undefined && req.body.comment != ""){
-                    appli.comment = req.body.comment;
+                if(req.body.reasonCancel != undefined && req.body.reasonCancel != ""){
+                    appli.reasonCancel = req.body.reasonCancel;
                     // save the new status
                     appli.save(function(err, appli) {
                         if (err){
