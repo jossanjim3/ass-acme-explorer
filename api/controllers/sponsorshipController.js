@@ -147,5 +147,43 @@ exports.pay_sponsorships_trip = function(req, res){
 }
 
 exports.cancel_sponsorships_trip = function(req, res){
-    res.send("Sponsorship, canceled");
+    var sponsorshipId = req.params.sponsorshipId;
+    var tripId = req.params.tripId;
+
+    Sponsorship.findOne({_id: sponsorshipId}, function(err, sponsorship){
+        if(err){
+            res.sendStatus(500);
+        }
+        else{
+            if(sponsorship === null)
+                res.status(404).json({message: 'Sponsorship not found.'});
+
+            else{
+                var sponsorshipReceived = sponsorship;
+                var tripToChange = sponsorshipReceived.tripSponsorships.filter((obj) => {
+                    return obj.trip == tripId;
+                });
+                if(tripToChange.length < 1)
+                    res.status(404).json({message: 'Trip not found in this sponsorship.'});
+
+                else{
+                    var indexOfChange = sponsorshipReceived.tripSponsorships.indexOf(tripToChange[0]);
+                    if(sponsorshipReceived.tripSponsorships[indexOfChange].paid == false){
+                        res.status(422).json({message: 'Sponsorship not paid.'});
+                    }
+                    else{
+                        sponsorshipReceived.tripSponsorships[indexOfChange].paid = false;
+                        Sponsorship.updateOne({_id: sponsorshipId}, sponsorshipReceived, function(err, sponsorship){
+                            if(err){
+                                res.status(500);
+                            }
+                            else{
+                                res.status(204).json({message: "Sponsorship paid."});
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    });
 }

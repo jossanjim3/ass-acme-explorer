@@ -62,6 +62,7 @@ exports.update_finder = function(req, res) {
             tripController.search_trips(req, res).then((trips)=> {
                 trips_results_finder = [];
                 trips.array.forEach(element => {
+                    console.log(element);
                     trips_results_finder.append(transformToFinderTripSchema(element));
                 });
                 if(finder === null){
