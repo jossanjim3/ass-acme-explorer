@@ -182,6 +182,7 @@ exports.delete_an_application = function(req,res){
 //----------------------------
 // /v1/applications/:applicationId/cancel
 //----------------------------
+
 // update an application status to rejected by manager or cancelled by explorer
 exports.cancel_an_application = function(req, res) {    
 
@@ -277,6 +278,7 @@ exports.list_all_my_applications = function(req, res) {
 //----------------------------
 // /v1/applications/trips/:tripId
 //----------------------------
+
 // list applications from a trip
 exports.list_all_trip_applications = function(req, res) {
     var trip_id = req.params.tripId;
