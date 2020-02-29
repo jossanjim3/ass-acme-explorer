@@ -87,6 +87,6 @@ finderSchema.pre('save', function(callback){
     callback();
 });
 
-exports.TripsSchemaFinder = trips_schema_for_finder;
+exports.TripsSchemaFinder = mongoose.model('TripSchemaFinder', trips_schema_for_finder);
 
 exports.FinderModel = mongoose.model('Finders', finderSchema);

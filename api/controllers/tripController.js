@@ -28,6 +28,8 @@ exports.list_all_trips_of_manager = function(req,res){
 exports.search_trips = function(req,res){
     var query = {};
     
+    console.log("Llego");
+
     if (req.query.keyword) {
       query.$text = {$search: req.query.keyword ,$language: "es"};
     }

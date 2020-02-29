@@ -3,15 +3,41 @@
 var mongoose = require('mongoose'),
     Finder = require('../models/finderModel');
 
+var fetch = require('node-fetch');
+
 const tripController = require('./tripController')
 
 
-function transformToFinderTripSchema(trip){
-    tripForFinder = new Finder.TripsSchemaFinder();
-    for(attr of Object.keys(Finder.TripsSchemaFinder.paths)){
-        tripForFinder.attr = trip.attr;
+function extractUrl(body){
+    var url = "http://localhost:" + (process.env.PORT || 8080) + "/v1/trips/search";
+    var firstAttr = true;
+    var jsonBody = Object.keys(body);
+    var jsonBodyFiltered = jsonBody.filter((element) => jsonBody[element] != null);
+    var attr;
+
+    for (attr of jsonBodyFiltered){
+        if(!firstAttr){
+            url += "&";   
+        }
+        url += "?" + attr + "=" + jsonBody[attr];
+        firstAttr = false;
     }
-    
+
+    return url;
+}
+
+function transformToFinderTripSchema(trip){
+    var tripForFinder = new Finder.TripsSchemaFinder();
+    var attr;
+
+    var attributesToCopy = Object.keys(Finder.TripsSchemaFinder.schema.paths).filter((element) => 
+        String(element) != "__v" || String(element) != "_id"
+    );
+
+    for(attr of attributesToCopy){
+        tripForFinder[attr] = trip[attr];
+    }
+
     return tripForFinder;
 }
 
@@ -58,13 +84,19 @@ exports.update_finder = function(req, res) {
             res.status(500).send(err);
         }
         else{
-            req.query = req.body;
-            tripController.search_trips(req, res).then((trips)=> {
-                trips_results_finder = [];
-                trips.array.forEach(element => {
-                    console.log(element);
-                    trips_results_finder.append(transformToFinderTripSchema(element));
-                });
+            var urlForFinder = extractUrl(req.body);
+
+            fetch(urlForFinder,{
+                method: 'GET',
+            }).then(response => {
+                return response.json();
+            }).then(trips =>{
+                var trips_results_finder = [];
+                var trip;
+                for(trip of trips){
+                    trips_results_finder.push(transformToFinderTripSchema(trip));
+                }
+
                 if(finder === null){
                     var newFinder = new Finder(req.body);
                     newFinder.explorer = req.params.actorId;
@@ -86,8 +118,8 @@ exports.update_finder = function(req, res) {
                         }
                         res.status(202).json(finderToUpdate);
                     });
-                }
+                }  
             });
-        }   
-    });
+        }
+    });          
 }
