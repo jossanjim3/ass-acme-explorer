@@ -87,6 +87,9 @@ finderSchema.pre('save', function(callback){
     callback();
 });
 
+finderSchema.index({timestamp: -1});
+finderSchema.index({explorer: 1});
+
 exports.TripsSchemaFinder = mongoose.model('TripSchemaFinder', trips_schema_for_finder);
 
 exports.FinderModel = mongoose.model('Finders', finderSchema);

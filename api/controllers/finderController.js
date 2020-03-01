@@ -98,7 +98,8 @@ exports.update_finder = function(req, res) {
                 }
 
                 if(finder === null){
-                    var newFinder = new Finder(req.body);
+                    console.log("Create");
+                    var newFinder = new Finder.FinderModel(req.body);
                     newFinder.explorer = req.params.actorId;
                     newFinder.results = trips_results_finder;
                     newFinder.save(function(err, finder){
@@ -111,6 +112,7 @@ exports.update_finder = function(req, res) {
                     });
                 }
                 else {
+                    console.log("Update");
                     finder.results = trips_results_finder;
                     Finder.FinderModel.findOneAndUpdate({explorer: req.params.actorId}, finder, {new: true}, function(err, finderToUpdate){
                         if(err){

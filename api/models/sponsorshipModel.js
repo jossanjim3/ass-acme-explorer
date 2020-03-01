@@ -24,8 +24,10 @@ var sponsorshipSchema = new Schema({
     }]
 });
 
-sponsorshipSchema.pre('save', function(callback) {
+/*sponsorshipSchema.pre('save', function(callback) {
     callback();
-});
+});*/
+
+sponsorshipSchema.index({actor: 1});
 
 module.exports = mongoose.model('Sponsorships', sponsorshipSchema);
