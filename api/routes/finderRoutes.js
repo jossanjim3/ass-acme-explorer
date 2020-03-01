@@ -40,7 +40,7 @@ module.exports = function(app){
      * @type get, put
      * @url /v1/finders/:actorId
      */
-    app.route('/v1/finders/:actorId')
+    app.route('/v1/finders/explorers/:actorId')
         .get(applications.finder_of_actor)
         .put(applications.update_finder);
 }

@@ -11,7 +11,7 @@ var sponsorshipSchema = new Schema({
         type: String,
         required: 'Kindly add the link of the sponsorship'
     },
-    actor: {
+    sponsor: {
         type: Schema.Types.ObjectId,
         required: 'Kindly add the sponsor who owns the sponsorship'
     },

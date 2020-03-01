@@ -82,24 +82,25 @@ exports.delete_a_sponsorship = function(req, res){
 
 //Por terminar
 exports.list_sponsorships_sponsor = function(req, res){
-    Sponsorship.find({actor: req.params.sponsorId}, function(err, actor) {
+    Sponsorship.find({sponsor: req.params.sponsorId}, function(err, sponsorship) {
         if(err){
             res.status(500).send(err);
         }
         else{
-            res.status(200).json(actor);
+            res.status(200).json(sponsorship);
         }
     });
 }
 
 //Por terminar.
-exports.find_sponsorships_trip = function(req, res){
-    Sponsorship.find({id: req.params.tripId}, function(err, actor) {
+exports.find_sponsorships_trip = function(req, res){ 
+    var query = {tripSponsorships: {$elemMatch: {$or: [{trip: req.params.tripId, paid: true}]}}};
+    Sponsorship.find(query, function(err, sponsorship) {
         if(err){
             res.status(500).send(err);
         }
         else{
-            res.status(200).json(actor);
+            res.status(200).json(sponsorship);
         }
     });
 }
