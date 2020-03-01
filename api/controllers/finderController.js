@@ -114,7 +114,8 @@ exports.update_finder = function(req, res) {
                 else {
                     console.log("Update");
                     finder.results = trips_results_finder;
-                    Finder.FinderModel.findOneAndUpdate({explorer: req.params.actorId}, finder, {new: true}, function(err, finderToUpdate){
+                    finder.timestamp = new Date();
+                    Finder.FinderModel.updateOne({explorer: req.params.actorId}, finder, {new: true}, function(err, finderToUpdate){
                         if(err){
                             res.status(500).send(err);
                         }
