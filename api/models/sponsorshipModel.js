@@ -28,6 +28,6 @@ var sponsorshipSchema = new Schema({
     callback();
 });*/
 
-sponsorshipSchema.index({actor: 1});
+sponsorshipSchema.index({sponsor: 1});
 
 module.exports = mongoose.model('Sponsorships', sponsorshipSchema);
