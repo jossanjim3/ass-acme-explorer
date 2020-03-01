@@ -23,6 +23,16 @@ exports.create_an_actor = function(req,res){
             }
         }
         */  
+       new_actor.save(function(err, actor) {
+        if (err){
+
+            res.status(500).send(err);
+        }
+        else{
+            res.json(actor);
+        }
+    });
+       
     }else{
         new_actor.save(function(err, actor) {
             if (err){
@@ -59,7 +69,8 @@ exports.delete_an_actor = function(req, res) {
             res.status(500).send(err);
         }
         else{
-            res.json({ message: 'Actor successfully deleted' });
+            res.json({ message: 'This actor  was successfully deleted' });
+            //res.json(actor); the actor deleted is sent just in case that he/she didn't want to delete that actor and he/she can see what it is being deleted.
         }
     });
 };

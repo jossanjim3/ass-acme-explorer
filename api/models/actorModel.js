@@ -76,11 +76,11 @@ var ActorSchema = new Schema({
         type: Boolean,
         default:true
     },
-    role:[{
+    role:{
         type: String,
         required: 'Kindly enter the role(s) of the actor',
         enum: ['EXPLORER', 'MANAGER', 'ADMINISTRATOR', 'SPONSOR']
-    }],
+    },
     createdAt:{
         type: Date,
         default: Date.now
