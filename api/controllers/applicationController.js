@@ -3,6 +3,9 @@
 var mongoose = require('mongoose'),
     Application = mongoose.model('Applications');
 
+var Actor = mongoose.model('Actors');
+var Trip = mongoose.model('Trips');
+
 //----------------------------
 // /v1/applications
 //----------------------------
@@ -20,22 +23,71 @@ exports.list_all_applications = function(req,res){
 
 // create an applicaction
 exports.create_an_application = function(req,res){
-    //Check that user is a Explorer and if not: res.status(403); "an access token is valid, but requires more privileges"
     var new_appli = new Application(req.body);
+    var explorer = undefined;
+    var trip = undefined;
+    
+    // check if the actor exists
+    Actor.findById(req.body.explorer, function(err, actor){
+        if(err){
+            //res.status(500).send(err);
+            res.status(403);
+            res.json("Application cannot be created. Actor does not exist!");
+        } else {
+            explorer = actor;
+            //console.log(explorer);
+            
+            // Check if the actor is an Explorer  
+            if (explorer.role.includes("EXPLORER")) {
 
-    new_appli.save(function(err, appli) {
-        if (err){
-            if(err.name=='ValidationError') {
-                res.status(422).send(err);
-            }
-            else{
-                res.status(500).send(err);
+                // check if the trip exists
+                Trip.findById(req.body.trip, function(err, tripp){
+                    if(err){
+                        //res.status(500).send(err);
+                        res.status(403);
+                        res.json("Application cannot be created. Trips does not exist!");
+
+                    } else {
+                        trip = tripp;
+                        //console.log(trip);
+
+                        // Check if the trip has been published and is not started or cancelled
+                        if (trip.isPublished && trip.reasonCancel == undefined && trip.startDate > new Date()){
+
+                            // create the application
+                            new_appli.save(function(err, appli) {
+                                if (err){
+                                    if(err.name=='ValidationError') {
+                                        res.status(422).send(err);
+                                    }
+                                    else{
+                                        res.status(500).send(err);
+                                    }
+                                }
+                                else{
+                                    res.json(appli);
+                                }
+                            });
+                        } else if (!trip.isPublished) {
+                            res.status(403);
+                            res.json("Application cannot be created. The trip is not published yet!");
+                        } else if (trip.reasonCancel != undefined){
+                            res.status(403);
+                            res.json("Application cannot be created. The trip has been cancelled!");
+                        } else if (trip.startDate <= new Date()){
+                            res.status(403);
+                            res.json("Application cannot be created. The trip has already started!");
+                        }
+
+                    }
+                })
+
+            } else {
+                res.status(403);
+                res.json("Application cannot be created. The actor is not an explorer!");
             }
         }
-        else{
-            res.json(appli);
-        }
-    });
+    })        
 };
 
 //----------------------------
@@ -55,29 +107,68 @@ exports.read_an_application = function(req,res){
 
 // update an application status
 exports.update_an_application = function(req,res){
-    //Check if the appliction has been previously assigned or not to a trip
-    //Check if the trip has a manager assigned
-    //Check the current status of the application
-    //Update the apllication depending on the status
-    Application.findById(req.params.applicationId, function(err, appli) {
+
+    //console.log(req.params.applicationId);
+    // TODO: check if the user logged has role Explorer or Manager
+    Application.findById({_id : req.params.applicationId}, function(err, appli) {
         if (err){
             if(err.name=='ValidationError') {
                 res.status(422).send(err);
             }
             else{
-                res.status(500).send(err);
+                res.status(403); 
+                res.send("Application cannot be updated. Application does not exist!");
             }
-        }
-        else{
-            Application.findOneAndUpdate({_id: req.params.applicationId}, req.body, {new: true}, function(err, appli) {
-            if (err){
-                res.status(500).send(err);
-            }
-            else{
-                // do the check
-                res.json(appli);
-            }
-            });
+
+        } else {
+            var statusApp = appli.status;
+            // if the application status is Pending -> DUE 
+            // if the application status is Due -> Accepted
+            // en el frontend se controla si es la vista de manager o de explorer
+            
+            if (statusApp == "PENDING") { // TODO check if the user logged has role manager
+                appli.status = "DUE";
+
+                // save the new status
+                appli.save(function(err, appli) {
+                    if (err){
+                        if(err.name=='ValidationError') {
+                            res.status(422).send(err);
+                        }
+                        else{
+                            res.status(500).send(err);
+                        }
+                    }
+                    else{
+                        res.status(201);
+                        res.json(appli);
+                    }
+                });  
+                
+            } else if (statusApp == "DUE"){ // TODO check if the user logged has role explorer
+                appli.status = "ACCEPTED";
+
+                // save the new status
+                appli.save(function(err, appli) {
+                    if (err){
+                        if(err.name=='ValidationError') {
+                            res.status(422).send(err);
+                        }
+                        else{
+                            res.status(500).send(err);
+                        }
+                    }
+                    else{
+                        res.status(201);
+                        res.json(appli);
+                    }
+                });  
+                
+            } else {
+                res.status(403);
+                res.json("It is not possible to update the application status!");
+                
+            } 
         }
     });
 };
@@ -89,25 +180,92 @@ exports.delete_an_application = function(req,res){
 };
 
 //----------------------------
-// /v1/applications/:applicationId/pay
+// /v1/applications/:applicationId/cancel
 //----------------------------
-exports.pay_an_application = function(req, res) {
-    // pay a trip
-    res.send('applications payed by explorer');
+
+// update an application status to rejected by manager or cancelled by explorer
+exports.cancel_an_application = function(req, res) {    
+
+    // check the application status
+    Application.findById(req.params.applicationId, function(err, appli) {
+        if (err){
+            if(err.name=='ValidationError') {
+                res.status(422).send(err);
+            }
+            else{
+                res.status(403); 
+                res.send("Application cannot be rejected/cancelled. Application does not exist!");
+            }
+
+        } else {
+            var statusApp = appli.status;
+            // if the application status is Accepted -> Cancelled 
+            // if the application status is Pending -> Rejected
+            // en el frontend se controla si es la vista de manager o de explorer
+            
+            if (statusApp == "ACCEPTED") {
+                appli.status = "CANCELLED";
+
+                // save the new status
+                appli.save(function(err, appli) {
+                    if (err){
+                        if(err.name=='ValidationError') {
+                            res.status(422).send(err);
+                        }
+                        else{
+                            res.status(500).send(err);
+                        }
+                    }
+                    else{
+                        res.status(201);
+                        res.json(appli);
+                    }
+                });  
+                
+            } else if (statusApp == "PENDING"){
+                appli.status = "REJECTED";
+
+                if(req.body.reasonCancel != undefined && req.body.reasonCancel != ""){
+                    appli.reasonCancel = req.body.reasonCancel;
+                    // save the new status
+                    appli.save(function(err, appli) {
+                        if (err){
+                            if(err.name=='ValidationError') {
+                                res.status(422).send(err);
+                            }
+                            else{
+                                res.status(500).send(err);
+                            }
+                        }
+                        else{
+                            res.status(201);
+                            res.json(appli);
+                        }
+                    });  
+                    
+                } else {
+                    res.status(403);
+                    res.json("Sorry, you must include the reason why!");
+                }
+                
+            } else {
+                res.status(403);
+                res.json("It is not possible to reject or cancel the application!");
+                
+            }               
+        }       
+    });
 };
 
 //----------------------------
 // /v1/applications/users/:userId
 //----------------------------
 
-// list applications that explorers/manager have made
+// list applications that explorers have made
 exports.list_all_my_applications = function(req, res) {
-    // retieve the user id
-    // check if the user is explorer or manager
-
     var user_id = req.params.userId;
-    // TODO find by user_id
-    Application.find(function(err, appis) {
+
+    Application.find({explorer : user_id}, function(err, appis) {
       if (err){
         res.status(500).send(err);
       }
@@ -118,36 +276,19 @@ exports.list_all_my_applications = function(req, res) {
 };
 
 //----------------------------
-// /v1/applications/:applicationId/users/:userId
+// /v1/applications/trips/:tripId
 //----------------------------
 
-// read an applicaction that explorer/manager manages
-exports.read_an_application_by = function(req,res){
-    // check the manager_id
-    var manager_id = req.params.applicationId;
-    // check the application id
-    var app_id = req.params.applicationId;
+// list applications from a trip
+exports.list_all_trip_applications = function(req, res) {
+    var trip_id = req.params.tripId;
 
-    res.send('Retrieve an applicaction that explorer/manager manages');
+    Application.find({trip : trip_id}, function(err, appis) {
+      if (err){
+        res.status(500).send(err);
+      }
+      else{
+        res.json(appis);
+      }
+    });
 };
-
-// update an applicaction status that manager manages
-exports.update_an_application_by = function(req,res){
-    // check the manager_id
-    var manager_id = req.params.applicationId;
-    // check the application id
-    var app_id = req.params.applicationId;
-
-    res.send('Retrieve and update an applicaction status that explorer/manager manages');
-};
-
-//----------------------------
-// /v1/applications/search
-//----------------------------
-exports.search_applications = function(req, res) {
-    //check if explorer or manager param exists
-    //Search depending on params
-    //console.log('Searching applications depending on params');
-    res.send('applications returned from the applications search');
-};
-
