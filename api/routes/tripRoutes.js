@@ -24,6 +24,17 @@ module.exports = function (app){
     app.route('/v1/trips/search')
         .get(trips.search_trips);
 
+
+    /**
+     * Read all trips of a manager
+     *   RequiredRoles: to be a Manager
+     * @section trips
+     * @type get
+     * @url /v1/trips/manager/:managerId
+     */
+    app.route('/v1/trips/manager/:managerId')
+        .get(trips.list_all_trips_of_manager);
+    
     /**
      * Read, modify and delete a trip
      *   RequiredRoles: to be a Manager for modify and delete
