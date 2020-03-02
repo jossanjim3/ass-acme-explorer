@@ -147,3 +147,5 @@ exports.updateFinder = function(req, res) {
     else{
         var newFinder = req.body;
         newFinder.timestamp = new Date();
+    }
+}
