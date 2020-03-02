@@ -2,7 +2,8 @@
 var async = require("async");
 var mongoose = require('mongoose'),
   DataWareHouse = mongoose.model('DataWareHouse'),
-  Orders =  mongoose.model('Orders');
+  Trips =  mongoose.model('Trips'),
+  Applications = mongoose.model('Applications');
 
 exports.list_all_indicators = function(req, res) {
   console.log('Requesting indicators');
@@ -89,6 +90,68 @@ function createDataWareHouseJob(){
 
 module.exports.createDataWareHouseJob = createDataWareHouseJob;
 
+
+function computeTripsPerManager(callback){
+  Trips.aggregate([
+      { 
+          "$group" : { 
+              "_id" : { 
+                  "manager" : "$manager"
+              }, 
+              "COUNT(*)" : { 
+                  "$sum" : NumberInt(1)
+              }
+          }
+      }, 
+      { 
+          "$project" : { 
+              "manager" : "$_id.manager", 
+              "COUNT(*)" : "$COUNT(*)", 
+              "_id" : NumberInt(0)
+          }
+      }
+  ], function(err, res){
+    callback(err, res)
+  });
+}
+
+function computeApplicationsPerTrip(callback){
+  Applications.aggregate([
+    { 
+        "$group" : { 
+            "_id" : { 
+                "trip" : "$trip"
+            }, 
+            "COUNT(*)" : { 
+                "$sum" : NumberInt(1)
+            }
+        }
+    }, 
+    { 
+        "$project" : { 
+            "trip" : "$_id.trip", 
+            "COUNT(*)" : "$COUNT(*)", 
+            "_id" : NumberInt(0)
+        }
+    }
+  ],function(err,res){
+    callback(err,res)
+  });
+}
+
+function computePriceTrip(callback){
+
+}
+
+function computeRatioApplications(callback){
+
+}
+
+function computeAveragePriceRangeExplorers(callback){
+
+}
+
+//// Funciones ejemplo  
 function computeTopCancellers (callback) {
    Orders.aggregate([
     {$match:{ cancelationMoment: { $exists: true } }},
