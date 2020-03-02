@@ -10,7 +10,7 @@ var express = require('express'),
  bodyParser = require('body-parser');
 
 mongoose.set('useFindAndModify', false);
- 
+
 // MongoDB URI building
 var mongoDBUser = process.env.mongoDBUser || "myUser";
 var mongoDBPass = process.env.mongoDBPass || "myUserPassword";

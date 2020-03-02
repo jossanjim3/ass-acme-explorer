@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var bcrypt = require('bcrypt');
 var Schema = mongoose.Schema;
 
 var ActorSchema = new Schema({
@@ -35,25 +36,17 @@ var ActorSchema = new Schema({
         type: String,
         required: 'Kindly enter the phone of the actor'
     },
-    photo:  {
-        data: Buffer,
-        contentType: String,
-        default : ''
-    },
-    photo:  {
-        data: Buffer,
-        contentType: String
-    },
+    
     //all actors are validated initially, only an admin can modify this property an ban or unban an actor
     validated: {
         type: Boolean,
         default:true
     },
-    role:[{
+    role:{
         type: String,
         required: 'Kindly enter the role(s) of the actor',
         enum: ['EXPLORER', 'MANAGER', 'ADMINISTRATOR', 'SPONSOR']
-    }],
+    },
     createdAt:{
         type: Date,
         default: Date.now
@@ -62,37 +55,38 @@ var ActorSchema = new Schema({
 
 
 
-/*
 ActorSchema.pre('save', function(callback) {
     var actor = this;
-  // Break out if the password hasn't changed
-  if (!actor.isModified('password')) return callback();
-
-  // Password changed so we need to hash it
-    bcrypt.genSalt(5, function(err, salt) {
-    if (err) return callback(err);
-
-    bcrypt.hash(actor.password, salt, function(err, hash) {
-      if (err) return callback(err);
-      actor.password = hash;
-      //callback();
+    
+    if (!actor.isModified('password')) return callback();
   
+    bcrypt.genSalt(5, function(err, salt) {
+      if (err) return callback(err);
+  
+      bcrypt.hash(actor.password, salt, function(err, hash) {
+        if (err) return callback(err);
+        actor.password = hash;
+        callback();
+      });
     });
-  });
 });
-/*
-  ActorSchema.methods.verifyPassword = function(password, cb) {
+
+ActorSchema.methods.verifyPassword = function(password, cb) {
     bcrypt.compare(password, this.password, function(err, isMatch) {
     console.log('verifying password in actorModel: '+password);
     if (err) return cb(err);
     console.log('iMatch: '+isMatch);
     cb(null, isMatch);
   });
+
+  
 };
 
+//indice de los actores segun el email:
+ActorSchema.index({email:1});
 
-});
-*/
+//indice de los actores que solo esten baneados (validated=false):
+ActorSchema.index({validated:1},{ partialFilterExpression: {$eq:false}});
 
 //ActorSchema.index({"email": 1}, {unique: true});
 
