@@ -7,257 +7,775 @@
 	},
 	"item": [
 		{
-			"name": "list_all_applications",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/v1/applications",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"applications"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "create_an_application",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"status\": \"PENDING\",\n\t\"comment\": \"Third application with initial status pending.\",\n\t\"explorer\": \"5e47fcb3aed9531440793153\",\n\t\"trip\": \"5e47fcb3aed9531440793175\"\n}"
+			"name": "Applications",
+			"item": [
+				{
+					"name": "list_all_applications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/applications",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"applications"
+							]
+						}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "localhost:8080/v1/applications",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"applications"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "read_an_application",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682?",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"applications",
-						"5e4920447748661cb0e41682"
-					],
-					"query": [
-						{
-							"key": "applicationId",
-							"value": "5e4920447748661cb0e41682",
-							"disabled": true
+				{
+					"name": "create_an_application",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"explorer\": \"5e4bb6ab6da69a2bdcd19e02\",\n\t\"trip\": \"5e5169c48e31de26b8d1693b\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/v1/applications",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"applications"
+							]
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "delete_an_application",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682?",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"applications",
-						"5e4920447748661cb0e41682"
-					],
-					"query": [
-						{
-							"key": "applicationId",
-							"value": "5e4920447748661cb0e41682",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "pay_an_application",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682?",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"applications",
-						"5e4920447748661cb0e41682"
-					],
-					"query": [
-						{
-							"key": "applicationId",
-							"value": "5e4920447748661cb0e41682",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "update_an_application",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"status\": \"PENDING\",\n\t\"comment\": \"Second application UPDATED with initial status pending.\",\n\t\"explorer\": \"5e47fcb3aed9531440793152\",\n\t\"trip\": \"5e47fcb3aed9531440793174\"\n}"
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682?",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"applications",
-						"5e4920447748661cb0e41682"
-					],
-					"query": [
-						{
-							"key": "applicationId",
-							"value": "5e4920447748661cb0e41682",
-							"disabled": true
+				{
+					"name": "read_an_application",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682?",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"applications",
+								"5e4920447748661cb0e41682"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "5e4920447748661cb0e41682",
+									"disabled": true
+								}
+							]
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "list_all_my_applications",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/v1/applications/users/5e47fcb3aed9531440793152",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"applications",
-						"users",
-						"5e47fcb3aed9531440793152"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "read_an_application_by",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682/users/5e47fcb3aed9531440793152",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"applications",
-						"5e4920447748661cb0e41682",
-						"users",
-						"5e47fcb3aed9531440793152"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "update_an_application_by",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/v1/applications/user/5e47fcb3aed9531440793152/appli/5e4920447748661cb0e41682",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"applications",
-						"user",
-						"5e47fcb3aed9531440793152",
-						"appli",
-						"5e4920447748661cb0e41682"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "search_applications",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/v1/applications/search?",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"applications",
-						"search"
-					],
-					"query": [
-						{
-							"key": "keyword",
-							"value": "hola",
-							"disabled": true
+					},
+					"response": []
+				},
+				{
+					"name": "delete_an_application",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/applications/5e4920447748661cb0e41682?",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"applications",
+								"5e4920447748661cb0e41682"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "5e4920447748661cb0e41682",
+									"disabled": true
+								}
+							]
 						}
-					]
+					},
+					"response": []
+				},
+				{
+					"name": "cancel_an_application",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reasonCancel\" : \"rejected by manager\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/applications/5e55395935d47d41b09d1a52/cancel?",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"applications",
+								"5e55395935d47d41b09d1a52",
+								"cancel"
+							],
+							"query": [
+								{
+									"key": "applicationId",
+									"value": "5e4920447748661cb0e41682",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_an_application",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/v1/applications/5e53fc6c751d483198be12d2?",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"applications",
+								"5e53fc6c751d483198be12d2"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list_all_my_applications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/applications/users/5e4bb6ab6da69a2bdcd19e02",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"applications",
+								"users",
+								"5e4bb6ab6da69a2bdcd19e02"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list_all_trip_applications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/applications/trips/5e53fc4a751d483198be12cf",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"applications",
+								"trips",
+								"5e53fc4a751d483198be12cf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search_applications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/applications/search/?",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"applications",
+								"search",
+								""
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "hola",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Trips",
+			"item": [
+				{
+					"name": "GET trips",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/trips",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"trips"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a trip",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Viaje 4 Manager 1\",\r\n    \"description\": \"Viaje 4 Manager 1 description\",\r\n    \"price\": 200,\r\n    \"requeriments\": [\"Ser mayor de edad\", \"No se permite fumar\"],\r\n    \"startDate\": \"2020-03-28\",\r\n    \"endDate\": \"2020-03-31\",\r\n    \"stages\": [\r\n    \t\t{\r\n    \t\t\t\"title\": \"Viaje 4 stages\",\r\n    \t\t\t\"description\": \"Viaje 4 stages description\",\r\n    \t\t\t\"price\": 200\r\n    \t\t}\r\n    \t],\r\n    \"manager\": \"5e5168d58e31de26b8d16932\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/trips",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"trips"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a trip without title",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Viaje paradisiaco para disfrutar de la naturaleza y el mar\",\n    \"price\": 400,\n    \"requeriments\": [\"Ser mayor de edad\", \"No se permite fumar\"],\n    \"startDate\": \"2020-12-09\",\n    \"endDate\": \"2020-12-16\",\n    \"stages\": [\n    \t\t{\n    \t\t\t\"title\": \"Buceo\",\n    \t\t\t\"description\": \"Buceo al rededor de las islas, para comprobar la naturaleza marina.\",\n    \t\t\t\"price\": 200\n    \t\t},\n    \t\t{\n    \t\t\t\"title\": \"Surf\",\n    \t\t\t\"description\": \"Surf en playas hawaianas\",\n    \t\t\t\"price\": 200\n    \t\t}\n    \t],\n    \"manager\": \"5e47fcb3aed9531440793134\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/trips",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"trips"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Trips Search by a Keyword",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/trips/search?keyword=Hola",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"trips",
+								"search"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "Hola"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET a trip by ticker",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/trips/200216-LJPX",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"trips",
+								"200216-LJPX"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a Trip by ticker",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"Viaje a hawai bombai\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/trips/200216-LJPX",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"trips",
+								"200216-LJPX"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Trip by ticker",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/trips/200216-LJPX",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"trips",
+								"200216-LJPX"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Publish a trip by ticker",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/trips/200216-WCNN/publish",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"trips",
+								"200216-WCNN",
+								"publish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel an trip",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reasonCancel\": \"No hay suficientes participantes para hacer el viaje\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/trips/200222-IOFF/cancel",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"trips",
+								"200222-IOFF",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Actors",
+			"item": [
+				{
+					"name": "Create an actor as an explorer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Juan\",\n\t\"surname\": \"Cuesta\",\n\t\"email\": \"juancuesta@gmail.com\",\n\t\"password\": \"LQSA2020\",\n\t\"phone\": \"+34612345678\",\n\t\"role\": \"EXPLORER\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/actors",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"actors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create an actor as an explorer 2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Juan\",\n\t\"surname\": \"Cuesta\",\n\t\"email\": \"juancuesta@gmail.com\",\n\t\"password\": \"LQSA2020\",\n\t\"phone\": \"+34612345678\",\n\t\"role\": \"EXPLORER\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/actors",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"actors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create an actor but the email is not valid",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Antonio\",\n\t\"surname\": \"Recio\",\n\t\"email\": \"esto no es un email\",\n\t\"password\": \"MariscosRecio\",\n\t\"phone\": \"+3461234987\",\n\t\"role\": \"EXPLORER\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/actors",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"actors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create an actor as an admin but it is not possible",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\t\n\t\"name\": \"Coque\",\n\t\"surname\": \"Portero\",\n\t\"email\": \"falsoadmin@gmail.com\",\n\t\"password\": \"cresta\",\n\t\"phone\": \"+3461890987\",\n\t\"role\": \"ADMINISTRATOR\"\n\t\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/actors",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"actors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modify an actor",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Antonio\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/actors/5e47e1507caa7f247c45035a",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"actors",
+								"5e47e1507caa7f247c45035a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deactivate an actor",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/actors",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"actors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reactivate an actor",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"validated\":\"true\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/actors/5e48200bf6af4e2958478963/validated",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"actors",
+								"5e48200bf6af4e2958478963",
+								"validated"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve an actor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve an actor but the id doesn't exist",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"protocolProfileBehavior": {}

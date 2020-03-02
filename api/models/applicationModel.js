@@ -16,6 +16,9 @@ var ApplicationSchema = new Schema({
     comment:  {
         type: String,
     },
+    reasonCancel: {
+        type: String,
+    },
     explorer: {
         type: Schema.Types.ObjectId,
         required: 'explorer id required'
@@ -26,6 +29,10 @@ var ApplicationSchema = new Schema({
     },
 
 }, {strict:false});
+
+ApplicationSchema.index({ status: 1 });
+ApplicationSchema.index({ explorer: 1 });
+ApplicationSchema.index({ trip: 1 });
 
 // Execute before each item.save() call
 ApplicationSchema.pre('save', function(callback) {

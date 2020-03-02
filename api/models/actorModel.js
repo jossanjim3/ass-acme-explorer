@@ -2,40 +2,6 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 var Schema = mongoose.Schema;
 
-var trips = require('./tripModel');
-
-var trips_schema = trips.tripSchema;
-
-var FinderSchema = new Schema({
-    keyword: {
-        type: String,
-        default: null
-    },
-    startingDate: {
-        type: Date,
-        default: null
-    },
-    endingDate: {
-        type: Date,
-        default: null
-    },
-    minPrice: {
-        type: Number,
-        default: null
-    },
-    maxPrice: {
-        type: String,
-        default: null
-    },
-    results: {
-        type: [trips_schema],
-        default: null
-    },
-    timestamp: {
-        type: Date
-    }
-}, {strict: false});
-
 var ActorSchema = new Schema({
     name: {
         type: String,
@@ -48,7 +14,7 @@ var ActorSchema = new Schema({
     email:  {
         type: String,
         required: 'Kindly enter the email of the actor',
-        unique:true,
+        unique: true,
         match:[/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
     password:{
@@ -84,12 +50,7 @@ var ActorSchema = new Schema({
     createdAt:{
         type: Date,
         default: Date.now
-    },
-    finder: {
-        type: FinderSchema,
-        default: null
     }
-
 }, {strict:false});
 
 
@@ -126,5 +87,7 @@ ActorSchema.index({email:1});
 
 //indice de los actores que solo esten baneados (validated=false):
 ActorSchema.index({validated:1},{ partialFilterExpression: {$eq:false}});
+
+//ActorSchema.index({"email": 1}, {unique: true});
 
 module.exports = mongoose.model('Actors', ActorSchema)
