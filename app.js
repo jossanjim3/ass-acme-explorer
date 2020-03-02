@@ -10,7 +10,7 @@ var express = require('express'),
  bodyParser = require('body-parser');
 
 mongoose.set('useFindAndModify', false);
- 
+
 // MongoDB URI building
 var mongoDBUser = process.env.mongoDBUser || "myUser";
 var mongoDBPass = process.env.mongoDBPass || "myUserPassword";
@@ -45,11 +45,13 @@ var routesActors = require('./api/routes/actorRoutes');
 var routesTrips = require('./api/routes/tripRoutes');
 var routesApplications = require('./api/routes/applicationRoutes');
 var routesSponsorships = require('./api/routes/sponsorshipRoutes');
+var storageRoutes= require('./api/routes/storageRoutes')
 
 routesActors(app);
 routesApplications(app);
 routesTrips(app);
 routesSponsorships(app);
+storageRoutes(app);
 
 console.log("Connecting DB to: " + mongoDBURI);
 mongoose.connection.on("open", function (err, conn) {

@@ -19,7 +19,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"name\": \"Juan\",\n\t\"surname\": \"Cuesta\",\n\t\"email\": \"juancuesta@gmail.com\",\n\t\"password\": \"LQSA2020\",\n\t\"phone\": \"+34612345678\",\n\t\"role\": \"EXPLORER\"\n}",
+					"raw": "{\n\t\"name\": \"Lionel\",\n\t\"surname\": \"Messi\",\n\t\"email\": \"lapulga@gmail.com\",\n\t\"password\": \"millonetis\",\n\t\"phone\": \"+34698347889\",\n\t\"role\": \"EXPLORER\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -48,13 +48,13 @@
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"name\": \"Juan\",\n\t\"surname\": \"Cuesta\",\n\t\"email\": \"juancuesta@gmail.com\",\n\t\"password\": \"LQSA2020\",\n\t\"phone\": \"+34612345678\",\n\t\"role\": \"EXPLORER\"\n}",
+					"raw": "{\n\t\"name\": \"Antonio\",\n\t\"surname\": \"Recio\",\n\t\"email\": \"mariscosrecio@gmail.com\",\n\t\"password\": \"centollos\",\n\t\"phone\": \"+3461234768\",\n\t\"role\": \"EXPLORER\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -159,7 +159,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"name\": \"Antonio\"\n}",
+					"raw": "{\n\t\"email\":\"benzemaBalonDeOro@gmail.com\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -167,7 +167,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/v1/actors/5e47e1507caa7f247c45035a",
+					"raw": "localhost:8080/v1/actors/5e5b8f8af2fb6b26b8526e3f",
 					"host": [
 						"localhost"
 					],
@@ -175,7 +175,7 @@
 					"path": [
 						"v1",
 						"actors",
-						"5e47e1507caa7f247c45035a"
+						"5e5b8f8af2fb6b26b8526e3f"
 					]
 				}
 			},
@@ -185,16 +185,34 @@
 			"name": "Deactivate an actor",
 			"request": {
 				"method": "PUT",
-				"header": [],
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"validated\": \"false\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:8080/v1/actors",
+					"raw": "localhost:8080/v1/actors/5e48200bf6af4e2958478963/validated",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
 						"v1",
-						"actors"
+						"actors",
+						"5e48200bf6af4e2958478963",
+						"validated"
 					]
 				}
 			},
@@ -239,22 +257,114 @@
 		},
 		{
 			"name": "Retrieve an actor",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\n\t\"id\":\"5e48200bf6af4e2958478963\"\n\t\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": ""
+					"raw": "localhost:8080/v1/actors/5e48200bf6af4e2958478963",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"actors",
+						"5e48200bf6af4e2958478963"
+					]
 				}
 			},
 			"response": []
 		},
 		{
 			"name": "Retrieve an actor but the id doesn't exist",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":\"6e48200bf6af4e2958478963\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": ""
+					"raw": "localhost:8080/v1/actors/5e48200bf6af4e2958478963",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"actors",
+						"5e48200bf6af4e2958478963"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete an actor",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/v1/actors/5e5b8f8af2fb6b26b8526e3f",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"actors",
+						"5e5b8f8af2fb6b26b8526e3f"
+					]
 				}
 			},
 			"response": []
