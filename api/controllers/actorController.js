@@ -138,12 +138,3 @@ exports.modify_activate_an_actor = function(req, res) {
     });
     //}else{: res.status(403).send("You are not authenticated as an administrator therefore this operation is invalid")}
 };
-
-
-exports.updateFinder = function(req, res) {
-    if(!req.params.role.contains('EXPLORER')){
-        res.status(422).json({message: 'The actor must be an explorer.'})
-    }
-    else{
-        var newFinder = req.body;
-        newFinder.timestamp = new Date();
