@@ -7,6 +7,8 @@ var fetch = require('node-fetch');
 
 const tripController = require('./tripController')
 
+var maxNumberTrips = 10;
+
 
 function extractUrl(body){
     var url = "http://localhost:" + (process.env.PORT || 8080) + "/v1/trips/search";
@@ -96,7 +98,8 @@ exports.update_finder = function(req, res) {
                 for(trip of trips){
                     trips_results_finder.push(transformToFinderTripSchema(trip));
                 }
-
+                trips_results_finder = trips_results_finder.slice(0, maxNumberTrips);
+                
                 if(finder === null){
                     console.log("Create");
                     var newFinder = new Finder.FinderModel(req.body);
