@@ -42,7 +42,7 @@ module.exports = function(app) {
      * @type get
      * @url /v1/sponsorships/:sponsorId
      */
-    app.route('/v1/sponsorships/:sponsorId')
+    app.route('/v1/sponsorships/sponsors/:sponsorId')
         .get(sponsorships.list_sponsorships_sponsor);
     
     /**
@@ -52,7 +52,7 @@ module.exports = function(app) {
      * @type get
      * @url /v1/sponsorships/:tripId
      */
-    app.route('/v1/sponsorships/:tripId')
+    app.route('/v1/sponsorships/trips/:tripId')
         .get(sponsorships.find_sponsorships_trip);
 
     /**

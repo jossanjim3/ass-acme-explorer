@@ -35,7 +35,7 @@ exports.create_an_actor = function(req,res){
                                         }else{
 
                                         res.status(401).send("El usuario no está autorizado");
-                                        
+
                                         }
 
     }else{

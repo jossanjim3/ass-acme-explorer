@@ -31,7 +31,7 @@ var tripSchema = new Schema({
                 return /\d{6}-[A-Z]{4}/.test(v);
             },
             message: 'ticker is not valid!, Pattern("\d(6)-[A-Z](4)")'
-            }
+        }
     },
     title: {
         type: String,
@@ -50,7 +50,11 @@ var tripSchema = new Schema({
         required: 'Kindle enter some requeriments for the trip'
     },
     startDate:{
-        type: Date
+        type: Date,
+        validate: function() {
+            return this.startDate > this.endDate;
+        },
+        message: 'startDate can\'t be greater than endDate'
     },
     endDate:{
         type: Date

@@ -5,13 +5,14 @@ var Schema = mongoose.Schema;
 var sponsorshipSchema = new Schema({
     banner: {
         type: Buffer,
-        required: 'Kindly add the banner of the sponsorship'
+        required: 'Kindly add the banner of the sponsorship',
+        unique: true
     },
     link: {
         type: String,
         required: 'Kindly add the link of the sponsorship'
     },
-    actor: {
+    sponsor: {
         type: Schema.Types.ObjectId,
         required: 'Kindly add the sponsor who owns the sponsorship'
     },
@@ -24,8 +25,10 @@ var sponsorshipSchema = new Schema({
     }]
 });
 
-sponsorshipSchema.pre('save', function(callback) {
+/*sponsorshipSchema.pre('save', function(callback) {
     callback();
-});
+});*/
+
+sponsorshipSchema.index({sponsor: 1});
 
 module.exports = mongoose.model('Sponsorships', sponsorshipSchema);

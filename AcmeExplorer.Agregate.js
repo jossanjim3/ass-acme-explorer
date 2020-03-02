@@ -1,10 +1,11 @@
 // hecho con Studio 3T for MongoDB
 
 // List of trips from a manager
+/*
 select *
 from trips
 where manager = ObjectId("5e5168e68e31de26b8d16933")
---
+--*/
 use ACME-Explorer;
 db.getCollection("trips").aggregate(
     [
@@ -21,7 +22,7 @@ db.getCollection("trips").aggregate(
 
 
 // List the applications for the trips that a manager manage
-// Requires official MongoShell 3.6+
+/*
 select actors._id, actors.name, trips._id, trips.name, applications._id, applications.status
 from actors
     inner join trips
@@ -29,7 +30,7 @@ from actors
     inner join applications
             on applications.trip = trips._id            
 where actors.role = "MANAGER"
---
+--*/
 use ACME-Explorer;
 db.getCollection("actors").aggregate(
     [
@@ -93,10 +94,11 @@ db.getCollection("actors").aggregate(
 // Search for trips using a single key word that must be contained in either their tickers, titles, or descriptions
 
 // Explorer can list the applications that he or she’s made, grouped by status
+/*
 select *
 from applications
 order by status
---
+--*/
 use ACME-Explorer;
 db.getCollection("applications").find({}).sort(
     { 
@@ -107,10 +109,11 @@ db.getCollection("applications").find({}).sort(
 
 
 // The average, the minimum, the maximum, and the standard deviation of the number of trips managed per manager
+/*
 select manager, count(*)
 from trips
 group by manager
---
+--*/
 use ACME-Explorer;
 db.getCollection("trips").aggregate(
     [
@@ -138,11 +141,11 @@ db.getCollection("trips").aggregate(
 );
 
 // The average, the minimum, the maximum, and the standard deviation of the number of applications per trip
-
+/*
 select trip, count(*)
 from applications
 group by trip
---
+--*/
 use ACME-Explorer;
 db.getCollection("applications").aggregate(
     [
@@ -171,10 +174,11 @@ db.getCollection("applications").aggregate(
 
 
 // The average, the minimum, the maximum, and the standard deviation of the price of the trips
+/*
 select manager, count(*), min(price), max(price), avg(price), stdev(price)
 from trips
 group by manager
---
+--*/
 use ACME-Explorer;
 db.getCollection("trips").aggregate(
     [
@@ -219,28 +223,28 @@ db.getCollection("trips").aggregate(
 
 // The ratio of applications grouped by status
 
-// Explorers have a finder in which they can specify some search criteria regarding trips, namely:
+/*Explorers have a finder in which they can specify some search criteria regarding trips, namely:
 a key word, a price range, and a date range. The key word must be contained in the ticker,
 the title, or the description of the trips returned, which must not exceed the price range
 and must be organised within the date range specified. Initially, every search criterion must
-be null; it is assumed that every trip satisfies a null search criterion
+be null; it is assumed that every trip satisfies a null search criterion*/
 
-// The maximum number of results that a finder returns is 10 by default. The administrator
+/*The maximum number of results that a finder returns is 10 by default. The administrator
 should be able to change this parameter in order to adjust the performance of the system.
-The absolute maximum is 100 results
+The absolute maximum is 100 results*/
 
 // The average price range that explorers indicate in their finders.
 
 // The top 10 key words that the explorers indicate in their finders.
 
-// Launch a process to compute a cube of the form M[e, p] that returns the amount of
+/*Launch a process to compute a cube of the form M[e, p] that returns the amount of
 money that explorer e has spent on trips during period p, which can be M01-M36 to
-denote any of the last 1-36 months or Y01-Y03 to denote any of the last three years.
+denote any of the last 1-36 months or Y01-Y03 to denote any of the last three years.*/
 
 // Consult the cube by means of the following queries:
 // Given e and p, return M[e, p].
-// Given p, return the explorers e such that M[e, p] q v, where v denotes an arbitrary
+/* Given p, return the explorers e such that M[e, p] q v, where v denotes an arbitrary
 amount of money and q is a comparison operator (that is, “equal”,
 “not equal”, “greater than”, “greater than or equal”, “smaller than”, or
-“smaller than or equal”)
+“smaller than or equal”)*/
 

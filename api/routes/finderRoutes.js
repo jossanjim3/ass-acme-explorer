@@ -1,5 +1,5 @@
 'use strict'
-module.exports = function(req, res){
+module.exports = function(app){
     var applications = require('../controllers/finderController');
     
     /**
@@ -13,8 +13,7 @@ module.exports = function(req, res){
      * @url /v1/finders
      */
     app.route('/v1/finders')
-        .get(applications.all_finders)
-        .post(applications.create_finder);
+        .get(applications.all_finders);
     
     /**
      * Get a finder by _id.
@@ -41,7 +40,7 @@ module.exports = function(req, res){
      * @type get, put
      * @url /v1/finders/:actorId
      */
-    app.route('/v1/finders/:actorId')
+    app.route('/v1/finders/explorers/:actorId')
         .get(applications.finder_of_actor)
         .put(applications.update_finder);
 }

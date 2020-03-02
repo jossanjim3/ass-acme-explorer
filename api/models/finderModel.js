@@ -1,11 +1,51 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var trips = require('./tripModel');
+var trips_schema_for_finder = new Schema({
+    ticker: {
+        type: String,
+        //This validation does not run after middleware pre-save
+        validate: {
+            validator: function(v) {
+                return /\d{6}-[A-Z]{4}/.test(v);
+            },
+            message: 'ticker is not valid!, Pattern("\d(6)-[A-Z](4)")'
+        }
+    },
+    title: {
+        type: String,
+        required: 'Kindly enter the title of the trip'
+    },
+    description: {
+        type: String,
+        required: 'Kindly enter the description of the trip'
+    },
+    price: {
+        type: Number,
+        min: 0
+    },
+    startDate:{
+        type: Date
+    },
+    endDate:{
+        type: Date
+    },
+    pictures: [{
+        data: Buffer,
+        contentType: String
+    }],
+    reasonCancel: {
+        type: String,
+        validate: {
+            validator: function() {
+                return this.startDate > new Date();
+            },
+            message: 'Can\'t cancel a started trip'
+        }
+    }
+});
 
-var trips_schema = trips.tripSchema;
-
-var FinderSchema = new Schema({
+var finderSchema = new Schema({
     explorer: {
         type: Schema.Types.ObjectId,
         required: true,
@@ -28,17 +68,37 @@ var FinderSchema = new Schema({
         default: null
     },
     maxPrice: {
-        type: String,
+        type: Number,
         default: null
     },
     results: {
-        type: [trips_schema],
-        default: null
+        type: [trips_schema_for_finder]
     },
     timestamp: {
         type: Date
     }
 }, {strict: false});
 
+finderSchema.pre('save', function(callback){
+    var timestamp = new Date();
+    var newFinder = this;
+    newFinder.timestamp = timestamp;
 
-module.exports = mongoose.model('Finders', FinderSchema)
+    callback();
+});
+
+/*finderSchema.pre('updateOne', function(callback){
+    console.log("Llego");
+    var timestamp = new Date();
+    var newFinder = this;
+    newFinder.timestamp = timestamp;
+
+    callback();
+});*/
+
+finderSchema.index({timestamp: -1});
+finderSchema.index({explorer: 1});
+
+exports.TripsSchemaFinder = mongoose.model('TripSchemaFinder', trips_schema_for_finder);
+
+exports.FinderModel = mongoose.model('Finders', finderSchema);

@@ -19,7 +19,6 @@ var mongoDBCredentials = (mongoDBUser && mongoDBPass) ? mongoDBUser + ":" + mong
 var mongoDBHostname = process.env.mongoDBHostname || "localhost";
 var mongoDBPort = process.env.mongoDBPort || "27017";
 var mongoDBName = process.env.mongoDBName || "ACME-Explorer";
-
 var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
 mongoose.set('useCreateIndex', true)
 
@@ -45,15 +44,18 @@ var routesActors = require('./api/routes/actorRoutes');
 var routesTrips = require('./api/routes/tripRoutes');
 var routesApplications = require('./api/routes/applicationRoutes');
 var routesSponsorships = require('./api/routes/sponsorshipRoutes');
-var storageRoutes= require('./api/routes/storageRoutes')
 var loginRoutes=require('./api/routes/loginRoutes')
+var routesFinders = require('./api/routes/finderRoutes');
+var routesStorage = require('./api/routes/storageRoutes');
 
 routesActors(app);
 routesApplications(app);
 routesTrips(app);
 routesSponsorships(app);
-storageRoutes(app);
 loginRoutes(app);
+routesFinders(app);
+routesStorage(app);
+
 
 console.log("Connecting DB to: " + mongoDBURI);
 mongoose.connection.on("open", function (err, conn) {
