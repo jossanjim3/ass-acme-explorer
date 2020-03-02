@@ -35,7 +35,7 @@ exports.create_a_sponsorship = function(req, res){
     //else{
         new_sponsorship.save(function(err, sponsorship){
             if(err){
-                res.status(500);
+                res.status(500).send(err);
             } else {
                 res.status(201).json(sponsorship);
             }

@@ -5,7 +5,8 @@ var Schema = mongoose.Schema;
 var sponsorshipSchema = new Schema({
     banner: {
         type: Buffer,
-        required: 'Kindly add the banner of the sponsorship'
+        required: 'Kindly add the banner of the sponsorship',
+        unique: true
     },
     link: {
         type: String,
