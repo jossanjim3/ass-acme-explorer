@@ -93,23 +93,12 @@ module.exports.createDataWareHouseJob = createDataWareHouseJob;
 
 function computeTripsPerManager(callback){
   Trips.aggregate([
-      { 
-          "$group" : { 
-              "_id" : { 
-                  "manager" : "$manager"
-              }, 
-              "COUNT(*)" : { 
-                  "$sum" : NumberInt(1)
-              }
-          }
-      }, 
-      { 
-          "$project" : { 
-              "manager" : "$_id.manager", 
-              "COUNT(*)" : "$COUNT(*)", 
-              "_id" : NumberInt(0)
-          }
-      }
+    {$group: {_id:"$manager", TripsPerManager:{$sum:1}}},
+    {$group: { _id:0,
+        average: {$avg:"$TripsPerManager"},
+        minimum: {$min:"$TripsPerManager"},
+        maximum: {$max:"$TripsPerManager"}
+        }}
   ], function(err, res){
     callback(err, res)
   });
