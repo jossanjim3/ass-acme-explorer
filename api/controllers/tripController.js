@@ -34,6 +34,7 @@ exports.search_trips = function(req,res){
 
     if(req.query.minPrice && req.query.maxPrice){
         //TODO - Validar que max no sea menor que min
+
         if(req.query.minPrice > req.query.maxPrice){
             //Error
             error=true;
@@ -55,6 +56,7 @@ exports.search_trips = function(req,res){
         error=true;
         res.status(400).send({"name":"ValidationError", "message": "Mininum Date is greater than maximum Date"});
     }
+
     if(req.query.minDate){
         query.startDate = {$gte: req.query.minDate};
     }
