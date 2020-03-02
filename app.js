@@ -46,12 +46,14 @@ var routesTrips = require('./api/routes/tripRoutes');
 var routesApplications = require('./api/routes/applicationRoutes');
 var routesSponsorships = require('./api/routes/sponsorshipRoutes');
 var storageRoutes= require('./api/routes/storageRoutes')
+var loginRoutes=require('./api/routes/loginRoutes')
 
 routesActors(app);
 routesApplications(app);
 routesTrips(app);
 routesSponsorships(app);
 storageRoutes(app);
+loginRoutes(app);
 
 console.log("Connecting DB to: " + mongoDBURI);
 mongoose.connection.on("open", function (err, conn) {

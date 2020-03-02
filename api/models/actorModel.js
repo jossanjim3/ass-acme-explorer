@@ -50,7 +50,10 @@ var ActorSchema = new Schema({
     createdAt:{
         type: Date,
         default: Date.now
-    }
+    }, customToken: {
+        type: String
+      }
+
 }, {strict:false});
 
 
