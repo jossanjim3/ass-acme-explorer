@@ -10,7 +10,7 @@ var express = require('express'),
  bodyParser = require('body-parser');
 
 mongoose.set('useFindAndModify', false);
- 
+
 // MongoDB URI building
 var mongoDBUser = process.env.mongoDBUser || "myUser";
 var mongoDBPass = process.env.mongoDBPass || "myUserPassword";
@@ -20,10 +20,10 @@ var mongoDBHostname = process.env.mongoDBHostname || "localhost";
 var mongoDBPort = process.env.mongoDBPort || "27017";
 var mongoDBName = process.env.mongoDBName || "ACME-Explorer";
 var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
-
-
 mongoose.set('useCreateIndex', true)
 
+//var mongoDBURI = "mongodb://" + mongoDBCredentials + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
+ 
 //mongodb://localhost:27017/ACME-Explorer
 mongoose.connect(mongoDBURI, {
  //reconnectTries: 10,
@@ -45,12 +45,14 @@ var routesTrips = require('./api/routes/tripRoutes');
 var routesApplications = require('./api/routes/applicationRoutes');
 var routesSponsorships = require('./api/routes/sponsorshipRoutes');
 var routesFinders = require('./api/routes/finderRoutes');
+var storageRoutes= require('./api/routes/storageRoutes')
 
 routesActors(app);
 routesApplications(app);
 routesTrips(app);
 routesSponsorships(app);
 routesFinders(app);
+storageRoutes(app);
 
 console.log("Connecting DB to: " + mongoDBURI);
 mongoose.connection.on("open", function (err, conn) {

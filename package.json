@@ -19,6 +19,7 @@
   "homepage": "https://github.com/MrManoloDG/ASS-ACME-Explorer-2020#readme",
   "dependencies": {
     "axios": "^0.19.2",
+    "JSONStream": "^1.3.5",
     "bcrypt": "^3.0.8",
     "body-parser": "^1.19.0",
     "dateformat": "^3.0.3",
@@ -27,6 +28,7 @@
     "git": "^0.1.5",
     "mongoose": "^5.9.1",
     "nanoid": "^2.1.11",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "stream-to-mongo-db": "^1.6.0"
   }
 }
