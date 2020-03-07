@@ -123,12 +123,12 @@ exports.update_an_actor = function(req,res){
 
 };
 
-exports.modify_activate_an_actor = function(req, res) {
+exports.modify_actor_validation = function(req, res) {
     
     if (req.body.validated.includes("true")){
-        console.log("Unbanning an actor with id: "+req.params.actorId)
+        console.log("Validating an actor with id: "+req.params.actorId)
     }else{
-        console.log("Banning an actor with id: "+req.params.actorId)
+        console.log("Invalidating an actor with id: "+req.params.actorId)
     }
     
     //Check that the user is an Administrator and if not: res.status(403); "an access token is valid, but requires more privileges"

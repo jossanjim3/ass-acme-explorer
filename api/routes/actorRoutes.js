@@ -17,5 +17,5 @@ module.exports = function(app) {
 
   app.route('/v1/actors/:actorId/validated')
     //ban or unban an actor 
-    .put(actors.modify_activate_an_actor);
+    .put(actors.modify_actor_validation);
 };
