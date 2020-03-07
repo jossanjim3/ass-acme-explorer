@@ -4,8 +4,8 @@ var mongoose = require('mongoose'),
 Actor = mongoose.model('Actors');
 var admin = require('firebase-admin');
 
-exports.getUserId = function(id) {
-
+exports.getUserId = async function(idToken) {
+    /*
     console.log('Buscando al usuario con el id: '+id);
 
     Actor.findById(id,'role',function(err,role){
@@ -15,7 +15,28 @@ exports.getUserId = function(id) {
             return role;
         }
 
-    })
+    })*/
+    console.log('idToken: '+idToken);
+    var id = null;
+  
+    var actorFromFB = await admin.auth().verifyIdToken(idToken);
+     
+        var uid = actorFromFB.uid;
+        var auth_time = actorFromFB.auth_time;
+        var exp =  actorFromFB.exp;
+        console.log('idToken verificado para el uid: '+uid);
+        console.log('auth_time: '+auth_time);
+        console.log('exp: '+exp);
+  
+        var mongoActor = await Actor.findOne({ email: uid });
+         if (!mongoActor) { return null; }
+  
+          else {
+              console.log('The actor exists in our DB');
+              console.log('actor: '+mongoActor);
+              id = mongoActor._id;
+              return id;
+          }
 
   }
 
@@ -54,10 +75,10 @@ exports.verifyUser = function(requiredRoles) {
               for (var i = 0; i < requiredRoles.length; i++) {
                 for (var j = 0; j < actor.role.length; j++) {
                    if (requiredRoles[i] == actor.role[j]) {
-                    if (requiredRoles[i] == "EXPLORER") {
+                    ///if (requiredRoles[i] == "EXPLORER") {
                       if (actor.validated == true) isAuth = true;
-                    } 
-                    else isAuth = true;
+                    //} 
+                    //else isAuth = true;
                    }
                 }
               }

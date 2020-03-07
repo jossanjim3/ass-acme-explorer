@@ -83,44 +83,61 @@ exports.delete_an_actor = function(req, res) {
 
 exports.update_an_actor = function(req,res){
     //Check that the user is the proper actor and if not: res.status(403); "an access token is valid, but requires more privileges"
-    var actor_body=req.body;
-    var promise_hash = new Promise((resolve,reject)=>{
-        if(actor_body.password!=undefined){
-            bcrypt.genSalt(5, function(err, salt) {
-                if (err) reject(err);
-            
-                bcrypt.hash(actor_body.password, salt, function(err, hash) {
-                  if (err) reject(err);
-                  actor_body.password = hash;
-                  resolve(actor_body)
-                });
-              });
-         }else{
-             resolve(actor_body)
-         }
-    })
-    
-    promise_hash.then((actor_body)=>{
+    Actor.findById(req.params.actorId, async function(err, actor) {
+        if (err){
+          res.send(err);
+        }
+        else{
+          console.log('actor: '+actor);
+          var idToken = req.headers['idtoken'];//WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
+          var authenticatedUserId = await authController.getUserId(idToken);
 
-        Actor.findOneAndUpdate({_id: req.params.actorId}, actor_body, {new: true}, function(err, actor) {
-            if (err){
-              if(err.name=='ValidationError') {
-                  res.status(422).send(err);
-              }
-              else{
-    
-                 res.status(500).send(err);
-              }
-              
-            }
-            else{
-                res.json(actor);
-            }
-          });
-    }).catch(function(err){
-        res.status(err).send(err);
-    })
+            if (authenticatedUserId == req.params.actorId){//if the actor is trying to modify himself:
 
+                    var actor_body=req.body;
+                    var promise_hash = new Promise((resolve,reject)=>{
+                        if(actor_body.password!=undefined){
+                            bcrypt.genSalt(5, function(err, salt) {
+                                if (err) reject(err);
+                            
+                                bcrypt.hash(actor_body.password, salt, function(err, hash) {
+                                if (err) reject(err);
+                                actor_body.password = hash;
+                                resolve(actor_body)
+                                });
+                            });
+                        }else{
+                            resolve(actor_body)
+                        }
+                    })
+                    
+                    promise_hash.then((actor_body)=>{
+
+                        Actor.findOneAndUpdate({_id: req.params.actorId}, actor_body, {new: true}, function(err, actor) {
+                            if (err){
+                            if(err.name=='ValidationError') {
+                                res.status(422).send(err);
+                            }
+                            else{
+                    
+                                res.status(500).send(err);
+                            }
+                            
+                            }
+                            else{
+                                res.json(actor);
+                            }
+                        });
+                    }).catch(function(err){
+                        res.status(err).send(err);
+                    })  
+            } else{
+              res.status(403); //Auth error
+              res.send('The Actor is trying to update an Actor that is not himself!');
+            }    
+        }
+    });
+    
 };
 
 exports.modify_actor_validation = function(req, res) {
