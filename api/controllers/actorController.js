@@ -159,7 +159,7 @@ exports.login_an_actor = async function(req, res) {
         
         //if the actor is not validated, he/she can not do any operation
         else if (actor.validated == false) {
-          res.status(403); //an access token is valid, but requires more privileges
+          res.status(403); //an access token is valid, but requires more privileges: to be validated
           res.json({message: 'forbidden',error: err});
         }else{
           // Make sure the password is correct
