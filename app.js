@@ -24,8 +24,8 @@ var mongoDBName = process.env.mongoDBName || "ACME-Explorer";
 var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
 mongoose.set('useCreateIndex', true)
 
-//var mongoDBURI = "mongodb://" + mongoDBCredentials + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
- 
+var mongoDBURI = "mongodb://" + mongoDBCredentials + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
+//http://localhost:8080/v1/dbURL=mongodb://carlos:carlos@localhost:27017/ACME-Explorer
 //mongodb://localhost:27017/ACME-Explorer
 mongoose.connect(mongoDBURI, {
  //reconnectTries: 10,

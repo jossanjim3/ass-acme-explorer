@@ -18,7 +18,7 @@ exports.create_an_actor = function(req,res){
 
         var role=authController.getUserId(req.body.id);
 
-        if(role.includes('ADMINISTRATOR')){
+        if(role=='ADMINISTRATOR'){
     
                 new_actor.save(function(err, actor) {
 

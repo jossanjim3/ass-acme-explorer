@@ -76,9 +76,12 @@ exports.verifyUser = function(requiredRoles) {
                 for (var j = 0; j < actor.role.length; j++) {
                    if (requiredRoles[i] == actor.role[j]) {
                     ///if (requiredRoles[i] == "EXPLORER") {
-                      if (actor.validated == true) isAuth = true;
-                    //} 
-                    //else isAuth = true;
+                      if (actor.validated == true){ //the actor is validated
+                        isAuth = true;
+                      }else{ //an access token is valid, but the user is not validated;
+                        res.status(403);
+                        res.json({message: 'The actor is not validated',error: err});
+                      }; 
                    }
                 }
               }
