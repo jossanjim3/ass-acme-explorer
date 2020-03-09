@@ -118,7 +118,7 @@ exports.update_finder = function(req, res) {
                         if(err){
                             res.status(500).send(err);
                         }
-                        res.status(201).json(finderToUpdate);
+                        res.status(201).json(finder);
                     });
                 }  
             });
