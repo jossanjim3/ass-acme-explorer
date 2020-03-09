@@ -82,48 +82,35 @@ exports.finder_of_actor = function(req, res){
 }
 
 exports.update_finder = function(req, res) {
-    Finder.FinderModel.findOne({explorer: req.params.actorId}, function(err, finder){
-        if(err)
-            res.status(500).send(err);
+    var urlForFinder = extractUrl(req.body);
+    console.log(urlForFinder);
+    fetch(urlForFinder,{
+        method: 'GET',
+    }).then(response => {
+        return response.json();
+    }).then(trips =>{
+        var trips_results_finder = trips.slice(0, maxNumberTrips)
+            .map((trip)=>transformToFinderTripSchema(trip));
 
-        else{
-            var urlForFinder = extractUrl(req.body);
-            console.log(urlForFinder);
-            fetch(urlForFinder,{
-                method: 'GET',
-            }).then(response => {
-                return response.json();
-            }).then(trips =>{
-                var trips_results_finder = trips.slice(0, maxNumberTrips)
-                    .map((trip)=>transformToFinderTripSchema(trip));
-
-                if(finder === null){
-                    console.log("Create");
-                    var newFinder = new Finder.FinderModel(req.body);
-                    newFinder.explorer = req.params.actorId;
-                    newFinder.results = trips_results_finder;
-                    newFinder.save(function(err, finder){
-                        if(err){
-                            res.status(500).send(err);
-                        }
-                        else{
-                            res.status(201).send(finder);
-                        }
-                    });
-                }
-                else {
-                    console.log("Update");
-                    finder.results = trips_results_finder;
-                    Finder.FinderModel.updateOne({explorer: req.params.actorId}, finder, {new: true}, function(err, finderToUpdate){
-                        if(err){
-                            res.status(500).send(err);
-                        }
-                        res.status(201).json(finder);
-                    });
-                }  
-            });
-        }
-    });       
+        var newFinder = new Finder.FinderModel(req.body);
+        newFinder.explorer = req.params.actorId;
+        newFinder.results = trips_results_finder;
+        Finder.FinderModel.deleteOne({explorer: req.params.actorId}, function(err, finder){
+            if(err){
+                res.status(500).send(err);
+            }
+            else{
+                newFinder.save(function(err, finder){
+                    if(err){
+                        res.status(500).send(err);
+                    }
+                    else{
+                        res.status(201).send(finder);
+                    }
+                });
+            }
+        });
+    }); 
 }
 
 exports.set_max_results = function(req, res){

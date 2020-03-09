@@ -55,11 +55,11 @@ var finderSchema = new Schema({
         type: String,
         default: null
     },
-    startingDate: {
+    startDate: {
         type: Date,
         default: null
     },
-    endingDate: {
+    endDate: {
         type: Date,
         default: null
     },
@@ -77,7 +77,7 @@ var finderSchema = new Schema({
     timestamp: {
         type: Date
     }
-}, {strict: false});
+}, {strict: true});
 
 finderSchema.pre('save', function(callback){
     console.log("Middleware Save");
