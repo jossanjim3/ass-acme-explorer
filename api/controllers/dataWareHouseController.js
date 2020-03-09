@@ -96,8 +96,9 @@ function computeTripsPerManager(callback){
     {$group: {_id:"$manager", TripsPerManager:{$sum:1}}},
     {$group: { _id:0,
         average: {$avg:"$TripsPerManager"},
-        minimum: {$min:"$TripsPerManager"},
-        maximum: {$max:"$TripsPerManager"}
+        min: {$min:"$TripsPerManager"},
+        max: {$max:"$TripsPerManager"},
+        stdev : {$stdDevSamp : "$TripsPerManager"}
         }}
   ], function(err, res){
     callback(err, res)
@@ -107,20 +108,28 @@ function computeTripsPerManager(callback){
 function computeApplicationsPerTrip(callback){
   Applications.aggregate([
     { 
-        "$group" : { 
-            "_id" : { 
-                "trip" : "$trip"
-            }, 
-            "COUNT(*)" : { 
-                "$sum" : NumberInt(1)
+        $group : { 
+            _id : "$manager", 
+            contador : { 
+                $sum : 1.0
             }
         }
     }, 
     { 
-        "$project" : { 
-            "trip" : "$_id.trip", 
-            "COUNT(*)" : "$COUNT(*)", 
-            "_id" : NumberInt(0)
+        $group : { 
+            _id : 0.0, 
+            average : { 
+                $avg : "$contador"
+            }, 
+            min : { 
+                $min : "$contador"
+            }, 
+            max : { 
+                $max : "$contador"
+            }, 
+            stdev : { 
+                $stdDevSamp : "$contador"
+            }
         }
     }
   ],function(err,res){
@@ -129,7 +138,42 @@ function computeApplicationsPerTrip(callback){
 }
 
 function computePriceTrip(callback){
-
+  Trips.aggregate([
+    { 
+        "$group" : { 
+            "_id" : { 
+                "manager" : "$manager"
+            }, 
+            "COUNT(*)" : { 
+                "$sum" : NumberInt(1)
+            }, 
+            "MIN(price)" : { 
+                "$min" : "$price"
+            }, 
+            "MAX(price)" : { 
+                "$max" : "$price"
+            }, 
+            "AVG(price)" : { 
+                "$avg" : "$price"
+            }, 
+            "STDEV(price)" : { 
+                "$stdDevSamp" : "$price"
+            }
+        }
+    }, 
+    { 
+        "$project" : { 
+            "manager" : "$_id.manager", 
+            "count" : "$COUNT(*)", 
+            "min" : "$MIN(price)", 
+            "max" : "$MAX(price)", 
+            "avg" : "$AVG(price)", 
+            "stdev" : "$STDEV(price)"
+        }
+    }
+], function(err,res){
+  callback(err,res);
+})
 }
 
 function computeRatioApplications(callback){
