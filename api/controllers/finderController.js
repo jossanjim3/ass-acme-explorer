@@ -5,10 +5,13 @@ var mongoose = require('mongoose'),
 
 var fetch = require('node-fetch');
 
-const tripController = require('./tripController')
+const authController = require('./authController');
 
 var maxNumberTrips = 10;
 var maxTimeAResultIsStored = 3600;
+
+const validateExplorer = authController.verifyUser(['EXPLORER']);
+
 
 function extractUrl(body){
     var url = "http://localhost:" + (process.env.PORT || 8080) + "/v1/trips/search";
@@ -77,14 +80,9 @@ exports.finder_of_actor = function(req, res){
 
 exports.update_finder = function(req, res) {
     Finder.FinderModel.findOne({explorer: req.params.actorId}, function(err, finder){
-
-        /*if(!req.params.actorId.role.includes('EXPLORER')){
-            res.status(422).json({message: 'The actor must be an explorer.'})
-        }
-
-        else*/ if(err){
+        if(err)
             res.status(500).send(err);
-        }
+
         else{
             var urlForFinder = extractUrl(req.body);
 
@@ -93,13 +91,9 @@ exports.update_finder = function(req, res) {
             }).then(response => {
                 return response.json();
             }).then(trips =>{
-                var trips_results_finder = [];
-                var trip;
-                for(trip of trips){
-                    trips_results_finder.push(transformToFinderTripSchema(trip));
-                }
-                trips_results_finder = trips_results_finder.slice(0, maxNumberTrips);
-                
+                var trips_results_finder = trips.slice(0, maxNumberTrips)
+                    .map((trip)=>transformToFinderTripSchema(trip));
+
                 if(finder === null){
                     console.log("Create");
                     var newFinder = new Finder.FinderModel(req.body);
@@ -117,7 +111,6 @@ exports.update_finder = function(req, res) {
                 else {
                     console.log("Update");
                     finder.results = trips_results_finder;
-                    finder.timestamp = new Date();
                     Finder.FinderModel.updateOne({explorer: req.params.actorId}, finder, {new: true}, function(err, finderToUpdate){
                         if(err){
                             res.status(500).send(err);
@@ -127,7 +120,7 @@ exports.update_finder = function(req, res) {
                 }  
             });
         }
-    });          
+    });       
 }
 
 exports.set_max_results = function(req, res){
