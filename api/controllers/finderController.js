@@ -21,10 +21,13 @@ function extractUrl(body){
     var attr;
 
     for (attr of jsonBodyFiltered){
-        if(!firstAttr){
-            url += "&";   
+        if(firstAttr){
+            url += "?";
         }
-        url += "?" + attr + "=" + jsonBody[attr];
+        else if(!firstAttr){
+            url += "&";
+        }
+        url += attr + "=" + body[attr];
         firstAttr = false;
     }
 
