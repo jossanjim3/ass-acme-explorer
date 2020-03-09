@@ -29,7 +29,7 @@ exports.search_trips = function(req,res){
     var query = {};
     var error = false;
     if (req.query.keyword) {
-      query.$text = {$search: req.query.keyword ,$language: "es"};
+      query.$text = {$search: req.query.keyword};
     }
 
     if(req.query.minPrice && req.query.maxPrice){
@@ -82,8 +82,8 @@ exports.search_trips = function(req,res){
     if(req.query.sortedBy){
       sort+=req.query.sortedBy;
     }
-  
-    console.log("Query: "+query+" Skip:" + skip+" Limit:" + limit+" Sort:" + sort);
+    console.log("Query: "+query.toString()+" Skip:" + skip+" Limit:" + limit+" Sort:" + sort);
+    console.log(query);
     if(!error){
         Trip.find(query)
         .sort(sort)
