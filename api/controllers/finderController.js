@@ -17,7 +17,7 @@ function extractUrl(body){
     var url = "http://localhost:" + (process.env.PORT || 8080) + "/v1/trips/search";
     var firstAttr = true;
     var jsonBody = Object.keys(body);
-    var jsonBodyFiltered = jsonBody.filter((element) => jsonBody[element] != null);
+    var jsonBodyFiltered = jsonBody.filter((element) => jsonBody[element] !== null);
     var attr;
 
     for (attr of jsonBodyFiltered){
@@ -85,7 +85,7 @@ exports.update_finder = function(req, res) {
 
         else{
             var urlForFinder = extractUrl(req.body);
-
+            console.log(urlForFinder);
             fetch(urlForFinder,{
                 method: 'GET',
             }).then(response => {
@@ -115,7 +115,7 @@ exports.update_finder = function(req, res) {
                         if(err){
                             res.status(500).send(err);
                         }
-                        res.status(202).json(finderToUpdate);
+                        res.status(201).json(finderToUpdate);
                     });
                 }  
             });
