@@ -27,6 +27,6 @@ var DataWareHouseSchema = new mongoose.Schema({
     //The ratio of applications grouped by status
     ratioApplications: Map,
     //The average price range that explorers indicate in their finders
-    averagePriceRangeExplorers: Number
-
+    averagePriceRangeExplorers: Number,
+    Top10keywords: [String]
 })
