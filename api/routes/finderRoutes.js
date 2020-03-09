@@ -1,6 +1,7 @@
 'use strict'
 module.exports = function(app){
     var applications = require('../controllers/finderController');
+    const authController = require('../controllers/authController');
     
     /**
      * Get all finders.
@@ -47,10 +48,10 @@ module.exports = function(app){
     
     
     app.route('/v1/finders/maxNumResults/:number')
-        .put(applications.set_max_results);
+        .put(authController.verifyUser(["ADMINISTRATOR"]), applications.set_max_results);
     
 
     
     app.route('/v1/finders/timeResultsSaved/:time')
-        .put(applications.set_time_results_saved);
+        .put(authController.verifyUser(["ADMINISTRATOR"]), applications.set_time_results_saved);
 }
