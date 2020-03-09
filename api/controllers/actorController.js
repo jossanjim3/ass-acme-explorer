@@ -25,18 +25,19 @@ exports.create_an_actor = function(req,res){
                                         if (err){
 
                                                 res.status(500).send(err);
-                                            }
-                                            else{
-                                                res.json(actor);
-                                            }
-                                        });
-                                        
-                                        
-                                        }else{
-
-                                        res.status(401).send("El usuario no está autorizado");
-
                                         }
+                                        else{
+                                                res.json(actor);
+                                                res.status(200);
+                                        }
+                 });
+                                        
+                                        
+            }else{
+
+                res.status(403).send("El usuario no está autorizado");
+
+             }
 
     }else{
         new_actor.save(function(err, actor) {
@@ -46,6 +47,7 @@ exports.create_an_actor = function(req,res){
             }
             else{
                 res.json(actor);
+                res.status(200);
             }
         });
     }
@@ -64,6 +66,7 @@ exports.read_an_actor=function(req,res){
 
         }else{
             res.json(actor);
+            res.status(200);
         }
     })
 }
@@ -75,6 +78,7 @@ exports.delete_an_actor = function(req, res) {
         }
         else{
             res.json({ message: 'This actor  was successfully deleted' });
+            res.status(204)
             //res.json(actor); the actor deleted is sent just in case that he/she didn't want to delete that actor and he/she can see what it is being deleted.
         }
     });
@@ -104,6 +108,8 @@ exports.update_an_actor = function(req,res){
                                 if (err) reject(err);
                                 actor_body.password = hash;
                                 resolve(actor_body)
+                                res.status(200);
+                                res.json(actor);
                                 });
                             });
                         }else{
@@ -126,6 +132,7 @@ exports.update_an_actor = function(req,res){
                             }
                             else{
                                 res.json(actor);
+                                res.status(200);
                             }
                         });
                     }).catch(function(err){
@@ -149,16 +156,17 @@ exports.modify_actor_validation = function(req, res) {
     }
     
     //Check that the user is an Administrator and if not: res.status(403); "an access token is valid, but requires more privileges"
-    //if(auth admin){
+
     Actor.findOneAndUpdate({_id: req.params.actorId},  { $set: {"validated":req.body.validated }}, {new: true}, function(err, actor) {
         if (err){
         res.status(500).send(err);
         }
         else{
         res.json(actor);
+        res.status(200);
         }
     });
-    //}else{: res.status(403).send("You are not authenticated as an administrator therefore this operation is invalid")}
+    
 };
 
 exports.login_an_actor = async function(req, res) {

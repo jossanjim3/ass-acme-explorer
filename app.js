@@ -10,7 +10,6 @@ var express = require('express'),
  serviceAccount=require('./acme-viaje-el-corte-andaluh-firebase-adminsdk-matgx-6762472378.json')
  bodyParser = require('body-parser');
  
-
 mongoose.set('useFindAndModify', false);
 
 // MongoDB URI building
@@ -46,7 +45,6 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://acme-viaje-el-corte-andaluh.firebaseio.com"
 
-
 });
 
 var routesActors = require('./api/routes/actorRoutes');
@@ -76,3 +74,5 @@ mongoose.connection.on("open", function (err, conn) {
 mongoose.connection.on("error", function (err, conn) {
  console.error("DB init error " + err);
 });
+
+module.exports=app;
