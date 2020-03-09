@@ -87,14 +87,14 @@ finderSchema.pre('save', function(callback){
     callback();
 });
 
-/*finderSchema.pre('updateOne', function(callback){
+finderSchema.pre('updateOne', function(callback){
     console.log("Llego");
     var timestamp = new Date();
     var newFinder = this;
     newFinder.timestamp = timestamp;
 
     callback();
-});*/
+});
 
 finderSchema.index({timestamp: -1});
 finderSchema.index({explorer: 1});

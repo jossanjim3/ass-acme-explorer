@@ -43,4 +43,14 @@ module.exports = function(app){
     app.route('/v1/finders/explorers/:actorId')
         .get(applications.finder_of_actor)
         .put(applications.update_finder);
+    
+    
+    
+    app.route('/v1/finders/maxNumResults/:number')
+        .put(applications.set_max_results);
+    
+
+    
+    app.route('/v1/finders/timeResultsSaved/:time')
+        .put(applications.set_time_results_saved);
 }
