@@ -9,7 +9,6 @@ module.exports = function(app) {
     .post(actors.create_an_actor);
     
   app.route('/v1/actors/:actorId')
-
     //Retrieve an actor 
     .get(actors.read_an_actor)
 

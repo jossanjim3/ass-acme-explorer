@@ -6,8 +6,6 @@ Actor = mongoose.model('Actors');
 var admin = require('firebase-admin');
 var authController = require('./authController');
 
-
-
 exports.create_an_actor = function(req,res){
     var new_actor = new Actor(req.body);
 
@@ -30,7 +28,7 @@ exports.create_an_actor = function(req,res){
 
 exports.read_an_actor=function(req,res){
     
-    Actor.findById(req.body.id, function(err,actor){
+    Actor.findById(req.params.actorId, function(err,actor){
 
         if(err){
             res.status(500).send(err);
@@ -192,7 +190,7 @@ exports.create_an_actor_authenticated = function(req,res){
     }else if (new_actor.role.includes('MANAGER')){
 
         id=authController.getUserId(req.body.id);
-        
+
         Actor.findById(id, function(err,actor){
 
             if(actor.role.includes('ADMINISTRATOR')){

@@ -9,13 +9,11 @@ chai.use(chaiHttp);
 
 describe("API Testing actors", () => {
 
-
-
   it("Get Actor 1: request of an actor and  he/she exists", done => {
+    var actorTest=new Actor({"id":"5e64e0cfe3de7324f8d46c97","role":"EXPLORER","validated":false,"name":"Miguel","surname":"Agudo","email":"esteMiguel@fakemail11.com","password":"abcdefghj","phone":"+34612345679","address":"myAddress"});
     chai
       .request(app)
-      .get("/v1/actors/:actorId")
-      .send({"_id":"5e64e0cfe3de7324f8d46c97"})
+      .get("/v1/actors/:"+actorTest.id).send(actorTest)
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect('Content-Type', /json/);
@@ -28,7 +26,7 @@ describe("API Testing actors", () => {
     chai
       .request(app)
       .get("/v1/actors/:actorId")
-      .send({"_id":"5e64e0cfe3de7324f8d46c"})
+      .send({"actorId":"5e64e0cfe3de7324f8d46c97"})
       .end((err, res) => {
         expect(res).to.have.status(404);
         done();
@@ -40,7 +38,7 @@ describe("API Testing actors", () => {
     chai
       .request(app)
       .post("/v1/actors")
-      .send({"preferredLanguage":"en","role":["EXPLORER"],"validated":false,"name":"Carlos","surname":"Agudo","email":"carlos@fakemail11.com","password":"$2b$05$fMPnmaTx6doE/ISNc/I1leKTQcwAegVmzMP6WtKZ2xKeFP89kOxvO","phone":"+34612345679","address":"myAddress"})
+      .send({"role":"EXPLORER","validated":false,"name":"Miguel","surname":"Agudo","email":"esteMiguel@fakemail11.com","password":"abcdefghj","phone":"+34612345679","address":"myAddress"})
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect('Content-Type', /json/);
@@ -51,22 +49,22 @@ describe("API Testing actors", () => {
       });
   });
 
-  it("Post Actor 2: request the post of an actor as a manager but the user is not authorized", done => {
+  it("Post Actor 2: request the post of an actor as an administrator but it is not possible", done => {
     chai
       .request(app)
       .post("/v1/actors")
-      .send({"preferredLanguage":"en","role":["MANAGER"],"validated":false,"name":"Carlos","surname":"Agudo","email":"carlos@fakemail11.com","password":"$2b$05$fMPnmaTx6doE/ISNc/I1leKTQcwAegVmzMP6WtKZ2xKeFP89kOxvO","phone":"+34612345679","address":"myAddress"})
+      .send({"preferredLanguage":"en","role":"ADMINISTRATOR","validated":false,"name":"Carlos","surname":"Agudo","email":"carlos@fakemail11.com","password":"$2b$05$fMPnmaTx6doE/ISNc/I1leKTQcwAegVmzMP6WtKZ2xKeFP89kOxvO","phone":"+34612345679","address":"myAddress"})
       .end((err, res) => {
-        expect(res).to.have.status(401);
+        expect(res).to.have.status(422);
         done();
       });
   });
-
+  
   it("Put Actor 1: request the modification of an actor", done => {
     chai
       .request(app)
-      .put("/v1/actors/:actorId")
-      .send({"_id":"5e64e0cfe3de7324f8d46c97","name":"Carlos"})
+      .put("/v1/actors/5e64e0cfe3de7324f8d46c97")
+      .send({"name":"Fede"})
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect('Content-Type', /json/);
@@ -78,12 +76,13 @@ describe("API Testing actors", () => {
     it("Put Actor 2: request the modification of an actor,who is not the user", done => {
         chai
           .request(app)
-          .post("/v1/actors/:actorId")
-          .send({"_id":"5e5b9d48ca84490728e4a1c1","name":"Carlos"})
+          .put("/v1/actors/:5e64e0cfe3de7324f8d46c97")
+          .send({"name":"Carlos"})
           .end((err, res) => {
             expect(res).to.have.status(403);
             done();
           });
+      
       });
 
 
