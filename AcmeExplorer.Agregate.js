@@ -356,7 +356,10 @@ db.getCollection("applications").aggregate(
     }
 );
 
-// The ratio of applications grouped by status
+// The ratio of applications grouped by status -> lo que devuele / el total de applications
+
+
+
 
 
 /*Explorers have a finder in which they can specify some search criteria regarding trips, namely:
@@ -370,8 +373,78 @@ should be able to change this parameter in order to adjust the performance of th
 The absolute maximum is 100 results*/
 
 // The average price range that explorers indicate in their finders.
+use ACME-Explorer;
+db.getCollection("finders").aggregate(
+    [
+        { 
+            "$group" : { 
+                "_id" : { 
+
+                }, 
+                "AVG(minPrice)" : { 
+                    "$avg" : "$minPrice"
+                }, 
+                "AVG(maxPrice)" : { 
+                    "$avg" : "$maxPrice"
+                }
+            }
+        }, 
+        { 
+            "$project" : { 
+                "avgMinPrice" : "$AVG(minPrice)", 
+                "avgMaxPrice" : "$AVG(maxPrice)", 
+                "_id" : NumberInt(0)
+            }
+        }
+    ], 
+    { 
+        "allowDiskUse" : true
+    }
+);
+
 
 // The top 10 key words that the explorers indicate in their finders.
+/*
+select keyword, count(*)
+from finders
+group by keyword
+order by count(*) desc
+limit 10
+*/
+use ACME-Explorer;
+db.getCollection("finders").aggregate(
+    [
+        { 
+            "$group" : { 
+                "_id" : { 
+                    "keyword" : "$keyword"
+                }, 
+                "COUNT(*)" : { 
+                    "$sum" : NumberInt(1)
+                }
+            }
+        }, 
+        { 
+            "$project" : { 
+                "keyword" : "$_id.keyword", 
+                "count" : "$COUNT(*)"
+		}
+        }, 
+        { 
+            "$sort" : { 
+                "COUNT(*)" : NumberInt(-1)
+            }
+        }, 
+        { 
+            "$limit" : NumberInt(10)
+        }
+    ], 
+    { 
+        "allowDiskUse" : true
+    }
+);
+
+
 
 /*Launch a process to compute a cube of the form M[e, p] that returns the amount of
 money that explorer e has spent on trips during period p, which can be M01-M36 to
