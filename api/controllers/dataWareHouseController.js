@@ -3,7 +3,8 @@ var async = require("async");
 var mongoose = require('mongoose'),
   DataWareHouse = mongoose.model('DataWareHouse'),
   Trips =  mongoose.model('Trips'),
-  Applications = mongoose.model('Applications');
+  Applications = mongoose.model('Applications'),
+  Finders = mongoose.model('finders')
 
 exports.list_all_indicators = function(req, res) {
   console.log('Requesting indicators');
@@ -59,7 +60,8 @@ function createDataWareHouseJob(){
         computeApplicationsPerTrip,
         computePriceTrip,
         computeRatioApplications,
-        computeAveragePriceRangeExplorers
+        computeAveragePriceRangeExplorers,
+        computeTop10Keywords
       ], function (err, results) {
         if (err){
           console.log("Error computing datawarehouse: "+err);
@@ -71,6 +73,7 @@ function createDataWareHouseJob(){
           new_dataWareHouse.PriceTrip = results[2];
           new_dataWareHouse.ratioApplications = results[3];
           new_dataWareHouse.averagePriceRangeExplorers = results[4];
+          new_dataWareHouse.top10keywords = results[5];
     
           new_dataWareHouse.save(function(err, datawarehouse) {
             if (err){
@@ -178,5 +181,59 @@ function computeRatioApplications(callback){
 }
 
 function computeAveragePriceRangeExplorers(callback){
+  Finders.aggregate([
+    { 
+        "$group" : { 
+            "_id" : { 
 
+            }, 
+            "AVG(minPrice)" : { 
+                "$avg" : "$minPrice"
+            }, 
+            "AVG(maxPrice)" : { 
+                "$avg" : "$maxPrice"
+            }
+        }
+    }, 
+    { 
+        "$project" : { 
+            "avgMinPrice" : "$AVG(minPrice)", 
+            "avgMaxPrice" : "$AVG(maxPrice)", 
+            "_id" : NumberInt(0)
+        }
+    }
+], function(err,res){
+  callback(err,res);
+});
+}
+
+function computeTop10Keywords(callback){
+  Finders.aggregate([
+    { 
+        "$group" : { 
+            "_id" : { 
+                "keyword" : "$keyword"
+            }, 
+            "COUNT(*)" : { 
+                "$sum" : NumberInt(1)
+            }
+        }
+    }, 
+    { 
+        "$project" : { 
+            "keyword" : "$_id.keyword", 
+            "count" : "$COUNT(*)"
+}
+    }, 
+    { 
+        "$sort" : { 
+            "COUNT(*)" : NumberInt(-1)
+        }
+    }, 
+    { 
+        "$limit" : NumberInt(10)
+    }
+], function(err,res){
+  callback(err,res);
+});
 }
