@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
   DataWareHouse = mongoose.model('DataWareHouse'),
   Trips =  mongoose.model('Trips'),
   Applications = mongoose.model('Applications'),
-  Finders = mongoose.model('finders')
+  Finders = mongoose.model('Finders')
 
 exports.list_all_indicators = function(req, res) {
   console.log('Requesting indicators');
@@ -67,13 +67,14 @@ function createDataWareHouseJob(){
           console.log("Error computing datawarehouse: "+err);
         }
         else{
-          //console.log("Resultados obtenidos por las agregaciones: "+JSON.stringify(results));
+          console.log("Resultados obtenidos por las agregaciones: "+JSON.stringify(results));
           new_dataWareHouse.TripsPerManager = results[0];
           new_dataWareHouse.ApplicationsPerTrip = results[1];
           new_dataWareHouse.PriceTrip = results[2];
           new_dataWareHouse.ratioApplications = results[3];
           new_dataWareHouse.averagePriceRangeExplorers = results[4];
-          new_dataWareHouse.top10keywords = results[5];
+          new_dataWareHouse.Top10keywords = results[5];
+          new_dataWareHouse.rebuildPeriod = rebuildPeriod;
     
           new_dataWareHouse.save(function(err, datawarehouse) {
             if (err){
