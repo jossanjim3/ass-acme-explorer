@@ -140,7 +140,9 @@ exports.login_an_actor = async function(req, res) {
     var emailParam = req.query.email;
     var password = req.query.password;
     Actor.findOne({ email: emailParam }, function (err, actor) {
-        if (err) { res.send(err); }
+        if (err) { res.send(err); 
+        console.log("The actor does not exist")
+    }
   
         // No actor found with that email as username
         else if (!actor) {
@@ -152,6 +154,7 @@ exports.login_an_actor = async function(req, res) {
         else if (actor.validated == false) {
           res.status(403); //an access token is valid, but requires more privileges: to be validated
           res.json({message: 'forbidden',error: err});
+          console.log('The actor is not validated');
         }else{
           // Make sure the password is correct
           //console.log('En actor Controller pass: '+password);

@@ -34,8 +34,7 @@ module.exports = function(app) {
   app.route('/v2/actors/:actorId')
 
     //edit the personal data of the actor with authentication
-    .put(authController.verifyUser(["EXPLORER","MANAGER", "ADMINISTRATOR",
-    "SPONSORSHIP"]),actors.update_an_actor_authenticated)
+    .put(actors.update_an_actor_authenticated)
 
   app.route('/v2/actors/:actorId/validated')
 

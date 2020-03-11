@@ -5,17 +5,7 @@ Actor = mongoose.model('Actors');
 var admin = require('firebase-admin');
 
 exports.getUserId = async function(idToken) {
-    /*
-    console.log('Buscando al usuario con el id: '+id);
 
-    Actor.findById(id,'role',function(err,role){
-        if(err){
-            "error el usuario no existe en nuestra base de datos"
-        }else{
-            return role;
-        }
-
-    })*/
     console.log('idToken: '+idToken);
     var id = null;
   
@@ -49,7 +39,7 @@ exports.verifyUser = function(requiredRoles) {
     console.log('idToken: '+idToken);
 
     admin.auth().verifyIdToken(idToken).then(function(decodedToken) {
-        console.log('entra en el then de verifyIdToken: ');
+        //console.log('entra en el then de verifyIdToken: ');
 
         var uid = decodedToken.uid;
         var auth_time = decodedToken.auth_time;
