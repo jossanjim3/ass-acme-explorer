@@ -9,31 +9,7 @@ chai.use(chaiHttp);
 
 describe("API Testing actors", () => {
 
-  it("Get Actor 1: request of an actor and  he/she exists", done => {
-    var actorTest=new Actor({"id":"5e64e0cfe3de7324f8d46c97","role":"EXPLORER","validated":false,"name":"Miguel","surname":"Agudo","email":"esteMiguel@fakemail11.com","password":"abcdefghj","phone":"+34612345679","address":"myAddress"});
-    chai
-      .request(app)
-      .get("/v1/actors/:"+actorTest.id).send(actorTest)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect('Content-Type', /json/);
-        if (err) done(err);
-        else done();
-      });
-  });
-
-  it("Get Actor 2: request of an actor but he/she does not exist", done => {
-    chai
-      .request(app)
-      .get("/v1/actors/:actorId")
-      .send({"actorId":"5e64e0cfe3de7324f8d46c97"})
-      .end((err, res) => {
-        expect(res).to.have.status(404);
-        done();
-      });
-  });
-
-
+ 
   it("Post Actor 1: request the post of an actor as an explorer", done => {
     chai
       .request(app)
@@ -42,8 +18,6 @@ describe("API Testing actors", () => {
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect('Content-Type', /json/);
-        //expect(res.body.status).to.equals("success");
-        //expect(res.body.result).to.equals(10);
         if (err) done(err);
         else done();
       });
@@ -60,10 +34,62 @@ describe("API Testing actors", () => {
       });
   });
   
-  it("Put Actor 1: request the modification of an actor", done => {
+  var id=Actor.find({"name":"Miguel"},'_id',function (err, actor) {});
+  //console.log(id);
+
+  it("Get Actor 1: request of an actor and he/she exists", done => {
+   // var actorTest=new Actor({"id":"5e64e0cfe3de7324f8d46c97","role":"EXPLORER","validated":false,"name":"Miguel","surname":"Agudo","email":"esteMiguel@fakemail11.com","password":"abcdefghj","phone":"+34612345679","address":"myAddress"});
     chai
       .request(app)
-      .put("/v1/actors/5e64e0cfe3de7324f8d46c97")
+      .get("/v1/actors/"+id)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect('Content-Type', /json/);
+        if (err) done(err);
+        else done();
+      });
+  });
+
+  it("Get Actor 2: request of an actor but he/she does not exist", done => {
+    chai
+      .request(app)
+      .get("/v1/actors/"+"erth976645")
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        done();
+      });
+  });
+
+  it("Validate Actor 1: request the validation of an actor", done => {
+    chai
+      .request(app)
+      .put("/v1/actors/"+id+"/validated")
+      .send({"validated":true})
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect('Content-Type', /json/);
+        if (err) done(err);
+        else done();
+      });
+    })
+
+    it("Validate Actor 2: request the validation of an actor but there are no fields in the body", done => {
+      chai
+        .request(app)
+        .put("/v1/actors/"+id+"/validated")
+        .send({})
+        .end((err, res) => {
+          expect(res).to.have.status(500);
+          if (err) done(err);
+          else done();
+        });
+      })
+
+  
+    it("Put Actor 1: request the modification of an actor", done => {
+    chai
+      .request(app)
+      .put("/v1/actors/"+id)
       .send({"name":"Fede"})
       .end((err, res) => {
         expect(res).to.have.status(200);
@@ -73,17 +99,18 @@ describe("API Testing actors", () => {
       });
     })
 
-    it("Put Actor 2: request the modification of an actor,who is not the user", done => {
-        chai
-          .request(app)
-          .put("/v1/actors/:5e64e0cfe3de7324f8d46c97")
-          .send({"name":"Carlos"})
-          .end((err, res) => {
-            expect(res).to.have.status(403);
-            done();
-          });
-      
-      });
 
+    it("Delete Actor 1: request the deletion of actor", done =>{
+        chai
+        .request(app)
+        .delete("/v1/actors/"+id)
+        .end((err, res) => {
+          expect(res).to.have.status(204);
+          if (err) done (err);
+          else done();
+        });
+    
+    });
+      
 
 });

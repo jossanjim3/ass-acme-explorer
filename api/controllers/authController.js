@@ -65,7 +65,6 @@ exports.verifyUser = function(requiredRoles) {
               for (var i = 0; i < requiredRoles.length; i++) {
                 for (var j = 0; j < actor.role.length; j++) {
                    if (requiredRoles[i] == actor.role[j]) {
-                    ///if (requiredRoles[i] == "EXPLORER") {
                       if (actor.validated == true){ //the actor is validated
                         isAuth = true;
                       }else{ //an access token is valid, but the user is not validated;

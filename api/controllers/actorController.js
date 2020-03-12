@@ -63,6 +63,7 @@ exports.update_an_actor = function(req,res){
     var actor_body=req.body;
     var promise_hash = new Promise((resolve,reject)=>{
         if(actor_body.password!=undefined){
+            console.log("entra el put con contraseña")
             bcrypt.genSalt(5, function(err, salt) {
                 if (err) reject(err);
             
@@ -78,7 +79,7 @@ exports.update_an_actor = function(req,res){
     })
     
     promise_hash.then((actor_body)=>{
-
+        console.log("entra el put sin contraseña")
         Actor.findOneAndUpdate({_id: req.params.actorId}, actor_body, {new: true}, function(err, actor) {
             if (err){
               if(err.name=='ValidationError') {
@@ -102,7 +103,7 @@ exports.update_an_actor = function(req,res){
 
 exports.modify_actor_validation = function(req, res) {
     
-    if (req.body.validated.includes("true")){
+    if (req.body.validated==true){
         console.log("Validating an actor with id: "+req.params.actorId)
     }else{
         console.log("Invalidating an actor with id: "+req.params.actorId)
@@ -248,6 +249,7 @@ exports.update_an_actor_authenticated = function(req,res){
                     var actor_body=req.body;
                     var promise_hash = new Promise((resolve,reject)=>{
                         if(actor_body.password!=undefined){
+                            console.log("entra en put con contraseña");
                             bcrypt.genSalt(5, function(err, salt) {
                                 if (err) reject(err);
                             
@@ -255,7 +257,7 @@ exports.update_an_actor_authenticated = function(req,res){
                                 if (err) reject(err);
                                 actor_body.password = hash;
                                 resolve(actor_body)
-                                res.status(200);
+                                //res.status(200);
                                 res.json(actor);
                                 });
                             });
@@ -265,7 +267,7 @@ exports.update_an_actor_authenticated = function(req,res){
                     })
                     
                     promise_hash.then((actor_body)=>{
-
+                        console.log("entra en put sin contraseña");
                         Actor.findOneAndUpdate({_id: req.params.actorId}, actor_body, {new: true}, function(err, actor) {
                             if (err){
                             if(err.name=='ValidationError') {
