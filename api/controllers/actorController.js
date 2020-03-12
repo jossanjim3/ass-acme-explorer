@@ -206,8 +206,8 @@ exports.create_an_actor_authenticated = function(req,res){
                                                     res.status(500).send(err);
                                             }
                                             else{
-                                                    res.json(actor);
-                                                    res.status(200);
+                                                    res.status(200).json(actor);
+                                                    
                                             }
                     });
                                             
@@ -248,7 +248,7 @@ exports.update_an_actor_authenticated = function(req,res){
 
                     var actor_body=req.body;
                     var promise_hash = new Promise((resolve,reject)=>{
-                        if(actor_body.password!=undefined){
+                        if(actor_body.password!=undefined && actor_body.password!=''){
                             console.log("entra en put con contraseña");
                             bcrypt.genSalt(5, function(err, salt) {
                                 if (err) reject(err);
@@ -266,30 +266,33 @@ exports.update_an_actor_authenticated = function(req,res){
                         }
                     })
                     
-                    promise_hash.then((actor_body)=>{
-                        console.log("entra en put sin contraseña");
-                        Actor.findOneAndUpdate({_id: req.params.actorId}, actor_body, {new: true}, function(err, actor) {
-                            if (err){
-                            if(err.name=='ValidationError') {
-                                res.status(422).send(err);
-                            }
-                            else{
-                    
-                                res.status(500).send(err);
-                            }
-                            
-                            }
-                            else{
-                                res.json(actor);
-                                res.status(200);
-                            }
-                        });
+                    promise_hash.then((actor_body,err)=>{
+                        if(err){
+                            res.status(500).send(err);
+                        } else {
+                            console.log("entra el put sin contraseña")
+                            Actor.findOneAndUpdate({_id: req.params.actorId}, actor_body, {new: true}, function(err, actor) {
+                                if (err){
+                                if(err.name=='ValidationError') {
+                                    res.status(422).send(err);
+                                }
+                                else{
+                        
+                                    res.status(500).send(err);
+                                }
+                                
+                                }
+                                else{
+                                    res.status(200).send(actor);
+                                }
+                            });
+                        }
+                        
                     }).catch(function(err){
                         res.status(err).send(err);
-                    })  
+                    })
             } else{
-              res.status(403); //Auth error
-              res.send('The Actor is trying to update an Actor that is not himself!');
+              res.status(403).send('The Actor is trying to update an Actor that is not himself!');
             }    
         }
     });
