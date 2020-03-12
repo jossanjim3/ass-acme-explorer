@@ -1,13 +1,18 @@
-require('dotenv').config()
+require('dotenv').config();
+
 var express = require('express'),
  app = express(),
  port = process.env.PORT || 8080,
  mongoose = require('mongoose'),
  Actor = require('./api/models/actorModel'),
  Application = require('./api/models/applicationModel'),
- Trip = require('./api/models/tripModel')
-
+ Trip = require('./api/models/tripModel'),
+ DataWareHouse = require('./api/models/dataWareHouseModel'),
+ Finder = require('./api/models/finderModel'),
+ admin=require('firebase-admin'),
+ serviceAccount=require('./acme-viaje-el-corte-andaluh-firebase-adminsdk-matgx-6762472378.json'),
  bodyParser = require('body-parser');
+ 
 
 mongoose.set('useFindAndModify', false);
 
@@ -34,26 +39,36 @@ mongoose.connect(mongoDBURI, {
  family: 4, // skip trying IPv6
  useNewUrlParser: true,
  useFindAndModify: true,
- useUnifiedTopology: true
+ useUnifiedTopology: true 
 });
  
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
- 
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://acme-viaje-el-corte-andaluh.firebaseio.com"
+
+
+});
+
 var routesActors = require('./api/routes/actorRoutes');
 var routesTrips = require('./api/routes/tripRoutes');
 var routesApplications = require('./api/routes/applicationRoutes');
 var routesSponsorships = require('./api/routes/sponsorshipRoutes');
+var loginRoutes=require('./api/routes/loginRoutes')
 var routesFinders = require('./api/routes/finderRoutes');
 var routesStorage = require('./api/routes/storageRoutes');
-
+var routesDataWareHouse = require('./api/routes/dataWareHouseRoutes');
 
 routesActors(app);
 routesApplications(app);
 routesTrips(app);
 routesSponsorships(app);
+loginRoutes(app);
 routesFinders(app);
 routesStorage(app);
+routesDataWareHouse(app);
 
 
 console.log("Connecting DB to: " + mongoDBURI);
@@ -66,3 +81,5 @@ mongoose.connection.on("open", function (err, conn) {
 mongoose.connection.on("error", function (err, conn) {
  console.error("DB init error " + err);
 });
+
+module.exports = app;
