@@ -8,9 +8,7 @@ var fetch = require('node-fetch');
 const authController = require('./authController');
 
 var maxNumberTrips = 10;
-var maxTimeAResultIsStored = 3600;
-
-const validateExplorer = authController.verifyUser(['EXPLORER']);
+var maxTimeAResultIsStored = 1;
 
 
 function extractUrl(body){
@@ -71,46 +69,110 @@ exports.remove_finder = function(req, res){
 }
 
 exports.finder_of_actor = function(req, res){
-    Finder.FinderModel.find({actor: req.params.explorer}, function(err, finder){
+    Finder.FinderModel.findOne({explorer: req.params.actorId}, function(err, finder){
         if(err){
             res.status(500).send(err);
         }
         else{
-            res.status(200).json(finder);
+            if(timestampUnderLimit(finder)) {
+                res.status(200).json(finder);
+            }
+            else{
+                console.log("No se encuentra resultado");
+                res.status(200).json({message: "Not a valid finder found."})
+            }
         }
     });
 }
 
-exports.update_finder = function(req, res) {
-    var urlForFinder = extractUrl(req.body);
-    console.log(urlForFinder);
-    fetch(urlForFinder,{
-        method: 'GET',
-    }).then(response => {
-        return response.json();
-    }).then(trips =>{
-        var trips_results_finder = trips.slice(0, maxNumberTrips)
-            .map((trip)=>transformToFinderTripSchema(trip));
 
-        var newFinder = new Finder.FinderModel(req.body);
-        newFinder.explorer = req.params.actorId;
-        newFinder.results = trips_results_finder;
-        Finder.FinderModel.deleteOne({explorer: req.params.actorId}, function(err, finder){
-            if(err){
-                res.status(500).send(err);
+const attrToCheck = ["keyword", "startDate", "endDate", "minPrice", "maxPrice"];
+
+var timestampUnderLimit = function(finder){
+    var currentTime = new Date();
+    var timeToCompare = new Date(finder.timestamp);
+    
+    timeToCompare = timeToCompare.setHours(timeToCompare.getHours() + maxTimeAResultIsStored);
+    console.log("Comparacion: " + timeToCompare + " y " + currentTime.getTime());
+
+    return timeToCompare > currentTime.getTime();
+}
+
+var checkEquality = function(finder, body){
+    return function(attr){
+        if(body[attr] === undefined && finder[attr] === null){
+            return true
+            
+        }
+        else{
+            if(attr === "startDate" || attr === "endDate"){
+                console.log("Comparacion fechas: " + new Date(finder[attr]) + " y " + new Date(body[attr]));
+                return ((new Date(finder[attr])).getTime() === (new Date(body[attr])).getTime());
             }
             else{
-                newFinder.save(function(err, finder){
+                console.log("Comparacion atributos: " + finder[attr] + " y " + body[attr]);
+                return finder[attr] === body[attr];
+            }
+        }
+    }
+}
+
+exports.update_finder = function(req, res) {
+    var url = "http://localhost:" + (process.env.PORT || 8080) + "/v1/finders/explorers/" + req.params.actorId;
+    fetch(url,{
+        method: 'GET',
+    }).then(response => {
+        console.log("Primer then");
+        if(response.json.hasOwnProperty('message')){
+            console.log("Json es nulo");
+            return null;
+        }
+        else{
+            console.log("Devuelvo json");
+            return response.json();
+        }     
+    }).then(finder => {
+        var equalityBetweenFinderAndBody = checkEquality(finder, req.body);
+        console.log("Tercera comparacion: " + attrToCheck.every(equalityBetweenFinderAndBody))
+        if(finder !== null &&
+            timestampUnderLimit(finder) && 
+            attrToCheck.every(equalityBetweenFinderAndBody)){
+
+            console.log("Finder: " + finder);
+            console.log("Llego a devolver el anterior");
+            res.status(200).json(finder);
+        }
+        else{
+            var urlForFinder = extractUrl(req.body);
+            fetch(urlForFinder,{
+                method: 'GET',
+            }).then(response => {
+                return response.json();
+            }).then(trips =>{
+                var trips_results_finder = trips.slice(0, maxNumberTrips)
+                    .map((trip)=>transformToFinderTripSchema(trip));
+
+                var newFinder = new Finder.FinderModel(req.body);
+                newFinder.explorer = req.params.actorId;
+                newFinder.results = trips_results_finder;
+                Finder.FinderModel.deleteOne({explorer: req.params.actorId}, function(err, finder){
                     if(err){
                         res.status(500).send(err);
                     }
                     else{
-                        res.status(201).send(finder);
+                        newFinder.save(function(err, finder){
+                            if(err){
+                                res.status(500).send(err);
+                            }
+                            else{
+                                res.status(201).send(finder);
+                            }
+                        });
                     }
                 });
-            }
-        });
-    }); 
+            });
+        }
+    });
 }
 
 exports.set_max_results = function(req, res){
@@ -132,12 +194,12 @@ exports.set_max_results = function(req, res){
 
 exports.set_time_results_saved = function(req, res){
     var promise = new Promise(function(resolve, reject){
-        if(req.params.time > 0 && req.params.time < 24) {
-            maxTimeAResultIsStored = req.params.time * 3600;
+        if(req.params.time > 0 && req.params.time <= 24) {
+            maxTimeAResultIsStored = req.params.time;
             resolve({message: "Operacion successful. Max time the search is stored updated."});
         }
         else
-            reject({message: "Operation not allowed. The number of hours must be between 1 and 24."});
+            reject({message: "Operation not allowed. The number of hours must be between 1 and 24, latter included."});
     });
     promise.then((message)=>{
         res.status(200).send(message);
