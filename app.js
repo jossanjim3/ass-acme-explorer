@@ -1,4 +1,5 @@
-require('dotenv').config()
+require('dotenv').config();
+
 var express = require('express'),
  app = express(),
  port = process.env.PORT || 8080,
@@ -80,3 +81,5 @@ mongoose.connection.on("open", function (err, conn) {
 mongoose.connection.on("error", function (err, conn) {
  console.error("DB init error " + err);
 });
+
+module.exports = app;
