@@ -9,7 +9,6 @@ chai.use(chaiHttp);
 
 describe("API Testing actors", () => {
 
- 
   it("Post Actor 1: request the post of an actor as an explorer", done => {
     chai
       .request(app)
@@ -23,6 +22,7 @@ describe("API Testing actors", () => {
       });
   });
 
+
   it("Post Actor 2: request the post of an actor as an administrator but it is not possible", done => {
     chai
       .request(app)
@@ -34,8 +34,9 @@ describe("API Testing actors", () => {
       });
   });
   
-  var id=Actor.find({"name":"Miguel"},'_id',function (err, actor) {});
-  //console.log(id);
+  var id=Actor.find({"name":"Miguel"},function (err, actor) {return actor.actorId;});
+  //var id="5e6a81e5b931292ad0f5a5b6";
+  console.log(id);
 
   it("Get Actor 1: request of an actor and he/she exists", done => {
    // var actorTest=new Actor({"id":"5e64e0cfe3de7324f8d46c97","role":"EXPLORER","validated":false,"name":"Miguel","surname":"Agudo","email":"esteMiguel@fakemail11.com","password":"abcdefghj","phone":"+34612345679","address":"myAddress"});

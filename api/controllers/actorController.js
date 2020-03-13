@@ -92,7 +92,7 @@ exports.update_an_actor = function(req,res){
               
             }
             else{
-                res.json(actor);
+                res.status(200).json(actor);
             }
           });
     }).catch(function(err){
@@ -142,7 +142,6 @@ exports.login_an_actor = async function(req, res) {
     var password = req.query.password;
     Actor.findOne({ email: emailParam }, function (err, actor) {
         if (err) { res.send(err); 
-        console.log("The actor does not exist")
     }
   
         // No actor found with that email as username
@@ -190,14 +189,14 @@ exports.create_an_actor_authenticated = function(req,res){
 
     //checks that the user can register as explorer, manager (only an admin can create it) or sponsor
     if(new_actor.role.includes('ADMINISTRATOR')){
-        res.status(422).send("No se puede crear un administrador")
+        res.status(422).send("It is not possible to create an administrator")
     }else if (new_actor.role.includes('MANAGER')){
 
         id=authController.getUserId(req.body.id);
 
-        Actor.findById(id, function(err,actor){
+        Actor.findById(id, function(err,actor2){
 
-            if(actor.role.includes('ADMINISTRATOR')){
+            if(actor2.role.includes('ADMINISTRATOR')){
         
                     new_actor.save(function(err, actor) {
 
@@ -214,7 +213,7 @@ exports.create_an_actor_authenticated = function(req,res){
                                             
                 }else{
 
-                    res.status(403).send("El usuario no está autorizado");
+                    res.status(403).send("The user is not authorized");
 
                 }
                 });
@@ -283,7 +282,9 @@ exports.update_an_actor_authenticated = function(req,res){
                                 
                                 }
                                 else{
-                                    res.status(200).send(actor);
+                                    res.send(actor);
+                                    res.status(200);
+                                   
                                 }
                             });
                         }
