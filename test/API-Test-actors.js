@@ -34,8 +34,7 @@ describe("API Testing actors", () => {
       });
   });
   
-  var id=Actor.find({"name":"Miguel"},function (err, actor) {return actor.actorId;});
-  //var id="5e6a81e5b931292ad0f5a5b6";
+  var id=Actor.find({"name":"Miguel"},function (err, actor) { id=actor.actorId;});
   console.log(id);
 
   it("Get Actor 1: request of an actor and he/she exists", done => {

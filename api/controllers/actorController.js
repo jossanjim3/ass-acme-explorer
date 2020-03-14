@@ -63,7 +63,6 @@ exports.update_an_actor = function(req,res){
     var actor_body=req.body;
     var promise_hash = new Promise((resolve,reject)=>{
         if(actor_body.password!=undefined){
-            console.log("entra el put con contraseña")
             bcrypt.genSalt(5, function(err, salt) {
                 if (err) reject(err);
             
@@ -79,7 +78,6 @@ exports.update_an_actor = function(req,res){
     })
     
     promise_hash.then((actor_body)=>{
-        console.log("entra el put sin contraseña")
         Actor.findOneAndUpdate({_id: req.params.actorId}, actor_body, {new: true}, function(err, actor) {
             if (err){
               if(err.name=='ValidationError') {
