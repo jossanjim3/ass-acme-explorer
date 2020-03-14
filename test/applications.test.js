@@ -21,11 +21,11 @@ describe("API Testing for Applications", () => {
   });
 
 
-  /* it("Post Applications", done => {
+   it("Post Applications", done => {
     chai
       .request(app)
       .post("/v1/applications")
-      .send({"explorer":"5e4bb6ab6da69a2bdcd19e02","trip":"5e5169c48e31de26b8d1693b"})
+      .send({"explorer":"5e6cf4ef101524246076c60e","trip":"5e53fc4a751d483198be12cf"})
       .end((err, res) => {
         expect(res).to.have.status(200);
         //expect(res.body.status).to.equals("success");
@@ -33,7 +33,7 @@ describe("API Testing for Applications", () => {
         if (err) done(err);
         else done();
       });
-  });  */
+  });  
 
 });
 
