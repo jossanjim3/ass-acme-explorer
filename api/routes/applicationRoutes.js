@@ -2,6 +2,7 @@
 
 module.exports = function (app){
     var applications = require('../controllers/applicationController');
+    var authController = require('../controllers/authController');
 
     app.route('/v1/applications')
         // list all the applications
@@ -16,6 +17,10 @@ module.exports = function (app){
         .put(applications.update_an_application)
         // delete an application. Currently an application cannot be deleted!
         .delete(applications.delete_an_application);  
+
+    app.route('/v2/applications/:applicationId')
+        // update an application status
+        .put(authController.verifyUser(["EXPLORER","MANAGER"]), applications.update_an_application_authorized)
 
     app.route('/v1/applications/:applicationId/cancel')
         // update an application status to rejected by manager or cancelled by explorer

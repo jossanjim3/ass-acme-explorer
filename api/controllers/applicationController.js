@@ -3,6 +3,8 @@
 var mongoose = require('mongoose'),
     Application = mongoose.model('Applications');
 
+var authController = require('../controllers/authController');
+
 var Actor = mongoose.model('Actors');
 var Trip = mongoose.model('Trips');
 
@@ -35,7 +37,7 @@ exports.create_an_application = function(req,res){
             res.json("Application cannot be created. Actor does not exist!");
         } else {
             explorer = actor;
-            //console.log(explorer);
+            console.log(explorer.role);
             
             // Check if the actor is an Explorer  
             if (explorer.role.includes("EXPLORER")) {
@@ -103,6 +105,86 @@ exports.read_an_application = function(req,res){
             res.json(application);
         }
     })
+};
+
+
+
+exports.update_an_application_authorized = function(req,res){
+
+    //console.log(req.params.applicationId);
+    // TODO: check if the user logged has role Explorer or Manager
+    Application.findById({_id : req.params.applicationId}, function(err, appli) {
+        if (err){
+            if(err.name=='ValidationError') {
+                res.status(422).send(err);
+            }
+            else{
+                res.status(403); 
+                res.send("Application cannot be updated. Application does not exist!");
+            }
+
+        } else {
+
+            // TODO 403 forbiden
+            var idToken = req.headers['idtoken'];
+            var userId = authController.getUserId(idToken);
+
+            if (appli.explorer === userId){
+
+            }else {
+
+            }
+
+            var statusApp = appli.status;
+            // if the application status is Pending -> DUE 
+            // if the application status is Due -> Accepted
+            // en el frontend se controla si es la vista de manager o de explorer
+            
+            if (statusApp == "PENDING") { // TODO check if the user logged has role manager
+                appli.status = "DUE";
+
+                // save the new status
+                appli.save(function(err, appli) {
+                    if (err){
+                        if(err.name=='ValidationError') {
+                            res.status(422).send(err);
+                        }
+                        else{
+                            res.status(500).send(err);
+                        }
+                    }
+                    else{
+                        res.status(201);
+                        res.json(appli);
+                    }
+                });  
+                
+            } else if (statusApp == "DUE"){ // TODO check if the user logged has role explorer
+                appli.status = "ACCEPTED";
+
+                // save the new status
+                appli.save(function(err, appli) {
+                    if (err){
+                        if(err.name=='ValidationError') {
+                            res.status(422).send(err);
+                        }
+                        else{
+                            res.status(500).send(err);
+                        }
+                    }
+                    else{
+                        res.status(201);
+                        res.json(appli);
+                    }
+                });  
+                
+            } else {
+                res.status(403);
+                res.json("It is not possible to update the application status!");
+                
+            } 
+        }
+    });
 };
 
 // update an application status
