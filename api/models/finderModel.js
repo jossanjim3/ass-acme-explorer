@@ -55,11 +55,11 @@ var finderSchema = new Schema({
         type: String,
         default: null
     },
-    startDate: {
+    minDate: {
         type: Date,
         default: null
     },
-    endDate: {
+    maxDate: {
         type: Date,
         default: null
     },

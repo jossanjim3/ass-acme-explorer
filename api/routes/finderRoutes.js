@@ -14,20 +14,7 @@ module.exports = function(app){
      * @url /v1/finders
      */
     app.route('/v1/finders')
-        .get(applications.all_finders);
-    
-    /**
-     * Get a finder by _id.
-     *     Required role: Explorer.
-     * 
-     * Delete a finder by _id.
-     * 
-     * @section finders
-     * @type get, delete.
-     * @url /v1/finders/:finderId
-     */
-    app.route('/v1/finders/:finderId')
-        .delete(applications.remove_finder);
+        .get(applications.all_finders);  
     
     /**
      * Get the actor's finder.
@@ -42,7 +29,8 @@ module.exports = function(app){
      */
     app.route('/v1/finders/explorers/:actorId')
         .get(applications.finder_of_actor)
-        .put(applications.update_finder);
+        .put(applications.update_finder)
+        .delete(applications.remove_finder);
     
     app.route('/v1/finders/maxNumResults/:number')
         .put(applications.set_max_results);
