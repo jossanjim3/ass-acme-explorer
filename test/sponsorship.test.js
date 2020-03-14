@@ -4,7 +4,7 @@ const expect = require("chai").expect;
 const chaiHttp = require("chai-http");
 
 const route = "/v1/sponsorships"
-const idSponsor = "5e4d890645dd27745b5f6e81";
+const idSponsor = "";
 const sponsorship = ""
 
 chai.use(chaiHttp);
@@ -34,10 +34,6 @@ describe("Tests on Sponsorships", () => {
             chai
             .request(app)
             .put(route + explorers + "/" + idSponsor)
-            .send({
-                keyword: "Hawai",
-                startDate: "2021"
-            })
             .end((err, res) => {
                 expect(res).to.have.any.status(200, 201);
                 done();
@@ -46,7 +42,14 @@ describe("Tests on Sponsorships", () => {
     });
     describe("PUT", done => {
         it("Update sponsorship", done =>{
-            
+            chai
+            .request(app)
+            .put(route + explorers + "/" + idSponsor)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                //expect(res).to.have({message: "Finder eliminado."});
+                done();
+            });
         });
     });
     describe("DELETE", () => {

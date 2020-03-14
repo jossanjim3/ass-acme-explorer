@@ -157,8 +157,6 @@ exports.update_finder = function(req, res) {
             }).then(response => {
                 return response.json();
             }).then(trips =>{
-                console.log(trips.hasOwnProperty("name"));
-                console.log(trips);
                 if(trips.hasOwnProperty("name")){
                     res.status(400).send(trips);
                 }
@@ -192,7 +190,7 @@ exports.update_finder = function(req, res) {
 
 exports.set_max_results = function(req, res){
     var promise = new Promise(function(resolve, reject){
-        if(req.params.number > 0 && req.params.number < 100) {
+        if(req.params.number > 0 && req.params.number < 101) {
             maxNumberTrips = req.params.number;
             resolve({message: "Operacion successful. Max number of results available per search updated."});
         }
@@ -204,7 +202,7 @@ exports.set_max_results = function(req, res){
         res.status(200).send(message);
     })
     .catch((err) => {
-        res.status(500).send(err);
+        res.status(403).send(err);
     });
 }
 
@@ -222,7 +220,7 @@ exports.set_time_results_saved = function(req, res){
         res.status(200).send(message);
     })
     .catch((err) => {
-        res.status(500).send(err);
+        res.status(403).send(err);
     });
 }
 
