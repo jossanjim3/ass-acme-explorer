@@ -352,6 +352,7 @@ exports.list_all_my_applications = function(req, res) {
         res.status(500).send(err);
       }
       else{
+        res.status(200);
         res.json(appis);
       }
     });
@@ -370,6 +371,7 @@ exports.list_all_trip_applications = function(req, res) {
         res.status(500).send(err);
       }
       else{
+        res.status(200);
         res.json(appis);
       }
     });
