@@ -5,17 +5,7 @@ Actor = mongoose.model('Actors');
 var admin = require('firebase-admin');
 
 exports.getUserId = async function(idToken) {
-    /*
-    console.log('Buscando al usuario con el id: '+id);
 
-    Actor.findById(id,'role',function(err,role){
-        if(err){
-            "error el usuario no existe en nuestra base de datos"
-        }else{
-            return role;
-        }
-
-    })*/
     console.log('idToken: '+idToken);
     var id = null;
   
@@ -49,7 +39,7 @@ exports.verifyUser = function(requiredRoles) {
     console.log('idToken: '+idToken);
 
     admin.auth().verifyIdToken(idToken).then(function(decodedToken) {
-        console.log('entra en el then de verifyIdToken: ');
+        //console.log('entra en el then de verifyIdToken: ');
 
         var uid = decodedToken.uid;
         var auth_time = decodedToken.auth_time;
@@ -75,10 +65,12 @@ exports.verifyUser = function(requiredRoles) {
               for (var i = 0; i < requiredRoles.length; i++) {
                 for (var j = 0; j < actor.role.length; j++) {
                    if (requiredRoles[i] == actor.role[j]) {
-                    ///if (requiredRoles[i] == "EXPLORER") {
-                      if (actor.validated == true) isAuth = true;
-                    //} 
-                    //else isAuth = true;
+                      if (actor.validated == true){ //the actor is validated
+                        isAuth = true;
+                      }else{ //an access token is valid, but the user is not validated;
+                        res.status(403);
+                        res.json({message: 'The actor is not validated',error: err});
+                      }; 
                    }
                 }
               }
