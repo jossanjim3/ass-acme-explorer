@@ -230,6 +230,7 @@ exports.create_an_actor_authenticated = function(req,res){
     }
 };
 
+
 exports.update_an_actor_authenticated = function(req,res){
     //Check that the user is the proper actor and if not: res.status(403); "an access token is valid, but requires more privileges"
     Actor.findById(req.params.actorId, async function(err, actor) {
@@ -241,12 +242,11 @@ exports.update_an_actor_authenticated = function(req,res){
           var idToken = req.headers['idtoken'];//WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
           var authenticatedUserId = await authController.getUserId(idToken);
 
-            if (authenticatedUserId == req.params.actorId){//if the actor is trying to modify himself:
+            if (authenticatedUserId == actor.actorId){//if the actor is trying to modify himself:
 
                     var actor_body=req.body;
                     var promise_hash = new Promise((resolve,reject)=>{
                         if(actor_body.password!==undefined && actor_body.password!==''){
-                            console.log("entra en put con contraseña");
                             bcrypt.genSalt(5, function(err, salt) {
                                 if (err) reject(err);
                             
@@ -257,7 +257,6 @@ exports.update_an_actor_authenticated = function(req,res){
                                 });
                             });
                         }else{
-                            console.log("entra el put sin contraseña");
                             delete actor_body.password;
                             resolve(actor_body)
                         }
