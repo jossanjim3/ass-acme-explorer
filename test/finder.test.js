@@ -19,7 +19,7 @@ describe("Tests on finder", () => {
                 done();
             });
         });
-        it("Get finder by sponsorID, unexistent", done => {
+        it("Get finder by explorerID, unexistent", done => {
             chai
             .request(app)
             .get(route + "/explorers" + "/5e4d890645dd27745b5f6aaa")
@@ -36,7 +36,7 @@ describe("Tests on finder", () => {
             .put(route + explorers + "/" + idExplorer)
             .send({
                 keyword: "Hawai",
-                startDate: "2021"
+                minDate: "2021"
             })
             .end((err, res) => {
                 expect(res).to.have.status(201);
@@ -49,7 +49,7 @@ describe("Tests on finder", () => {
             .put(route + explorers + "/" + idExplorer)
             .send({
                 keyword: "Hawai",
-                startDate: "2021"
+                minDate: "2021"
             })
             .end((err, res) => {
                 expect(res).to.have.status(200);
@@ -62,15 +62,50 @@ describe("Tests on finder", () => {
             .put(route + explorers + "/" + idExplorer)
             .send({
                 keyword: "Hawai",
-                startDate: "2022"
+                minDate: "2022"
             })
             .end((err, res) => {
                 expect(res).to.have.status(201);
                 done();
             });
         });
+        it("Updates finder, no parameters, should work", done => {
+            chai
+            .request(app)
+            .put(route + explorers + "/" + idExplorer)
+            .send({})
+            .end((err, res) => {
+                expect(res).to.have.status(201);
+                done();
+            });
+        })
         it("Invalid combination of dates introduced, expect error", done => {
-            
+            chai
+            .request(app)
+            .put(route + explorers + "/" + idExplorer)
+            .send({
+                keyword: "Hawai",
+                minDate: "2022",
+                maxDate: "2021"
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                done();
+            });
+        });
+        it("Invalid combination of prices introduced, expect error", done => {
+            chai
+            .request(app)
+            .put(route + explorers + "/" + idExplorer)
+            .send({
+                keyword: "Hawai",
+                minPrice: 1000,
+                maxPrice: 500
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                done();
+            });
         });
     });
     describe("DELETE", () => {

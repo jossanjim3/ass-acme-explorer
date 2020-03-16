@@ -18,7 +18,7 @@ var mongoDBUser = process.env.mongoDBUser || "myUser";
 var mongoDBPass = process.env.mongoDBPass || "myUserPassword";
 var mongoDBCredentials = (mongoDBUser && mongoDBPass) ? mongoDBUser + ":" + mongoDBPass + "@" : "";
 
-var mongoDBHostname = process.env.mongoDBHostname || "localhost";
+var mongoDBHostname = process.env.mongoDBHostname || "mongo";//"localhost";
 var mongoDBPort = process.env.mongoDBPort || "27017";
 var mongoDBName = process.env.mongoDBName || "ACME-Explorer";
 var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
