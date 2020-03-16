@@ -7,14 +7,16 @@ Actor = mongoose.model('Actors');
 const { expect } = chai;
 chai.use(chaiHttp);
 
-describe("API Testing actors", () => {
 
+describe("API Testing actors", () => {
+  let id='';
   it("Post Actor 1: request the post of an actor as an explorer", done => {
     chai
       .request(app)
       .post("/v1/actors")
       .send({"role":"EXPLORER","validated":false,"name":"Miguel","surname":"Agudo","email":"esteMiguel@fakemail11.com","password":"abcdefghj","phone":"+34612345679","address":"myAddress"})
       .end((err, res) => {
+        id=res.body.actorId;
         expect(res).to.have.status(200);
         expect('Content-Type', /json/);
         if (err) done(err);
@@ -34,11 +36,9 @@ describe("API Testing actors", () => {
       });
   });
   
-  var id=Actor.find({"name":"Miguel"},function (err, actor) { id=actor.actorId;});
-  console.log(id);
 
   it("Get Actor 1: request of an actor and he/she exists", done => {
-   // var actorTest=new Actor({"id":"5e64e0cfe3de7324f8d46c97","role":"EXPLORER","validated":false,"name":"Miguel","surname":"Agudo","email":"esteMiguel@fakemail11.com","password":"abcdefghj","phone":"+34612345679","address":"myAddress"});
+  
     chai
       .request(app)
       .get("/v1/actors/"+id)
