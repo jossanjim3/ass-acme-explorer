@@ -30,12 +30,12 @@ exports.read_an_actor=function(req,res){
     
     Actor.findById(req.params.actorId, function(err,actor){
 
-        if(err){
-            res.status(500).send(err);
-
-        }else if(actor === null){
-
+        if(actor === null){
             res.status(404).send("No existe ese actor");
+   
+        }else if(err){
+
+            res.status(500).send(err);
 
         }else{
             res.json(actor);
