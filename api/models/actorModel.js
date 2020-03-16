@@ -34,7 +34,6 @@ var ActorSchema = new Schema({
 
     phone:  {
         type: String,
-        required: 'Kindly enter the phone of the actor'
     },
     
     //all actors are not validated initially, only an admin can modify this property to validate or invalidate an actor:
