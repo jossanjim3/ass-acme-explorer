@@ -248,18 +248,13 @@ exports.remove_finder_auth = function(req, res){
         }
         else{
             console.log('actor: '+actor); 
-            if (actor.role.includes('EXPLORER')){
-                Finder.FinderModel.remove({_id: req.params.id}, function(err, finder){
-                    if(err){
-                        res.status(500).send(err);
-                    } else {
-                        res.json({message:"Finder removed"});
-                    }
-                });
-            }
-            else{
-                res.status(403).json({message: "The user is not an explorer."})
-            }
+            Finder.FinderModel.remove({_id: req.params.id}, function(err, finder){
+                if(err){
+                    res.status(500).send(err);
+                } else {
+                    res.json({message:"Finder removed"});
+                }
+            });
         }
     });
 }
@@ -273,25 +268,20 @@ exports.finder_of_actor_auth = function(req, res){
         }
         else{
             console.log('actor: '+actor); 
-            if (actor.role.includes('SPONSOR')){
-                Finder.FinderModel.findOne({explorer: req.params.actorId}, function(err, finder){
-                    if(err){
-                        res.status(500).send(err);
+            Finder.FinderModel.findOne({explorer: req.params.actorId}, function(err, finder){
+                if(err){
+                    res.status(500).send(err);
+                }
+                else{
+                    if(timestampUnderLimit(finder)) {
+                        res.status(200).json(finder);
                     }
                     else{
-                        if(timestampUnderLimit(finder)) {
-                            res.status(200).json(finder);
-                        }
-                        else{
-                            console.log("No se encuentra resultado");
-                            res.status(200).json([]);
-                        }
+                        console.log("No se encuentra resultado");
+                        res.status(200).json([]);
                     }
-                });
-            }
-            else{
-                res.status(403).json({message: "The user is not an explorer."})
-            }
+                }
+            });
         }
     });
 }
