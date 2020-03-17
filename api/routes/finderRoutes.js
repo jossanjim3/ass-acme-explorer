@@ -38,7 +38,7 @@ module.exports = function(app){
     app.route('/v1/finders/timeResultsSaved/:time')
         .put(applications.set_time_results_saved);
     
-    app.route('/v2/finders/explorers/:actorId')
+    app.route('/v2/finders/explorers')
         .get(authController.verifyUser(["EXPLORER"]), applications.finder_of_actor_auth)
         .put(authController.verifyUser(["EXPLORER"]), applications.update_finder_auth)
         .delete(authController.verifyUser(["EXPLORER"]), applications.remove_finder_auth);
