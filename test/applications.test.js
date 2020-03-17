@@ -126,10 +126,10 @@ describe("API Testing for Applications", () => {
   });
 
 
-  /*it("Update One Application", done => {
+  it("Update One Application from PENDING to DUE", done => {
     chai
       .request(app)
-      .put("/v1/applications/5e53fc6c751d483198be12d2")
+      .put("/v1/applications/" + appIdTmp)
       .end((err, res) => {
         expect(res).to.have.status(201);
         //expect(res.body.status).to.equals("success");
@@ -138,23 +138,25 @@ describe("API Testing for Applications", () => {
         else done();
       });
   }); 
-  
-  it("Delete One Application", done => {
+
+  it("Update One Application from DUE to ACCEPTED", done => {
     chai
       .request(app)
-      .delete("/v1/applications/5e53fc6c751d483198be12d2")
+      .put("/v1/applications/" + appIdTmp)
       .end((err, res) => {
-        expect(res).to.have.status(403);
-        expect('Content-Type', /json/);
+        expect(res).to.have.status(201);
+        //expect(res.body.status).to.equals("success");
+        //expect(res.body.result).to.equals(10);
         if (err) done(err);
         else done();
       });
   });
+  
 
-  it("Cancel One Application", done => {
+  it("Cancel One Application with status ACCEPTED", done => {
     chai
       .request(app)
-      .put("/v1/applications/5e53fc6c751d483198be12d2/cancel")
+      .put("/v1/applications/" + appIdTmp + "/cancel")
       .end((err, res) => {
         expect(res).to.have.status(201);
         //expect(res.body.status).to.equals("success");
@@ -167,7 +169,7 @@ describe("API Testing for Applications", () => {
   it("Get Applications that explorer have made", done => {
     chai
       .request(app)
-      .get("/v1/applications/users/5e4bb6ab6da69a2bdcd19e01")
+      .get("/v1/applications/users/" + explorerTest._id)
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect('Content-Type', /json/);
@@ -179,15 +181,27 @@ describe("API Testing for Applications", () => {
   it("Get Applications from a Trip", done => {
     chai
       .request(app)
-      .get("/v1/applications/trips/5e53fc4a751d483198be12cf")
+      .get("/v1/applications/trips/" + tripTest._id)
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect('Content-Type', /json/);
         if (err) done(err);
         else done();
       });
-  }); */  
-
+  }); 
+  
+  it("Delete One Application", done => {
+    chai
+      .request(app)
+      .delete("/v1/applications/" + appIdTmp)
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect('Content-Type', /json/);
+        if (err) done(err);
+        else done();
+      });
+  });
+  
 
   // este bloque se ejecuta despues de todo
   after( (done) => {
