@@ -4,6 +4,8 @@ var express = require('express'),
  app = express(),
  port = process.env.PORT || 8080,
  mongoose = require('mongoose'),
+ https= require('https'),
+ fs=require('fs'),
  Actor = require('./api/models/actorModel'),
  Application = require('./api/models/applicationModel'),
  Trip = require('./api/models/tripModel'),
@@ -12,6 +14,7 @@ var express = require('express'),
  admin=require('firebase-admin'),
  serviceAccount=require('./acme-viaje-el-corte-andaluh-firebase-adminsdk-matgx-6762472378.json'),
  bodyParser = require('body-parser');
+ 
  
 mongoose.set('useFindAndModify', false);
 
@@ -27,7 +30,7 @@ var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mong
 mongoose.set('useCreateIndex', true)
 
 var mongoDBURI = "mongodb://" + mongoDBCredentials + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
-//http://localhost:8080/v1/dbURL=mongodb://carlos:carlos@localhost:27017/ACME-Explorer
+//http://localhost:8080/v1/dbURL=mongodb://myUser:myUserPasswrod@localhost:27017/ACME-Explorer
 //mongodb://localhost:27017/ACME-Explorer
 mongoose.connect(mongoDBURI, {
  //reconnectTries: 10,
@@ -48,7 +51,7 @@ app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header(
         "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept, idToken" //ojo, que si metemos un parametro propio por la cabecera hay que declararlo aquí para que no de el error CORS
+        "Origin, X-Requested-With, Content-Type, Accept, idToken" 
     );
     //res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
@@ -81,11 +84,26 @@ routesDataWareHouse(app);
 
 
 console.log("Connecting DB to: " + mongoDBURI);
+
+
 mongoose.connection.on("open", function (err, conn) {
+
  app.listen(port, function () {
  console.log('ACME-Explorer RESTful API server started on: ' + port);
  });
+
+ /*
+ https.createServer({
+    key:fs.readFileSync('server.key'),
+    cert:fs.readFileSync('server.cert')
+}, app)
+.listen(port, function (){
+    console.log('ACME-Explorer RESTful API server started on: ' + port)
+})
+*/
+
 });
+
  
 mongoose.connection.on("error", function (err, conn) {
  console.error("DB init error " + err);
