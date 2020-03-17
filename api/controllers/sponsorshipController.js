@@ -64,7 +64,7 @@ exports.update_a_sponsorship = function(req, res){
             res.status(500).send(err);
         }
         else{
-            res.status(204).json({message: "Sponsorship Updated"});
+            res.status(200).json({message: "Sponsorship Updated"});
         }
     });
 }
@@ -75,32 +75,30 @@ exports.delete_a_sponsorship = function(req, res){
             res.status(500).send(err);
         }
         else{
-            res.status(202).json({message: "Sponsorship Deleted"});
+            res.status(200).json({message: "Sponsorship Deleted"});
         }
     });
 }
 
-//Por terminar
 exports.list_sponsorships_sponsor = function(req, res){
-    Sponsorship.find({sponsor: req.params.sponsorId}, function(err, sponsorship) {
+    Sponsorship.find({sponsor: req.params.sponsorId}, function(err, sponsorships) {
         if(err){
             res.status(500).send(err);
         }
         else{
-            res.status(200).json(sponsorship);
+            res.status(200).json(sponsorships);
         }
     });
 }
 
-//Por terminar.
 exports.find_sponsorships_trip = function(req, res){ 
     var query = {tripSponsorships: {$elemMatch: {$or: [{trip: req.params.tripId, paid: true}]}}};
-    Sponsorship.find(query, function(err, sponsorship) {
+    Sponsorship.find(query, function(err, sponsorships) {
         if(err){
             res.status(500).send(err);
         }
         else{
-            res.status(200).json(sponsorship);
+            res.status(200).json(sponsorships);
         }
     });
 }
@@ -137,7 +135,7 @@ exports.pay_sponsorships_trip = function(req, res){
                                 res.status(500);
                             }
                             else{
-                                res.status(204).json({message: "Sponsorship paid."});
+                                res.status(200).json({message: "Sponsorship paid."});
                             }
                         });
                     }
@@ -179,7 +177,7 @@ exports.cancel_sponsorships_trip = function(req, res){
                                 res.status(500);
                             }
                             else{
-                                res.status(204).json({message: "Sponsorship paid."});
+                                res.status(200).json({message: "Sponsorship paid."});
                             }
                         });
                     }
