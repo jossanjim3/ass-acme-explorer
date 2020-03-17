@@ -37,10 +37,10 @@ exports.create_an_application = function(req,res){
             res.json("Application cannot be created. Actor does not exist!");
         } else {
             explorer = actor;
-            console.log(explorer.role);
+            //console.log(explorer.role);
             
             // Check if the actor is an Explorer  
-            if (explorer.role.includes("EXPLORER")) {
+            if (explorer.role == "EXPLORER" ) {
 
                 // check if the trip exists
                 Trip.findById(req.body.trip, function(err, tripp){

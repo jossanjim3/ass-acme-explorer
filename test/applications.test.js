@@ -2,17 +2,86 @@ const app = require("../app");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 var mongoose = require('mongoose'),
+Actor = mongoose.model('Actors'),
+Trip = mongoose.model('Trips'),
 Application = mongoose.model('Applications');
 
 const { expect } = chai;
 chai.use(chaiHttp);
+
 describe("API Testing for Applications", () => {
 
   // TODO hacer mock para que no interfiera los datos de BB.DD. con los de test...
+  let explorerTest;
+  let managerTest;
+  let tripTest;
+  let appIdTmp;
+  let applicationTest;     
+    
+  // este bloque se ejecuta antes de todo
+  before( (done) => {
 
+    explorerTest = new Actor(
+      {
+        "name": "testExplorer",
+        "surname": "testExplorer",
+        "email": "testExplorer@gmail.com",
+        "password": "testExplorer",
+        "phone": "+34666555987",
+        "role": "EXPLORER"
+      }
+    );
+    explorerTest.save(function (err) {
+      if (err) return handleError(err);
+      // saved!
+      console.log("Explorer test saved! : " + explorerTest._id);
+    });  
 
+    managerTest = new Actor(
+      {
+        "name": "testManager",
+        "surname": "testManager",
+        "email": "testManager@gmail.com",
+        "password": "testManager",
+        "phone": "+34666555987",
+        "role": "MANAGER"
+      }
+    );
+    managerTest.save(function (err,res) {
+      if (err) return handleError(err);
+      // saved!
+      console.log("Manager test saved! : " + managerTest._id);
+    }); 
 
-  it("Get Applications", done => {
+    tripTest = new Trip(
+      {
+        "title": "Trip Test",
+        "description": "Trip Test Description",
+        "price": 200,
+        "requeriments": ["Ser mayor de edad", "No se permite fumar"],
+        "startDate": "2020-03-28",
+        "endDate": "2020-03-31",
+        "stages": [
+            {
+              "title": "Viaje Test stages",
+              "description": "Viaje Test stages description",
+              "price": 200
+            }
+          ],
+        "isPublished" : true,
+        "manager": managerTest._id
+      }
+    );
+    tripTest.save(function (err) {
+      if (err) return handleError(err);
+      // saved!
+      console.log("Trip test saved! : " + tripTest._id);
+    }); 
+
+    done();
+  });
+
+  it("Get all applications", (done) => {
     chai
       .request(app)
       .get("/v1/applications")
@@ -24,25 +93,30 @@ describe("API Testing for Applications", () => {
       });
   });
 
-
-  it("Post Applications", done => {
+  it("Post Applications", (done) => {
     chai
       .request(app)
       .post("/v1/applications")
-      .send({"explorer":"5e6cf4ef101524246076c60e","trip":"5e53fc4a751d483198be12cf"})
+      .send({"explorer":explorerTest._id,"trip":tripTest._id})
       .end((err, res) => {
         expect(res).to.have.status(200);
         //expect(res.body.status).to.equals("success");
         //expect(res.body.result).to.equals(10);
-        if (err) done(err);
-        else done();
-      });
-  });  
-
+        if (err) {
+          done(err);
+        } else {
+          appIdTmp = res.body._id;
+          //console.log(appIdTmp);          
+          done();
+          
+        }
+      });          
+  });     
+  
   it("Get One Application", done => {
     chai
       .request(app)
-      .get("/v1/applications/5e53fc6c751d483198be12d2")
+      .get("/v1/applications/" + appIdTmp)
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect('Content-Type', /json/);
@@ -52,7 +126,7 @@ describe("API Testing for Applications", () => {
   });
 
 
-  it("Update One Application", done => {
+  /*it("Update One Application", done => {
     chai
       .request(app)
       .put("/v1/applications/5e53fc6c751d483198be12d2")
@@ -112,6 +186,34 @@ describe("API Testing for Applications", () => {
         if (err) done(err);
         else done();
       });
+  }); */  
+
+
+  // este bloque se ejecuta despues de todo
+  after( (done) => {
+    //console.log(applicationTest._id);
+
+    Application.deleteOne({ _id: appIdTmp }, function (err) {
+      if (err) return handleError(err);
+      else "Application Test deleted!";
+    }); 
+
+    Trip.deleteOne({ _id: tripTest._id }, function (err) {
+      if (err) return handleError(err);
+      else "Trip Test deleted!";
+    });
+
+    Actor.deleteOne({ _id: explorerTest._id }, function (err) {
+      if (err) return handleError(err);
+      else "Explorer Test deleted!";
+    });
+
+    Actor.deleteOne({ _id: managerTest._id }, function (err) {
+      if (err) return handleError(err);
+      else "Manager Test deleted!";
+    });
+
+    done();
   });
 
 });
