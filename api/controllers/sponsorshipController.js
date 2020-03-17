@@ -26,9 +26,6 @@ exports.list_all_sponsorships = function(req, res){
 
 exports.create_a_sponsorship = function(req, res){
     var new_sponsorship = new Sponsorship(req.body);
-
-    
-
     /*if(!new_sponsorship.actor.role.includes("SPONSOR")){
         res.status(422).json({message: "In order to manage a sponsorship, the actor needs to be a sponsor."})
     }*/
@@ -186,3 +183,6 @@ exports.cancel_sponsorships_trip = function(req, res){
         }
     });
 }
+
+/*------------------------API V2---------------------------------*/
+
