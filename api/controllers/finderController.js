@@ -1,7 +1,8 @@
 'use strict';
 /*---------------FINDER----------------------*/
 var mongoose = require('mongoose'),
-    Finder = require('../models/finderModel');
+    Finder = require('../models/finderModel'),
+    Actor = require('../models/actorModel');
 
 var fetch = require('node-fetch');
 
@@ -239,98 +240,150 @@ exports.set_time_results_saved = function(req, res){
 }*/
 
 exports.remove_finder_auth = function(req, res){
-    Finder.FinderModel.remove({_id: req.params.id}, function(err, finder){
+    var idToken = req.headers['idtoken']; //WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
+    var userId = await authController.getUserId(idToken);
+    Actor.findOne({_id: userId}, async function(err, actor){
         if(err){
             res.status(500).send(err);
-        } else {
-            res.json({message:"Finder removed"});
+        }
+        else{
+            console.log('actor: '+actor); 
+            if (actor.role.includes('EXPLORER')){
+                Finder.FinderModel.remove({_id: req.params.id}, function(err, finder){
+                    if(err){
+                        res.status(500).send(err);
+                    } else {
+                        res.json({message:"Finder removed"});
+                    }
+                });
+            }
+            else{
+                res.status(403).json({message: "The user is not an explorer."})
+            }
         }
     });
 }
 
 exports.finder_of_actor_auth = function(req, res){
-    Finder.FinderModel.findOne({explorer: req.params.actorId}, function(err, finder){
+    var idToken = req.headers['idtoken']; //WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
+    var userId = await authController.getUserId(idToken);
+    Actor.findOne({_id: userId}, async function(err, actor){
         if(err){
             res.status(500).send(err);
         }
         else{
-            if(timestampUnderLimit(finder)) {
-                res.status(200).json(finder);
+            console.log('actor: '+actor); 
+            if (actor.role.includes('EXPLORER')){
+                Finder.FinderModel.findOne({explorer: req.params.actorId}, function(err, finder){
+                    if(err){
+                        res.status(500).send(err);
+                    }
+                    else{
+                        if(timestampUnderLimit(finder)) {
+                            res.status(200).json(finder);
+                        }
+                        else{
+                            console.log("No se encuentra resultado");
+                            res.status(200).json([]);
+                        }
+                    }
+                });
             }
             else{
-                console.log("No se encuentra resultado");
-                res.status(200).json([]);
+                res.status(403).json({message: "The user is not an explorer."})
             }
         }
     });
 }
 
 exports.update_finder_auth = function(req, res) {
-    var url = "http://localhost:" + (process.env.PORT || 8080) + "/v1/finders/explorers/" + req.params.actorId;
-    fetch(url,{
-        method: 'GET',
-    }).then(response => {
-        console.log("Primer then");
-        if(response.json.hasOwnProperty('message')){
-            console.log("Json es nulo");
-            return null;
+    var idToken = req.headers['idtoken']; //WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
+    var userId = await authController.getUserId(idToken);
+    Actor.findOne({_id: userId}, async function(err, actor){
+        if(err){
+            res.status(500).send(err);
         }
         else{
-            console.log("Devuelvo json");
-            return response.json();
-        }     
-    }).then(finder => {
-        var equalityBetweenFinderAndBody = checkEquality(finder, req.body);
-        console.log("Tercera comparacion: " + attrToCheck.every(equalityBetweenFinderAndBody))
-        if(finder !== null &&
-            timestampUnderLimit(finder) && 
-            attrToCheck.every(equalityBetweenFinderAndBody)){
+            console.log('actor: '+actor); 
+            if (actor.role.includes('EXPLORER')){
+                if (userId == req.params.actorId){
+                    var url = "http://localhost:" + (process.env.PORT || 8080) + "/v1/finders/explorers/" + req.params.actorId;
+                    fetch(url,{
+                        method: 'GET',
+                    }).then(response => {
+                        console.log("Primer then");
+                        if(response.json.hasOwnProperty('message')){
+                            console.log("Json es nulo");
+                            return null;
+                        }
+                        else{
+                            console.log("Devuelvo json");
+                            return response.json();
+                        }     
+                    }).then(finder => {
+                        var equalityBetweenFinderAndBody = checkEquality(finder, req.body);
+                        console.log("Tercera comparacion: " + attrToCheck.every(equalityBetweenFinderAndBody))
+                        if(finder !== null &&
+                            timestampUnderLimit(finder) && 
+                            attrToCheck.every(equalityBetweenFinderAndBody)){
 
-            console.log("Finder: " + finder);
-            console.log("Llego a devolver el anterior");
-            res.status(200).json(finder);
-        }
-        else{
-            var urlForFinder = extractUrl(req.body);
-            fetch(urlForFinder,{
-                method: 'GET',
-            }).then(response => {
-                return response.json();
-            }).then(trips =>{
-                var trips_results_finder = trips.slice(0, maxNumberTrips)
-                    .map((trip)=>transformToFinderTripSchema(trip));
+                            console.log("Finder: " + finder);
+                            console.log("Llego a devolver el anterior");
+                            res.status(200).json(finder);
+                        }
+                        else{
+                            var urlForFinder = extractUrl(req.body);
+                            fetch(urlForFinder,{
+                                method: 'GET',
+                            }).then(response => {
+                                return response.json();
+                            }).then(trips =>{
+                                var trips_results_finder = trips.slice(0, maxNumberTrips)
+                                    .map((trip)=>transformToFinderTripSchema(trip));
 
-                var newFinder = new Finder.FinderModel(req.body);
-                newFinder.explorer = req.params.actorId;
-                newFinder.results = trips_results_finder;
-                Finder.FinderModel.deleteOne({explorer: req.params.actorId}, function(err, finder){
-                    if(err){
-                        res.status(500).send(err);
-                    }
-                    else{
-                        newFinder.save(function(err, finder){
-                            if(err){
-                                res.status(500).send(err);
-                            }
-                            else{
-                                res.status(201).send(finder);
-                            }
-                        });
-                    }
-                });
-            });
+                                var newFinder = new Finder.FinderModel(req.body);
+                                newFinder.explorer = req.params.actorId;
+                                newFinder.results = trips_results_finder;
+                                Finder.FinderModel.deleteOne({explorer: req.params.actorId}, function(err, finder){
+                                    if(err){
+                                        res.status(500).send(err);
+                                    }
+                                    else{
+                                        newFinder.save(function(err, finder){
+                                            if(err){
+                                                res.status(500).send(err);
+                                            }
+                                            else{
+                                                res.status(201).send(finder);
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                        }
+                    });
+                }
+                else{
+                    res.status(403).json({message: "The authenticated user is trying to modify a finder that does not belong to him."})
+                }
+            }
+            else{
+                res.status(403).json({message: "The user is not an explorer."})
+            }
         }
     });
+    
 }
 
 exports.set_max_results_auth = function(req, res){
-    Actor.findById(req.params.actorId, async function(err, actor) {
-        if (err){
-            res.send(err);
+    var idToken = req.headers['idtoken']; //WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
+    var userId = await authController.getUserId(idToken);
+    Actor.findOne({_id: userId}, async function(err, actor){
+        if(err){
+            res.status(500).send(err);
         }
         else{
-            console.log('actor: '+actor);
-            var idToken = req.headers['idtoken'];//WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
+            console.log('actor: '+actor); 
             if (actor.role.includes('ADMINISTRATOR')){
                 var promise = new Promise(function(resolve, reject){
                     if(req.params.number > 0 && req.params.number < 100) {
@@ -355,11 +408,14 @@ exports.set_max_results_auth = function(req, res){
 }
 
 exports.set_time_results_saved_auth = function(req, res){
-    var idToken = req.headers['idtoken'];
-    var userId = authController.getUserId(idToken);
-    
-            console.log('actor: '+actor);
-            var idToken = req.headers['idtoken'];//WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
+    var idToken = req.headers['idtoken']; //WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
+    var userId = await authController.getUserId(idToken);
+    Actor.findOne({_id: userId}, async function(err, actor){
+        if(err){
+            res.status(500).send(err);
+        }
+        else{
+            console.log('actor: '+actor); 
             if (actor.role.includes('ADMINISTRATOR')){
                 var promise = new Promise(function(resolve, reject){
                     if(req.params.time > 0 && req.params.time <= 24) {
@@ -379,4 +435,6 @@ exports.set_time_results_saved_auth = function(req, res){
             else{
                 res.status(403).json({message: "The user is not an administrator."})
             }
+        }
+    }); 
 }
