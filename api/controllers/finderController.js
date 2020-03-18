@@ -241,7 +241,7 @@ exports.set_time_results_saved = function(req, res){
 
 exports.remove_finder_auth = function(req, res){
     var idToken = req.headers['idtoken']; //WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
-    var userId = await authController.getUserId(idToken);
+    var userId = authController.getUserId(idToken);
     Actor.findOne({_id: userId}, async function(err, actor){
         if(err){
             res.status(500).send(err);
@@ -261,7 +261,7 @@ exports.remove_finder_auth = function(req, res){
 
 exports.finder_of_actor_auth = function(req, res){
     var idToken = req.headers['idtoken']; //WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
-    var userId = await authController.getUserId(idToken);
+    var userId = authController.getUserId(idToken);
     Actor.findOne({_id: userId}, async function(err, actor){
         if(err){
             res.status(500).send(err);
@@ -288,7 +288,7 @@ exports.finder_of_actor_auth = function(req, res){
 
 exports.update_finder_auth = function(req, res) {
     var idToken = req.headers['idtoken']; //WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
-    var userId = await authController.getUserId(idToken);
+    var userId = authController.getUserId(idToken);
     Actor.findOne({_id: userId}, async function(err, actor){
         if(err){
             res.status(500).send(err);

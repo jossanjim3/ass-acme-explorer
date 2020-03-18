@@ -198,7 +198,7 @@ exports.list_all_sponsorships = function(req, res){
 
 exports.create_a_sponsorship_auth = function(req, res){
     var idToken = req.headers['idtoken']; //WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
-    var userId = await authController.getUserId(idToken);
+    var userId = authController.getUserId(idToken);
     var new_sponsorship = new Sponsorship(req.body);
     new_sponsorship.sponsor = userId;
     new_sponsorship.save(function(err, sponsorship){
