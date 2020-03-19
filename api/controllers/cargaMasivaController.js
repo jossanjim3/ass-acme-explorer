@@ -15,6 +15,18 @@ async function countActors() {
     return number.length;
 }
 
+async function countExplorers() {
+    let number = 0;
+    number = await Actor.find({role : "EXPLORER"});
+    return number.length;
+}
+
+async function countManagers() {
+    let number = 0;
+    number = await Actor.find({role : "MANAGER"});
+    return number.length;
+}
+
 async function countTrips() {
     let number = 0;
     number = await Trip.find({});
@@ -66,6 +78,14 @@ async function agregarNuevosActores(countAct,numNewActors){
 
 }
 
+async function agregarNuevosTrips(countTri,numNewTrips){
+
+    
+
+     return numNewTrips;
+
+}
+
 // list all the applications
 exports.loadData = async (req,res) => {
 
@@ -85,14 +105,28 @@ exports.loadData = async (req,res) => {
     //console.log("countAppli:" + countAppli);
 
     var totalInicio = "ActorIni: " + countAct + ", TripsIni: " + countTri + ", ApplicationsIni: " + countAppli;
+    console.log(totalInicio);
 
     // si se quieren crear nuevos actores
-    if (numNewActors > 0 ) {      
-        
+    if (numNewActors > 0 ) {              
         // creo nuevos actores, le paso cuando actores hay en bbdd para contador de nombres y cuantos nuevos quiero
         await agregarNuevosActores(countAct,numNewActors);
+    }
+
+    // managers en bbdd
+    var countMan = await countManagers();
+    console.log("countMan:" + countMan);
+
+    // si hay viajes nuevos por insertar y hay actores en bbdd
+    if (numNewTrips > 0 && countMan > 0){
+        // creo nuevos actores, le paso cuando actores hay en bbdd para contador de nombres y cuantos nuevos quiero
+        await agregarNuevosTrips(countTri,numNewTrips);
 
     }
+
+
+    var countExplo = await countExplorers();
+    console.log("countExplo:" + countExplo);
 
     // print result operations
     countAct = await countActors();
@@ -100,6 +134,7 @@ exports.loadData = async (req,res) => {
     countAppli= await countApplications();
 
     var resultadoTotal = "ActorsTotal: " + countAct + ", TripsTotal: " + countTri + ", ApplicationsTotal: " + countAppli;
+    console.log(resultadoTotal);
 
     await res.status(200).json(totalInicio + " ----- " + resultadoTotal);
 
