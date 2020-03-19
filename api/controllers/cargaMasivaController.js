@@ -6,7 +6,7 @@ var mongoose = require('mongoose'),
     Application = mongoose.model('Applications');
 
 //----------------------------
-// /v1/cargaMasiva
+// /v1/cargaMasiva/:numActors/:numTrips/:numApplis
 //----------------------------
 
 async function countActors() {
@@ -52,11 +52,18 @@ async function countApplications() {
 // list all the applications
 exports.loadData = async (req,res) => {
 
+    const numNewActors = req.params.numActors;
+    const numNewTrips  = req.params.numTrips;
+    const numNewApplis = req.params.numApplis;
+
+    console.log("numNewActors: " + numNewActors + ", numNewTrips: " + numNewTrips + ", numNewApplis: " + numNewApplis);
+
     var countAct = await countActors();
     var countTri = await countTrips();
     var countAppli= await countApplications();
 
-    
+
+    console.log("Actors: " + countAct + ", countTrips: " + countTri + ", countApplications: " + countAppli);
 
     res.status(200).json("Actors: " + countAct + ", countTrips: " + countTri + ", countApplications: " + countAppli);
 
