@@ -9,13 +9,30 @@ var mongoose = require('mongoose'),
 // /v1/cargaMasiva
 //----------------------------
 
-// list all the applications
-exports.loadData = function(req,res){
-    Actor.find({},function(err, actors){
+async function countActors() {
+    let number = 0;
+    await Actor.find({}, async (err, actors) => {
         if(err){
-            res.status(500).send(err);
+            return 0;
         } else {
-            res.json(actors.length);
+            console.log("countActors: " + actors.length);
+            number = actors.length;
         }
     });
+    return number;
+}
+
+// list all the applications
+exports.loadData = async (req,res) => {
+
+    var countAct = await countActors();
+
+    if (countAct > 0 ) {
+        res.status(200);
+        res.json(countAct);
+    } else {
+        res.status(200);
+        res.json("No hay usuarios");
+    }
+
 };
