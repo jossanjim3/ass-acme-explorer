@@ -88,7 +88,7 @@ function createDataWareHouseJob(){
       });
     }, null, true, 'Europe/Madrid');
 }
-
+createDataWareHouseJob();
 module.exports.createDataWareHouseJob = createDataWareHouseJob;
 
 
@@ -146,7 +146,7 @@ function computePriceTrip(callback){
                 "manager" : "$manager"
             }, 
             "COUNT(*)" : { 
-                "$sum" : NumberInt(1)
+                "$sum" : { "$toInt": "1" }
             }, 
             "MIN(price)" : { 
                 "$min" : "$price"
@@ -178,7 +178,7 @@ function computePriceTrip(callback){
 }
 
 function computeRatioApplications(callback){
-
+  callback()
 }
 
 function computeAveragePriceRangeExplorers(callback){
@@ -200,7 +200,7 @@ function computeAveragePriceRangeExplorers(callback){
         "$project" : { 
             "avgMinPrice" : "$AVG(minPrice)", 
             "avgMaxPrice" : "$AVG(maxPrice)", 
-            "_id" : NumberInt(0)
+            "_id" : { "$toInt": "0" }
         }
     }
 ], function(err,res){
@@ -216,23 +216,24 @@ function computeTop10Keywords(callback){
                 "keyword" : "$keyword"
             }, 
             "COUNT(*)" : { 
-                "$sum" : NumberInt(1)
+                "$sum" : 1
             }
         }
     }, 
     { 
         "$project" : { 
+            "_id": 0,
             "keyword" : "$_id.keyword", 
             "count" : "$COUNT(*)"
 }
     }, 
     { 
         "$sort" : { 
-            "COUNT(*)" : NumberInt(-1)
+            "count" : -1
         }
     }, 
     { 
-        "$limit" : NumberInt(10)
+        "$limit" : 10
     }
 ], function(err,res){
   callback(err,res);

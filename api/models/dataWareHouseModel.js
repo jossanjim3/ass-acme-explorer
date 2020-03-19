@@ -30,9 +30,13 @@ var DataWareHouseSchema = new mongoose.Schema({
       type: Map
     },
     //The average price range that explorers indicate in their finders
-    averagePriceRangeExplorers: Number,
+    averagePriceRangeExplorers: {
+      avgMinPrice : Number, 
+      avgMaxPrice : Number, 
+    },
     Top10keywords: [{
-      type: String
+      keyword: String,
+      count: Number
     }],
     computationMoment: {
       type: Date,
