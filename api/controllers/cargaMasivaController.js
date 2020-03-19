@@ -22,17 +22,43 @@ async function countActors() {
     return number;
 }
 
+
+async function countTrips() {
+    let number = 0;
+    await Trip.find({}, async (err, trips) => {
+        if(err){
+            return 0;
+        } else {
+            console.log("countTrips: " + trips.length);
+            number = trips.length;
+        }
+    });
+    return number;
+}
+
+async function countApplications() {
+    let number = 0;
+    await Application.find({}, async (err, appli) => {
+        if(err){
+            return 0;
+        } else {
+            console.log("countApplications: " + appli.length);
+            number = appli.length;
+        }
+    });
+    return number;
+}
+
 // list all the applications
 exports.loadData = async (req,res) => {
 
     var countAct = await countActors();
+    var countTri = await countTrips();
+    var countAppli= await countApplications();
 
-    if (countAct > 0 ) {
-        res.status(200);
-        res.json(countAct);
-    } else {
-        res.status(200);
-        res.json("No hay usuarios");
-    }
+    
+
+    res.status(200).json("Actors: " + countAct + ", countTrips: " + countTri + ", countApplications: " + countAppli);
+
 
 };
