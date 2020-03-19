@@ -21,10 +21,22 @@ async function countExplorers() {
     return number.length;
 }
 
+async function getExplorers() {
+    let number;
+    number = await Actor.find({role : "EXPLORER"});
+    return number;
+}
+
 async function countManagers() {
     let number = 0;
     number = await Actor.find({role : "MANAGER"});
     return number.length;
+}
+
+async function getManagers() {
+    let number;
+    number = await Actor.find({role : "MANAGER"});
+    return number;
 }
 
 async function countTrips() {
@@ -78,11 +90,55 @@ async function agregarNuevosActores(countAct,numNewActors){
 
 }
 
+async function randomDate(start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
 async function agregarNuevosTrips(countTri,numNewTrips){
 
-    
+    var contador = countTri + 1;
+    var newTripsArray = [];
+    var managersBBDD = await getManagers();
 
-     return numNewTrips;
+    for (var i = 0; i <= numNewTrips-1; i++) {
+
+        var startDate = await randomDate(new Date(2012, 0, 1), new Date());
+        var endDate   = await randomDate(startDate, new Date(2025, 0, 1));
+        var randomNumber = Math.floor(Math.random()*managersBBDD.length);
+
+        var newTrip = new Trip(
+            {
+              "title": "Trip" + contador,
+              "description": "Trip Description " + contador,
+              "price": Math.floor(Math.random() * 3000) + 1,
+              "requeriments": ["Requeriments A" + contador, "Requirements" + contador],
+              "startDate": startDate,
+              "endDate": endDate,
+              "stages": [
+                  {
+                    "title": "Stage trip " + contador,
+                    "description": "Stage trip description  " + contador,
+                    "price": Math.floor(Math.random() * 1000) + 1,
+                  }
+                ],
+              "isPublished" : Math.random() >= 0.5, //random boolean
+              "manager": managersBBDD[randomNumber]
+            }
+          );
+
+        var trip = await newTrip.save();
+        if (trip == undefined){
+            i = i - 1;
+            contador = contador - 1;
+        }
+        //console.log("Actor saved! : " + actor._id);
+        newTripsArray.push(trip);
+
+        contador += 1;
+        
+     }
+    
+     return newTripsArray;
 
 }
 
