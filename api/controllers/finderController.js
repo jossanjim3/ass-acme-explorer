@@ -189,42 +189,6 @@ exports.update_finder = function(req, res) {
     });
 }
 
-exports.set_max_results = function(req, res){
-    var promise = new Promise(function(resolve, reject){
-        if(req.params.number > 0 && req.params.number < 101) {
-            maxNumberTrips = req.params.number;
-            resolve({message: "Operacion successful. Max number of results available per search updated."});
-        }
-        else{
-            reject({message: "Operation not allowed. The number must be one between 1 and 100."});
-        }
-    });
-    promise.then((message)=>{
-        res.status(200).send(message);
-    })
-    .catch((err) => {
-        res.status(403).send(err);
-    });
-}
-
-exports.set_time_results_saved = function(req, res){
-    var promise = new Promise(function(resolve, reject){
-        if(req.params.time > 0 && req.params.time <= 24) {
-            maxTimeAResultIsStored = req.params.time;
-            resolve({message: "Operacion successful. Max time the search is stored updated."});
-        }
-        else{
-            reject({message: "Operation not allowed. The number of hours must be between 1 and 24, latter included."});
-        }
-    });
-    promise.then((message)=>{
-        res.status(200).send(message);
-    })
-    .catch((err) => {
-        res.status(403).send(err);
-    });
-}
-
 
 /*-----------------Metodos para V2------------------------*/
 
@@ -357,38 +321,4 @@ exports.update_finder_auth = function(req, res) {
             }
         }
     }); 
-}
-
-exports.set_max_results_auth = function(req, res){
-    var promise = new Promise(function(resolve, reject){
-        if(req.params.number > 0 && req.params.number < 100) {
-            maxNumberTrips = req.params.number;
-            resolve({message: "Operacion successful. Max number of results available per search updated."});
-        }
-        else
-            reject({message: "Operation not allowed. The number must be one between 1 and 100."});
-    });
-    promise.then((message)=>{
-        res.status(200).send(message);
-    })
-    .catch((err) => {
-        res.status(500).send(err);
-    });
-}
-
-exports.set_time_results_saved_auth = function(req, res){
-    var promise = new Promise(function(resolve, reject){
-        if(req.params.time > 0 && req.params.time <= 24) {
-            maxTimeAResultIsStored = req.params.time;
-            resolve({message: "Operacion successful. Max time the search is stored updated."});
-        }
-        else
-            reject({message: "Operation not allowed. The number of hours must be between 1 and 24, latter included."});
-    });
-    promise.then((message)=>{
-        res.status(200).send(message);
-    })
-    .catch((err) => {
-        res.status(500).send(err);
-    });
 }
