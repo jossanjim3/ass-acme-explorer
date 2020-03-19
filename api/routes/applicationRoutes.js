@@ -26,6 +26,10 @@ module.exports = function (app){
         // update an application status to rejected by manager or cancelled by explorer
         .put(applications.cancel_an_application);
 
+    app.route('/v2/applications/:applicationId/cancel')
+        // update an application status to rejected by manager or cancelled by explorer
+        .put(authController.verifyUser(["EXPLORER","MANAGER"]), applications.cancel_an_application_authorized);
+
     app.route('/v1/applications/users/:userId')
         // list applications that explorers have made
         .get(applications.list_all_my_applications);
