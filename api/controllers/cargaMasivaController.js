@@ -11,42 +11,59 @@ var mongoose = require('mongoose'),
 
 async function countActors() {
     let number = 0;
-    await Actor.find({}, async (err, actors) => {
-        if(err){
-            return 0;
-        } else {
-            console.log("countActors: " + actors.length);
-            number = actors.length;
-        }
-    });
-    return number;
+    number = await Actor.find({});
+    return number.length;
 }
-
 
 async function countTrips() {
     let number = 0;
-    await Trip.find({}, async (err, trips) => {
-        if(err){
-            return 0;
-        } else {
-            console.log("countTrips: " + trips.length);
-            number = trips.length;
-        }
-    });
-    return number;
+    number = await Trip.find({});
+    return number.length;
 }
 
 async function countApplications() {
     let number = 0;
-    await Application.find({}, async (err, appli) => {
-        if(err){
-            return 0;
-        } else {
-            console.log("countApplications: " + appli.length);
-            number = appli.length;
+    number = await Application.find({});
+    return number.length;
+}
+
+async function agregarNuevosActores(countAct,numNewActors){
+
+    var contador = countAct + 1;
+    var roleArray = [
+        'EXPLORER',
+        'MANAGER'
+    ];
+
+    var newActorsArray = [];
+
+    for (var i = 0; i <= numNewActors-1; i++) {
+
+        var randomNumber = Math.floor(Math.random()*roleArray.length);
+
+        var newActor = new Actor({
+            "name": "nameActor" + contador,
+            "surname": "surnameActor" + contador,
+            "email": "emailActor" + contador + "@gmail.com",
+            "password": "nameActor" + contador,
+            "phone": Math.floor(Math.random() * 100000000) + 1,
+            "role": roleArray[randomNumber]
+        });
+
+        var actor = await newActor.save();
+        if (actor == undefined){
+            i = i - 1;
+            contador = contador - 1;
         }
-    });
-    return number;
+        //console.log("Actor saved! : " + actor._id);
+        newActorsArray.push(actor);
+
+        contador += 1;
+        
+     }
+
+     return newActorsArray;
+
 }
 
 // list all the applications
@@ -57,15 +74,34 @@ exports.loadData = async (req,res) => {
     const numNewApplis = req.params.numApplis;
 
     console.log("numNewActors: " + numNewActors + ", numNewTrips: " + numNewTrips + ", numNewApplis: " + numNewApplis);
-
+    
     var countAct = await countActors();
+    //console.log("countAct:" + countAct);
+
     var countTri = await countTrips();
+    //console.log("countTri:" + countTri);
+
     var countAppli= await countApplications();
+    //console.log("countAppli:" + countAppli);
 
+    var totalInicio = "ActorIni: " + countAct + ", TripsIni: " + countTri + ", ApplicationsIni: " + countAppli;
 
-    console.log("Actors: " + countAct + ", countTrips: " + countTri + ", countApplications: " + countAppli);
+    // si se quieren crear nuevos actores
+    if (numNewActors > 0 ) {      
+        
+        // creo nuevos actores, le paso cuando actores hay en bbdd para contador de nombres y cuantos nuevos quiero
+        await agregarNuevosActores(countAct,numNewActors);
 
-    res.status(200).json("Actors: " + countAct + ", countTrips: " + countTri + ", countApplications: " + countAppli);
+    }
+
+    // print result operations
+    countAct = await countActors();
+    countTri = await countTrips();
+    countAppli= await countApplications();
+
+    var resultadoTotal = "ActorsTotal: " + countAct + ", TripsTotal: " + countTri + ", ApplicationsTotal: " + countAppli;
+
+    await res.status(200).json(totalInicio + " ----- " + resultadoTotal);
 
 
 };
