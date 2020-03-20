@@ -1,11 +1,13 @@
-
 var async = require("async");
 var mongoose = require('mongoose'),
   DataWareHouse = mongoose.model('DataWareHouse'),
   Trips =  mongoose.model('Trips'),
   Applications = mongoose.model('Applications'),
   Finders = mongoose.model('Finders'),
-  Actors = mongoose.model('Actors')
+  Actors = mongoose.model('Actors'),
+  Cube = require('../models/cubeModel');
+
+var Table = require('olap-cube').model.Table
 
 exports.list_all_indicators = function(req, res) {
   console.log('Requesting indicators');
@@ -32,7 +34,7 @@ exports.last_indicator = function(req, res) {
   });
 };
 
-exports.getInformationCube = function(callback){
+getInformationCube = function(callback){
   Applications.aggregate([
     { $lookup:{
         'from': Trips.collection.name,
@@ -49,15 +51,35 @@ exports.getInformationCube = function(callback){
       }
     },
     {
+      $match : {"status" : "ACCEPTED"}
+    },
+    {
       $group: {
         _id: {explorer: "$explorer", year: {$year: "$createdAt"}, month: {$month: "$createdAt"}},
         totalSpent: {$sum: "$trip.price"}
       }
     }
   ], function(err, res){
-    console.log(res);
     callback(err, res);
   });
+}
+
+function creatingCube(datos){
+  var pointsCalculated = [];
+  var dataCalculated = [];
+  datos.map(dato => {
+    pointsCalculated.push([dato._id.explorer, dato._id.year, dato._id.month]);
+    dataCalculated.push([dato.totalSpent]);
+  });
+
+  const table = new Table({
+    dimensions: ['explorer', 'year', 'month'],
+    fields: ['totalSpent'],
+    points: pointsCalculated,
+    data: dataCalculated
+  });
+
+  return table;
 }
 
 var CronJob = require('cron').CronJob;
@@ -69,12 +91,15 @@ var CronTime = require('cron').CronTime;
 //'* * * * * *' cada segundo
 var rebuildPeriod = '*/10 * * * * *';  //El que se usará por defecto
 var computeDataWareHouseJob;
+var cubeComputation;
 
 exports.rebuildPeriod = function(req, res) {
   console.log('Updating rebuild period. Request: period:'+req.query.rebuildPeriod);
   rebuildPeriod = req.query.rebuildPeriod;
   computeDataWareHouseJob.setTime(new CronTime(rebuildPeriod));
   computeDataWareHouseJob.start();
+  cubeComputation.setTime(new CronTime(rebuildPeriod));
+  cubeComputation.start();
 
   res.json(req.query.rebuildPeriod);
 };
@@ -116,8 +141,59 @@ function createDataWareHouseJob(){
         }
       });
     }, null, true, 'Europe/Madrid');
+    var new_cube = new Cube();
+    cubeComputation = new CronJob(rebuildPeriod,  function() { //'0 0 0 */1 * *' Correct period. Once every midnight 00:00 AM.
+      async.parallel([
+        getInformationCube
+      ], function (err, result) {
+        if (err){
+          console.log("Error computing datawarehouse: "+err);
+        }
+        else{
+          new_cube.cube = creatingCube(result[0]);
+          new_cube.points = new_cube.cube.points;
+          new_cube.data = new_cube.cube.data;
+          // TODO: Quitar el id del cubo, que parece cambiar y no se deja cambiar. new_cube._id
+          Cube.updateOne({idCubo: 1}, new_cube, {upsert: true}, function(err, cube){
+          /*Cube.deleteOne({id: 1}, function(req, res){
+            if(err){
+              console.log("Error removing cube: " + err);
+            }
+            else{
+              new_cube.save(new_cube, function(err, cube){  
+                */if (err){
+                  console.log("Error saving cube: " + err);
+                }
+                else{
+                  console.log("new Cube succesfully saved. Date: " + new Date());
+                }
+              /*});
+            }*/
+          });
+          //
+        }
+      });
+    }, null, true, 'Europe/Madrid');
 }
+
 createDataWareHouseJob();
+
+exports.getCube = function(req, res){
+  Cube.find({}, function(err, cube){
+    if(err){
+      res.status(500).send(err);
+    }
+    else{
+      res.status(200).send(cube);
+    }
+  });
+}
+
+exports.getCubeWithInterval = function(req, res){
+  
+}
+
+
 module.exports.createDataWareHouseJob = createDataWareHouseJob;
 
 

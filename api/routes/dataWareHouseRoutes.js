@@ -27,8 +27,11 @@ module.exports = function(app) {
 	app.route('/v1/dataWareHouse/latest')
 	.get(dataWareHouse.last_indicator);
 
-	app.route('/dataWareHouse/latest/cube')
-		.get(dataWareHouse.getInformationCube);
+	app.route('/v1/dataWareHouse/latest/cube')
+		.get(dataWareHouse.getCube);
+
+	app.route('/v1/dataWareHouse/latest/cube/:emailUsuario/:intervalo')
+		.get(dataWareHouse.getCubeDataByInterval);
 
 	/*** V2 ***/
 	/**
