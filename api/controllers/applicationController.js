@@ -397,6 +397,9 @@ exports.cancel_an_application_authorized = function(req, res) {
                             res.json(appli);
                         }
                     });  
+                } else {
+                    res.status(403);
+                    res.json("Sorry, you can't cancel the application!");
                 }
                 
             // omly managers can reject application with status pending
