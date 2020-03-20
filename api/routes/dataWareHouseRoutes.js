@@ -26,4 +26,7 @@ module.exports = function(app) {
 	*/
 	app.route('/dataWareHouse/latest')
 	.get(dataWareHouse.last_indicator);
+
+	app.route('/dataWareHouse/latest/cube')
+		.get(dataWareHouse.getInformationCube);
 };

@@ -4,7 +4,8 @@ var mongoose = require('mongoose'),
   DataWareHouse = mongoose.model('DataWareHouse'),
   Trips =  mongoose.model('Trips'),
   Applications = mongoose.model('Applications'),
-  Finders = mongoose.model('Finders')
+  Finders = mongoose.model('Finders'),
+  Actors = mongoose.model('Actors')
 
 exports.list_all_indicators = function(req, res) {
   console.log('Requesting indicators');
@@ -30,6 +31,34 @@ exports.last_indicator = function(req, res) {
     }
   });
 };
+
+exports.getInformationCube = function(callback){
+  Applications.aggregate([
+    { $lookup:{
+        'from': Trips.collection.name,
+        'localField': 'trip',
+        'foreignField': '_id',
+        'as': 'trip'
+      }
+    },
+    { $lookup: {
+        'from': Actors.collection.name,
+        'localField': 'explorer',
+        'foreignField': '_id',
+        'as': 'explorer'
+      }
+    },
+    {
+      $group: {
+        _id: {explorer: "$explorer", year: {$year: "$createdAt"}, month: {$month: "$createdAt"}},
+        totalSpent: {$sum: "$trip.price"}
+      }
+    }
+  ], function(err, res){
+    console.log(res);
+    callback(err, res);
+  });
+}
 
 var CronJob = require('cron').CronJob;
 var CronTime = require('cron').CronTime;
