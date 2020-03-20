@@ -45,6 +45,14 @@ async function countTrips() {
     return number.length;
 }
 
+// published a true
+async function getTrips() {
+    // TODO
+    let number;
+    number = await Trip.find({isPublished:true});
+    return number;
+}
+
 async function countApplications() {
     let number = 0;
     number = await Application.find({});
@@ -102,8 +110,17 @@ async function agregarNuevosTrips(countTri,numNewTrips){
 
     for (var i = 0; i <= numNewTrips-1; i++) {
 
-        var startDate = await randomDate(new Date(2012, 0, 1), new Date());
-        var endDate   = await randomDate(startDate, new Date(2025, 0, 1));
+        const startDate = await randomDate(new Date(2020, 0, 1), new Date(2021,0,1));   
+        //console.log("startDate1:" + startDate.toDateString());
+
+        var numberToIncrement = Math.floor(Math.random()*30 + 1);
+        //console.log("numberToIncrement: " + numberToIncrement);
+
+        var endDate   = await randomDate(startDate, new Date(2021, 0, 1));
+
+        //console.log("startDate2:" + startDate.toDateString());
+        //console.log("endDate:" + endDate.toDateString());
+
         var randomNumber = Math.floor(Math.random()*managersBBDD.length);
 
         var newTrip = new Trip(
@@ -125,20 +142,54 @@ async function agregarNuevosTrips(countTri,numNewTrips){
               "manager": managersBBDD[randomNumber]
             }
           );
-
-        var trip = await newTrip.save();
-        if (trip == undefined){
+        
+        try {
+            var trip = await newTrip.save();
+            newTripsArray.push(trip);
+        } catch (error) {
             i = i - 1;
             contador = contador - 1;
-        }
-        //console.log("Actor saved! : " + actor._id);
-        newTripsArray.push(trip);
+        }        
 
         contador += 1;
         
      }
     
      return newTripsArray;
+
+}
+
+async function agregarNuevasApplications(countAppli,numNewApplis){
+
+    var contador = countAppli + 1;
+    var newApplissArray = [];
+    var explorerBBDD = await getExplorers();
+    var tripsBBDD = await getTrips();
+
+    for (var i = 0; i <= numNewApplis-1; i++) {
+
+        var randomNumberExplorer = Math.floor(Math.random()*explorerBBDD.length);
+        var randomNumberTrip = Math.floor(Math.random()*tripsBBDD.length);
+
+        var newAppl = new Application(
+            {              
+              "explorer": explorerBBDD[randomNumberExplorer],
+              "trip": tripsBBDD[randomNumberTrip]
+            }
+          );
+
+        var app = await newAppl.save();
+        if (app == undefined){
+            i = i - 1;
+            contador = contador - 1;
+        }
+        newApplissArray.push(app);
+
+        contador += 1;
+        
+     }
+    
+     return newApplissArray;
 
 }
 
@@ -163,26 +214,45 @@ exports.loadData = async (req,res) => {
     var totalInicio = "ActorIni: " + countAct + ", TripsIni: " + countTri + ", ApplicationsIni: " + countAppli;
     console.log(totalInicio);
 
+    /* --------------------------------------- */
+    /* AGREGO NUEVOS ACTORES */
+    /* --------------------------------------- */
+
     // si se quieren crear nuevos actores
     if (numNewActors > 0 ) {              
         // creo nuevos actores, le paso cuando actores hay en bbdd para contador de nombres y cuantos nuevos quiero
         await agregarNuevosActores(countAct,numNewActors);
     }
 
+    /* --------------------------------------- */
+    /* AGREGO NUEVOS TRIPS */
+    /* --------------------------------------- */
+
     // managers en bbdd
     var countMan = await countManagers();
-    console.log("countMan:" + countMan);
+    //console.log("countMan:" + countMan);
 
     // si hay viajes nuevos por insertar y hay actores en bbdd
     if (numNewTrips > 0 && countMan > 0){
-        // creo nuevos actores, le paso cuando actores hay en bbdd para contador de nombres y cuantos nuevos quiero
+        // creo nuevos trips, le paso cuantos managers hay en bbdd para contador de nombres y cuantos nuevos quiero
         await agregarNuevosTrips(countTri,numNewTrips);
 
     }
 
+    /* --------------------------------------- */
+    /* AGREGO NUEVAS SOLICITUDES DE VIAJES */
+    /* --------------------------------------- */
 
+    // explorers en bbdd
     var countExplo = await countExplorers();
-    console.log("countExplo:" + countExplo);
+    //console.log("countExplo:" + countExplo);
+
+    // si hay viajes nuevos por insertar y hay actores en bbdd
+    if (numNewApplis > 0 && countExplo > 0){
+        // creo nuevas applis, le paso cuantos explorers hay en bbdd para contador de nombres y cuantos nuevos quiero
+        await agregarNuevasApplications(countAppli,numNewApplis);
+
+    }
 
     // print result operations
     countAct = await countActors();
