@@ -67,7 +67,7 @@ function createDataWareHouseJob(){
           console.log("Error computing datawarehouse: "+err);
         }
         else{
-          console.log("Resultados obtenidos por las agregaciones: "+JSON.stringify(results));
+          //console.log("Resultados obtenidos por las agregaciones: "+JSON.stringify(results));
           new_dataWareHouse.TripsPerManager = results[0];
           new_dataWareHouse.ApplicationsPerTrip = results[1];
           new_dataWareHouse.PriceTrip = results[2];
@@ -178,7 +178,71 @@ function computePriceTrip(callback){
 }
 
 function computeRatioApplications(callback){
-  callback()
+  Applications.aggregate([
+    {$facet:{
+          totalByStatusPending: [
+            {$match : {"status" : "PENDING"}}, // 'PENDING','REJECTED','DUE','ACCEPTED','CANCELLED'
+            {$group : {_id:null, totalStatus:{$sum:1}}}
+          ],
+          totalByStatusRejected: [
+            {$match : {"status" : "REJECTED"}}, // 'PENDING','REJECTED','DUE','ACCEPTED','CANCELLED'
+            {$group : {_id:null, totalStatus:{$sum:1}}}
+          ],
+          totalByStatusDue: [
+            {$match : {"status" : "DUE"}}, // 'PENDING','REJECTED','DUE','ACCEPTED','CANCELLED'
+            {$group : {_id:null, totalStatus:{$sum:1}}}
+          ],
+          totalByStatusAccepted: [
+            {$match : {"status" : "ACCEPTED"}}, // 'PENDING','REJECTED','DUE','ACCEPTED','CANCELLED'
+            {$group : {_id:null, totalStatus:{$sum:1}}}
+          ],
+          totalByStatusCancelled: [
+            {$match : {"status" : "CANCELLED"}}, // 'PENDING','REJECTED','DUE','ACCEPTED','CANCELLED'
+            {$group : {_id:null, totalStatus:{$sum:1}}}
+          ],
+          total:         [{$group : {_id:null, totalApplication:{$sum:1}}}]
+
+          }
+    },
+          
+    {$project: {_id:0,                            
+              total : {$arrayElemAt: ["$total.totalApplication", 0 ]},
+              totalByStatusPending : {$arrayElemAt: ["$totalByStatusPending.totalStatus", 0 ]},
+              totalByStatusRejected : {$arrayElemAt: ["$totalByStatusRejected.totalStatus", 0 ]},
+              totalByStatusDue : {$arrayElemAt: ["$totalByStatusDue.totalStatus", 0 ]},
+              totalByStatusAccepted : {$arrayElemAt: ["$totalByStatusAccepted.totalStatus", 0 ]},
+              totalByStatusCancelled : {$arrayElemAt: ["$totalByStatusCancelled.totalStatus", 0 ]},
+              ratioApplicationsPending: { $divide: [
+                  {$arrayElemAt: ["$totalByStatusPending.totalStatus", 0 ]}, 
+                  {$arrayElemAt: ["$total.totalApplication", 0 ]} 
+                ]
+              },
+              ratioApplicationsRejected: { $divide: [
+                  {$arrayElemAt: ["$totalByStatusRejected.totalStatus", 0 ]}, 
+                  {$arrayElemAt: ["$total.totalApplication", 0 ]} 
+                ]
+              },
+              ratioApplicationsDue: { $divide: [
+                  {$arrayElemAt: ["$totalByStatusDue.totalStatus", 0 ]}, 
+                  {$arrayElemAt: ["$total.totalApplication", 0 ]} 
+                ]
+              },
+              ratioApplicationsAccepted: { $divide: [
+                  {$arrayElemAt: ["$totalByStatusAccepted.totalStatus", 0 ]}, 
+                  {$arrayElemAt: ["$total.totalApplication", 0 ]} 
+                ]
+              },
+              ratioApplicationsCancelled: { $divide: [
+                  {$arrayElemAt: ["$totalByStatusCancelled.totalStatus", 0 ]}, 
+                  {$arrayElemAt: ["$total.totalApplication", 0 ]} 
+                ]
+              }
+            }
+
+    }   
+  ], function(err,res){
+    callback(err,res);
+  })
 }
 
 function computeAveragePriceRangeExplorers(callback){

@@ -27,7 +27,17 @@ var DataWareHouseSchema = new mongoose.Schema({
     },
     //The ratio of applications grouped by status
     ratioApplications: {
-      type: Map
+      total: Number,
+      totalByStatusPending : Number,
+      totalByStatusRejected : Number,
+      totalByStatusDue : Number,
+      totalByStatusAccepted : Number,
+      totalByStatusCancelled : Number,
+      ratioApplicationsPending: Number,
+      ratioApplicationsRejected: Number,
+      ratioApplicationsDue: Number,
+      ratioApplicationsAccepted: Number,
+      ratioApplicationsCancelled: Number
     },
     //The average price range that explorers indicate in their finders
     averagePriceRangeExplorers: {
