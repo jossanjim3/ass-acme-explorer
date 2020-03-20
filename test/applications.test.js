@@ -11,7 +11,7 @@ chai.use(chaiHttp);
 
 describe("API Testing for Applications", () => {
 
-  // TODO hacer mock para que no interfiera los datos de BB.DD. con los de test...
+  // hacer mock para que no interfiera los datos de BB.DD. con los de test...
   let explorerTest;
   let managerTest;
   let tripTest;

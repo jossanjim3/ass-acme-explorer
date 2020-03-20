@@ -45,11 +45,13 @@ async function countTrips() {
     return number.length;
 }
 
-// published a true
+// published a true and is not started and cancelled
 async function getTrips() {
-    // TODO
     let number;
-    number = await Trip.find({isPublished:true});
+    number = await Trip.find({"isPublished": true, 
+                              "startDate" : {"$gt": new Date()}, 
+                              "reasonCancel" : { "$exists" : false }} 
+                            );                           
     return number;
 }
 
@@ -165,6 +167,7 @@ async function agregarNuevasApplications(countAppli,numNewApplis){
     var newApplissArray = [];
     var explorerBBDD = await getExplorers();
     var tripsBBDD = await getTrips();
+    console.log(tripsBBDD.length);
 
     for (var i = 0; i <= numNewApplis-1; i++) {
 
