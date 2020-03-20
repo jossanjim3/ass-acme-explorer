@@ -84,11 +84,11 @@ describe("API Testing actors", () => {
         });
       })
 
-      it("Validate Actor 2: request the validation or invalidation of an actor but the actor does not exist", done => {
+      it("Validate Actor 2: request the validation of an actor but the actor does not exist", done => {
         chai
           .request(app)
           .put("/v1/actors/"+"345678"+"/validated")
-          .send({"validated":false})
+          .send({"validated":true})
           .end((err, res) => {
             expect(res).to.have.status(500);
             if (err) done(err);

@@ -92,6 +92,7 @@ mongoose.connection.on("open", function (err, conn) {
  console.log('ACME-Explorer RESTful API server started on: ' + port);
  });
  
+ //Para cambiar a la version https basta con descomentar estas lineas de código y comentar el app.listen de arriba:
  /*
  https.createServer({
     key:fs.readFileSync('server.key'),
