@@ -108,7 +108,6 @@ exports.getCube = function(req, res){
 function getCubeData(){
   return new Promise((resolve,reject)=>{
     Cube.findOne({}, function(err, result){
-      console.log("Result points: " + result.points);
       if(err){
         reject(err);
       } else {
@@ -118,10 +117,6 @@ function getCubeData(){
           points: result.points,
           data: result.data
         })
-        console.log("Antes de promesa: " + result.cube.dimensions);
-        console.log("Antes de promesa: " + result.cube.fields);
-        console.log("Antes de promesa: " + result.points);
-        console.log("Antes de promesa: " + result.data);
         resolve(table);
       } 
     });
@@ -139,8 +134,6 @@ function getCubeDataByDates(pairMonthYear, table){
   });
 
   var tableFiltered = table.dice(inPeriod);
-  console.log("Table filtered: " + tableFiltered.points);
-  console.log("Table filtered: " + tableFiltered.data);
   return tableFiltered;
 }
 
@@ -182,8 +175,6 @@ function getCubeDataByInterval(startingMonth, endingMonth){
     var pairMonthYear = getStartingDateAndEndingDate(startingMonth, endingMonth);
     var table_prom = getCubeData();
     table_prom.then((table,err)=>{
-      console.log("Table: " + table.points);
-      console.log("Table: " + table.data);
       //We are filtering the data by the period.
       table = getCubeDataByDates(pairMonthYear, table);
       
@@ -194,18 +185,17 @@ function getCubeDataByInterval(startingMonth, endingMonth){
 
 exports.getCubeDataByIntervalMonths = function(req, res){
   var promise = new Promise(function(resolve, reject){
-    console.log(req.params.startingMonth);
-    console.log(req.params.endingMonth);
-    console.log(req.params.emailUser);
     var cube_prom = getCubeDataByInterval(req.params.startingMonth, req.params.endingMonth);
     cube_prom.then((cube,err)=>{
-      console.log("Cubo: " + cube);
       cube = getCubeDataByUser(req.params.emailUser, cube);
-      console.log("Cubo: " + cube);
-      console.log("Cubo points: " + cube.points);
-      console.log("Cubo data: " + cube.data);
       if(cube !== null){
-        resolve(cube);
+        var sol = new Table({
+          dimensions: cube.dimensions,
+          fields: cube.fields,
+          points: cube.points,
+          data: cube.data
+        });
+        resolve(sol);
       }
       else{
         reject("Cubo nulo");
@@ -213,7 +203,8 @@ exports.getCubeDataByIntervalMonths = function(req, res){
     })
   });
   promise.then((cube)=>{
-    res.status(200).send(cube);
+    var jsonToReturn = {structure: cube, values: cube.rows}
+    res.status(200).send(jsonToReturn);
   })
   .catch((err)=>{
     res.status(500).send(err);
@@ -227,24 +218,6 @@ exports.getCubeDataByIntervalMonths = function(req, res){
 function getCubeDataByComparisonMoney(){
 
 }*/
-
-exports.getCube = function(req, res){
-  var promise = new Promise(function(resolve, reject){
-    var cube = getCubeDataByUser(req.params.email);
-    if(cube !== null){
-      resolve(cube);
-    }
-    else{
-      reject("Cubo nulo");
-    }
-  });
-  promise.then((cube)=>{
-    res.status(200).send(cube);
-  })
-  .catch((err)=>{
-    res.status(500).send(err);
-  })
-}
 /*------------------Cubo(End)---------------------------------*/
 
 
@@ -328,7 +301,14 @@ function createDataWareHouseJob(){
               new_cube.data = new_cube.cube.data;
               //new_cube.data.map(dato => console.log(new_cube.data.indexOf(dato)));
               // ToDo: Quitar el id del cubo, que parece cambiar y no se deja cambiar. new_cube._id
-              new_cube.save();
+              new_cube.save(function(err, cube){
+                if(err){
+                  console.log("Err on saving cube: " + err);
+                }
+                else{
+                  console.log("Cube correctly saved");
+                }
+              });
             }
           });
           /*
