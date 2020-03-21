@@ -34,7 +34,14 @@ exports.last_indicator = function(req, res) {
   });
 };
 
-getInformationCube = function(callback){
+
+
+/*------------------Cubo---------------------------------*/
+
+/**
+ * Creation part
+ */
+var getInformationCube = function(callback){
   Applications.aggregate([
     { $lookup:{
         'from': Trips.collection.name,
@@ -81,6 +88,149 @@ function creatingCube(datos){
 
   return table;
 }
+
+/**
+ * Query part
+ */
+
+function getCubeData(){
+  return new Promise((resolve,reject)=>{
+    Cube.find({}, function(err, result){
+      if(err){
+        reject(err);
+      } else {
+        var table = new Table({
+          dimensions: result[0].cube.dimensions,
+          fields: result[0].cube.fields,
+          points: result[0].points,
+          data: result[0].data
+        })
+        resolve(table);
+      } 
+    });
+  })
+  
+}
+
+function getCubeDataByDates(pairMonthYear, table){
+  const inPeriod = ((point) => {
+    return (
+      //Checking if month and year are past the actual month, or the month where we start to consider.
+      (point[1] < pairMonthYear[0][0] && point[2] < pairMonthYear[0][1]) &&
+      //Checking if we do not go further than 36 months, or those introduced.
+      (point[1] > pairMonthYear[1][0] && point[2] > pairMonthYear[1][1])
+    )
+  });
+
+  var tableFiltered = table.dice(inPeriod);
+  return tableFiltered;
+}
+
+function getCubeDataByUser(userEmail, table){
+  console.log("AWdawaadwawdaw");
+  console.log(table);
+  const onlyUser = ((point) => point[0][0].email === userEmail);
+
+  var tableFiltered = table.dice(onlyUser);
+  return tableFiltered;
+}
+
+  /**
+   * Son dos 0, porque el array se imprime en la forma [ [ [ [Object] ], 2020, 3 ] ], donde object es el actor.
+   * Por ahora se imprime asi porque el actor se guarda como objeto. Si da tiempo, intentaremos guardarlo como nombre.
+   */ 
+function obtainingPairMonthYear(monthsBackwards){
+  var today = new Date();
+  var actualMonth = today.getMonth();
+  var actualYear = today.getYear();
+
+  var year = actualYear;
+  var month = actualMonth - monthsBackwards;
+  
+  while(month < 1){
+    month += 12;
+    --year;
+  }
+  return [month, year];
+}
+
+function getStartingDateAndEndingDate(startingMonth, endingMonth){
+  var pairMonthYear = []
+  pairMonthYear.push(obtainingPairMonthYear(startingMonth));
+  pairMonthYear.push(obtainingPairMonthYear(endingMonth));
+  return pairMonthYear;
+}
+
+function getCubeDataByInterval(startingMonth, endingMonth){
+  return new Promise((resolve,reject)=>{
+    var pairMonthYear = getStartingDateAndEndingDate(startingMonth, endingMonth);
+    var table_prom = getCubeData();
+    table_prom.then((table,err)=>{
+      //We are filtering the data by the period.
+      table = getCubeDataByDates(pairMonthYear, table);
+      
+      resolve(table);
+    })
+  });
+}
+
+exports.getCubeDataByIntervalMonths = function(req, res){
+  var promise = new Promise(function(resolve, reject){
+    console.log(req.params.startingMonth);
+    console.log(req.params.endingMonth);
+    console.log(req.params.emailUser);
+    var cube_prom = getCubeDataByInterval(req.params.startingMonth, req.params.endingMonth);
+    cube_prom.then((cube,err)=>{
+      console.log("Cubo: " + cube);
+      cube = getCubeDataByUser(req.params.emailUser, cube);
+      console.log("Cubo: " + cube);
+      console.log("Cubo points: " + cube.points);
+      console.log("Cubo data: " + cube.data);
+      if(cube !== null){
+        resolve(cube);
+      }
+      else{
+        reject("Cubo nulo");
+      }
+    })
+  });
+  promise.then((cube)=>{
+    res.status(200).send(cube);
+  })
+  .catch((err)=>{
+    res.status(500).send(err);
+  });
+}
+
+/*function getCubeDataByIntervalYears(){
+
+}
+
+function getCubeDataByComparisonMoney(){
+
+}*/
+
+exports.getCube = function(req, res){
+  var promise = new Promise(function(resolve, reject){
+    var cube = getCubeDataByUser(req.params.email);
+    if(cube !== null){
+      resolve(cube);
+    }
+    else{
+      reject("Cubo nulo");
+    }
+  });
+  promise.then((cube)=>{
+    res.status(200).send(cube);
+  })
+  .catch((err)=>{
+    res.status(500).send(err);
+  })
+}
+/*------------------Cubo(End)---------------------------------*/
+
+
+
 
 var CronJob = require('cron').CronJob;
 var CronTime = require('cron').CronTime;
@@ -141,7 +291,7 @@ function createDataWareHouseJob(){
         }
       });
     }, null, true, 'Europe/Madrid');
-    var new_cube = new Cube();
+
     cubeComputation = new CronJob(rebuildPeriod,  function() { //'0 0 0 */1 * *' Correct period. Once every midnight 00:00 AM.
       async.parallel([
         getInformationCube
@@ -150,50 +300,34 @@ function createDataWareHouseJob(){
           console.log("Error computing datawarehouse: "+err);
         }
         else{
-          new_cube.cube = creatingCube(result[0]);
-          new_cube.points = new_cube.cube.points;
-          new_cube.data = new_cube.cube.data;
-          // TODO: Quitar el id del cubo, que parece cambiar y no se deja cambiar. new_cube._id
-          Cube.updateOne({idCubo: 1}, new_cube, {upsert: true}, function(err, cube){
-          /*Cube.deleteOne({id: 1}, function(req, res){
+          Cube.deleteMany({},function(err,cube){
             if(err){
-              console.log("Error removing cube: " + err);
+              console.error("Error deleting all cubes: " + err);
+            } else {
+              let new_cube = new Cube();
+              new_cube.cube = creatingCube(result[0]);
+              new_cube.points = new_cube.cube.points;
+              new_cube.data = new_cube.cube.data;
+              //new_cube.data.map(dato => console.log(new_cube.data.indexOf(dato)));
+              // ToDo: Quitar el id del cubo, que parece cambiar y no se deja cambiar. new_cube._id
+              new_cube.save();
+            }
+          });
+          /*
+          Cube.updateOne({idCubo: 1}, new_cube, {upsert: true}, function(err, cube){
+            if (err){
+              console.log("Error saving cube: " + err);
             }
             else{
-              new_cube.save(new_cube, function(err, cube){  
-                */if (err){
-                  console.log("Error saving cube: " + err);
-                }
-                else{
-                  console.log("new Cube succesfully saved. Date: " + new Date());
-                }
-              /*});
-            }*/
-          });
-          //
+              console.log("new Cube succesfully saved. Date: " + new Date());
+            }
+          });*/
         }
       });
     }, null, true, 'Europe/Madrid');
 }
 
 createDataWareHouseJob();
-
-exports.getCube = function(req, res){
-  Cube.find({}, function(err, cube){
-    if(err){
-      res.status(500).send(err);
-    }
-    else{
-      res.status(200).send(cube);
-    }
-  });
-}
-
-exports.getCubeWithInterval = function(req, res){
-  
-}
-
-
 module.exports.createDataWareHouseJob = createDataWareHouseJob;
 
 
