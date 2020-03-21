@@ -62,7 +62,7 @@ var getInformationCube = function(callback){
     },
     {
       $group: {
-        _id: {explorer: "$explorer", year: {$year: "$createdAt"}, month: {$month: "$createdAt"}},
+        _id: {explorer: "$explorer.email", year: {$year: "$createdAt"}, month: {$month: "$createdAt"}},
         totalSpent: {$sum: "$trip.price"}
       }
     }
@@ -138,7 +138,7 @@ function getCubeDataByDates(pairMonthYear, table){
 }
 
 function getCubeDataByUser(userEmail, table){
-  const onlyUser = ((point) => point[0][0].email === userEmail);
+  const onlyUser = ((point) => point[0][0] === userEmail);
 
   var tableFiltered = table.dice(onlyUser);
   return tableFiltered;
@@ -187,7 +187,9 @@ exports.getCubeDataByIntervalMonths = function(req, res){
   var promise = new Promise(function(resolve, reject){
     var cube_prom = getCubeDataByInterval(req.params.startingMonth, req.params.endingMonth);
     cube_prom.then((cube,err)=>{
+      console.log(cube.rows);
       cube = getCubeDataByUser(req.params.emailUser, cube);
+      console.log(cube.rows);
       if(cube !== null){
         var sol = new Table({
           dimensions: cube.dimensions,
@@ -199,6 +201,56 @@ exports.getCubeDataByIntervalMonths = function(req, res){
       }
       else{
         reject("Cubo nulo");
+      }
+    })
+  });
+  promise.then((cube)=>{
+    var jsonToReturn = {structure: cube, values: cube.rows}
+    res.status(200).send(jsonToReturn);
+  })
+  .catch((err)=>{
+    res.status(500).send(err);
+  });
+}
+
+exports.getCubeDataByComparisonAndMonths = function(req, res){
+  let amount = req.params.amount;
+  let map = {
+    "gte": (amountToCompare) => amountToCompare >= amount,
+    "gt": (amountToCompare) => amountToCompare > amount,
+    "eq": (amountToCompare) => amountToCompare == amount,
+    "lte": (amountToCompare) => amountToCompare <= amount,
+    "lt": (amountToCompare) => amountToCompare < amount
+  }
+
+  const summation = (sum, value) => {
+    return [sum[0] + value[0]];
+  }
+  const initialValue = [0];
+
+  var promise = new Promise(function(resolve, reject){
+    var cube_prom = getCubeDataByInterval(req.params.startingMonth, req.params.endingMonth);
+    cube_prom.then((cube,err)=>{
+
+      if(!(req.params.condition in map)){
+        reject("Comparison operator not valid. Valid ones: gte, gt, eq, lte, lt.");
+      }
+      else{
+        comparisonOperator = req.params.condition;
+        let cubeRolledUp = cube.rollup('explorer', ['totalSpent'], summation, initialValue);
+        comparisonFunction = map[comparisonOperator];
+        let cubeRolledUpFiltered = cubeRolledUp.rows.filter((row) => {
+          return comparisonFunction(row[1]);
+        });
+        console.log(cubeRolledUpFiltered);
+        
+        if(cubeRolledUpFiltered !== null){
+          sol = cubeRolledUpFiltered;
+          resolve(sol);
+        }
+        else{
+          reject("Cubo nulo");
+        }
       }
     })
   });

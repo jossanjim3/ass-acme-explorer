@@ -30,6 +30,9 @@ module.exports = function(app) {
 	app.route('/v1/dataWareHouse/latest/cube/:emailUser/:startingMonth/:endingMonth')
 		.get(dataWareHouse.getCubeDataByIntervalMonths);
 
+	app.route('/v1/dataWareHouse/latest/cube/byCondition/:condition/:amount/:startingMonth/:endingMonth')
+		.get(dataWareHouse.getCubeDataByComparisonAndMonths);
+
 	app.route('/v1/dataWareHouse/latest/cube')
 		.get(dataWareHouse.getCube);
 	/*app.route('/v1/dataWareHouse/latest/cube/:emailUsuario/:intervalo')
