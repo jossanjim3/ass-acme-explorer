@@ -93,23 +93,39 @@ function creatingCube(datos){
  * Query part
  */
 
+exports.getCube = function(req, res){
+  Cube.findOne({}, function(err, result){
+      if(err){
+        res.status(500).send(err);
+      }
+      else{
+        res.status(200).send(result);
+      }
+  });
+}
+
+
 function getCubeData(){
   return new Promise((resolve,reject)=>{
-    Cube.find({}, function(err, result){
+    Cube.findOne({}, function(err, result){
+      console.log("Result points: " + result.points);
       if(err){
         reject(err);
       } else {
         var table = new Table({
-          dimensions: result[0].cube.dimensions,
-          fields: result[0].cube.fields,
-          points: result[0].points,
-          data: result[0].data
+          dimensions: result.cube.dimensions,
+          fields: result.cube.fields,
+          points: result.points,
+          data: result.data
         })
+        console.log("Antes de promesa: " + result.cube.dimensions);
+        console.log("Antes de promesa: " + result.cube.fields);
+        console.log("Antes de promesa: " + result.points);
+        console.log("Antes de promesa: " + result.data);
         resolve(table);
       } 
     });
   })
-  
 }
 
 function getCubeDataByDates(pairMonthYear, table){
@@ -123,12 +139,12 @@ function getCubeDataByDates(pairMonthYear, table){
   });
 
   var tableFiltered = table.dice(inPeriod);
+  console.log("Table filtered: " + tableFiltered.points);
+  console.log("Table filtered: " + tableFiltered.data);
   return tableFiltered;
 }
 
 function getCubeDataByUser(userEmail, table){
-  console.log("AWdawaadwawdaw");
-  console.log(table);
   const onlyUser = ((point) => point[0][0].email === userEmail);
 
   var tableFiltered = table.dice(onlyUser);
@@ -166,6 +182,8 @@ function getCubeDataByInterval(startingMonth, endingMonth){
     var pairMonthYear = getStartingDateAndEndingDate(startingMonth, endingMonth);
     var table_prom = getCubeData();
     table_prom.then((table,err)=>{
+      console.log("Table: " + table.points);
+      console.log("Table: " + table.data);
       //We are filtering the data by the period.
       table = getCubeDataByDates(pairMonthYear, table);
       
