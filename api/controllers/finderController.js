@@ -1,7 +1,8 @@
 'use strict';
 /*---------------FINDER----------------------*/
 var mongoose = require('mongoose'),
-    Finder = require('../models/finderModel');
+    Finder = require('../models/finderModel'),
+    Actor = require('../models/actorModel');
 
 var fetch = require('node-fetch');
 
@@ -188,42 +189,6 @@ exports.update_finder = function(req, res) {
     });
 }
 
-exports.set_max_results = function(req, res){
-    var promise = new Promise(function(resolve, reject){
-        if(req.params.number > 0 && req.params.number < 101) {
-            maxNumberTrips = req.params.number;
-            resolve({message: "Operacion successful. Max number of results available per search updated."});
-        }
-        else{
-            reject({message: "Operation not allowed. The number must be one between 1 and 100."});
-        }
-    });
-    promise.then((message)=>{
-        res.status(200).send(message);
-    })
-    .catch((err) => {
-        res.status(403).send(err);
-    });
-}
-
-exports.set_time_results_saved = function(req, res){
-    var promise = new Promise(function(resolve, reject){
-        if(req.params.time > 0 && req.params.time <= 24) {
-            maxTimeAResultIsStored = req.params.time;
-            resolve({message: "Operacion successful. Max time the search is stored updated."});
-        }
-        else{
-            reject({message: "Operation not allowed. The number of hours must be between 1 and 24, latter included."});
-        }
-    });
-    promise.then((message)=>{
-        res.status(200).send(message);
-    })
-    .catch((err) => {
-        res.status(403).send(err);
-    });
-}
-
 
 /*-----------------Metodos para V2------------------------*/
 
@@ -239,144 +204,121 @@ exports.set_time_results_saved = function(req, res){
 }*/
 
 exports.remove_finder_auth = function(req, res){
-    Finder.FinderModel.remove({_id: req.params.id}, function(err, finder){
-        if(err){
-            res.status(500).send(err);
-        } else {
-            res.json({message:"Finder removed"});
-        }
-    });
-}
-
-exports.finder_of_actor_auth = function(req, res){
-    Finder.FinderModel.findOne({explorer: req.params.actorId}, function(err, finder){
+    var idToken = req.headers['idtoken']; //WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
+    var userId = authController.getUserId(idToken);
+    Actor.findOne({_id: userId}, async function(err, actor){
         if(err){
             res.status(500).send(err);
         }
         else{
-            if(timestampUnderLimit(finder)) {
-                res.status(200).json(finder);
-            }
-            else{
-                console.log("No se encuentra resultado");
-                res.status(200).json([]);
-            }
-        }
-    });
-}
-
-exports.update_finder_auth = function(req, res) {
-    var url = "http://localhost:" + (process.env.PORT || 8080) + "/v1/finders/explorers/" + req.params.actorId;
-    fetch(url,{
-        method: 'GET',
-    }).then(response => {
-        console.log("Primer then");
-        if(response.json.hasOwnProperty('message')){
-            console.log("Json es nulo");
-            return null;
-        }
-        else{
-            console.log("Devuelvo json");
-            return response.json();
-        }     
-    }).then(finder => {
-        var equalityBetweenFinderAndBody = checkEquality(finder, req.body);
-        console.log("Tercera comparacion: " + attrToCheck.every(equalityBetweenFinderAndBody))
-        if(finder !== null &&
-            timestampUnderLimit(finder) && 
-            attrToCheck.every(equalityBetweenFinderAndBody)){
-
-            console.log("Finder: " + finder);
-            console.log("Llego a devolver el anterior");
-            res.status(200).json(finder);
-        }
-        else{
-            var urlForFinder = extractUrl(req.body);
-            fetch(urlForFinder,{
-                method: 'GET',
-            }).then(response => {
-                return response.json();
-            }).then(trips =>{
-                var trips_results_finder = trips.slice(0, maxNumberTrips)
-                    .map((trip)=>transformToFinderTripSchema(trip));
-
-                var newFinder = new Finder.FinderModel(req.body);
-                newFinder.explorer = req.params.actorId;
-                newFinder.results = trips_results_finder;
-                Finder.FinderModel.deleteOne({explorer: req.params.actorId}, function(err, finder){
-                    if(err){
-                        res.status(500).send(err);
-                    }
-                    else{
-                        newFinder.save(function(err, finder){
-                            if(err){
-                                res.status(500).send(err);
-                            }
-                            else{
-                                res.status(201).send(finder);
-                            }
-                        });
-                    }
-                });
+            console.log('actor: '+actor); 
+            Finder.FinderModel.remove({_id: req.params.id}, function(err, finder){
+                if(err){
+                    res.status(500).send(err);
+                } else {
+                    res.json({message:"Finder removed"});
+                }
             });
         }
     });
 }
 
-exports.set_max_results_auth = function(req, res){
-    Actor.findById(req.params.actorId, async function(err, actor) {
-        if (err){
-            res.send(err);
+exports.finder_of_actor_auth = function(req, res){
+    var idToken = req.headers['idtoken']; //WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
+    var userId = authController.getUserId(idToken);
+    Actor.findOne({_id: userId}, async function(err, actor){
+        if(err){
+            res.status(500).send(err);
         }
         else{
-            console.log('actor: '+actor);
-            var idToken = req.headers['idtoken'];//WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
-            if (actor.role.includes('ADMINISTRATOR')){
-                var promise = new Promise(function(resolve, reject){
-                    if(req.params.number > 0 && req.params.number < 100) {
-                        maxNumberTrips = req.params.number;
-                        resolve({message: "Operacion successful. Max number of results available per search updated."});
-                    }
-                    else
-                        reject({message: "Operation not allowed. The number must be one between 1 and 100."});
-                });
-                promise.then((message)=>{
-                    res.status(200).send(message);
-                })
-                .catch((err) => {
+            console.log('actor: '+actor); 
+            Finder.FinderModel.findOne({explorer: req.params.actorId}, function(err, finder){
+                if(err){
                     res.status(500).send(err);
-                });
-            }
-            else{
-                res.status(403).json({message: "The user is not an administrator."})
-            }
+                }
+                else{
+                    if(timestampUnderLimit(finder)) {
+                        res.status(200).json(finder);
+                    }
+                    else{
+                        console.log("No se encuentra resultado");
+                        res.status(200).json([]);
+                    }
+                }
+            });
         }
     });
 }
 
-exports.set_time_results_saved_auth = function(req, res){
-    var idToken = req.headers['idtoken'];
+exports.update_finder_auth = function(req, res) {
+    var idToken = req.headers['idtoken']; //WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
     var userId = authController.getUserId(idToken);
-    
-            console.log('actor: '+actor);
-            var idToken = req.headers['idtoken'];//WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
-            if (actor.role.includes('ADMINISTRATOR')){
-                var promise = new Promise(function(resolve, reject){
-                    if(req.params.time > 0 && req.params.time <= 24) {
-                        maxTimeAResultIsStored = req.params.time;
-                        resolve({message: "Operacion successful. Max time the search is stored updated."});
+    Actor.findOne({_id: userId}, async function(err, actor){
+        if(err){
+            res.status(500).send(err);
+        }
+        else{
+            console.log('actor: '+actor); 
+            if (userId == req.params.actorId){
+                var url = "http://localhost:" + (process.env.PORT || 8080) + "/v1/finders/explorers/" + req.params.actorId;
+                fetch(url,{
+                    method: 'GET',
+                }).then(response => {
+                    console.log("Primer then");
+                    if(response.json.hasOwnProperty('message')){
+                        console.log("Json es nulo");
+                        return null;
                     }
-                    else
-                        reject({message: "Operation not allowed. The number of hours must be between 1 and 24, latter included."});
-                });
-                promise.then((message)=>{
-                    res.status(200).send(message);
-                })
-                .catch((err) => {
-                    res.status(500).send(err);
+                    else{
+                        console.log("Devuelvo json");
+                        return response.json();
+                    }     
+                }).then(finder => {
+                    var equalityBetweenFinderAndBody = checkEquality(finder, req.body);
+                    console.log("Tercera comparacion: " + attrToCheck.every(equalityBetweenFinderAndBody))
+                    if(finder !== null &&
+                        timestampUnderLimit(finder) && 
+                        attrToCheck.every(equalityBetweenFinderAndBody)){
+
+                        console.log("Finder: " + finder);
+                        console.log("Llego a devolver el anterior");
+                        res.status(200).json(finder);
+                    }
+                    else{
+                        var urlForFinder = extractUrl(req.body);
+                        fetch(urlForFinder,{
+                            method: 'GET',
+                        }).then(response => {
+                            return response.json();
+                        }).then(trips =>{
+                            var trips_results_finder = trips.slice(0, maxNumberTrips)
+                                .map((trip)=>transformToFinderTripSchema(trip));
+
+                            var newFinder = new Finder.FinderModel(req.body);
+                            newFinder.explorer = req.params.actorId;
+                            newFinder.results = trips_results_finder;
+                            Finder.FinderModel.deleteOne({explorer: req.params.actorId}, function(err, finder){
+                                if(err){
+                                    res.status(500).send(err);
+                                }
+                                else{
+                                    newFinder.save(function(err, finder){
+                                        if(err){
+                                            res.status(500).send(err);
+                                        }
+                                        else{
+                                            res.status(201).send(finder);
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    }
                 });
             }
             else{
-                res.status(403).json({message: "The user is not an administrator."})
+                res.status(403).json({message: "The authenticated user is trying to modify a finder that does not belong to him."})
             }
+        }
+    }); 
 }

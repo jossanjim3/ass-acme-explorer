@@ -20,8 +20,8 @@ describe("Tests on Sponsorships", () => {
             .request(url)
             .post(route)
             .send({
-                "banner": "No aun",
-                "link": "No aun",
+                "banner": "Banner de prueba",
+                "link": "Link de prueba",
                 "sponsor": "5e4d890345dd27745b5f6e81",
                 "tripSponsorships": [{"trip":"5e52755ba9be7b1c51e2d890"}]
             })

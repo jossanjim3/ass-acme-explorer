@@ -29,7 +29,8 @@ var mongoDBName = process.env.mongoDBName || "ACME-Explorer";
 var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
 mongoose.set('useCreateIndex', true)
 
-var mongoDBURI = "mongodb://" + mongoDBCredentials + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
+//var mongoDBURI = "mongodb://" + mongoDBCredentials + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
+var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
 //http://localhost:8080/v1/dbURL=mongodb://myUser:myUserPasswrod@localhost:27017/ACME-Explorer
 //mongodb://localhost:27017/ACME-Explorer
 mongoose.connect(mongoDBURI, {
@@ -72,6 +73,7 @@ var loginRoutes=require('./api/routes/loginRoutes')
 var routesFinders = require('./api/routes/finderRoutes');
 var routesStorage = require('./api/routes/storageRoutes');
 var routesDataWareHouse = require('./api/routes/dataWareHouseRoutes');
+var routesConfig = require('./api/routes/configRoutes');
 var routesCargaMasiva = require('./api/routes/cargaMasivaRoutes');
 
 routesActors(app);
@@ -82,6 +84,7 @@ loginRoutes(app);
 routesFinders(app);
 routesStorage(app);
 routesDataWareHouse(app);
+routesConfig(app);
 routesCargaMasiva(app);
 
 
