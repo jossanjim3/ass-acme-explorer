@@ -190,7 +190,8 @@ exports.create_an_actor_authenticated = function(req,res){
         res.status(422).send("It is not possible to create an administrator")
     }else if (new_actor.role.includes('MANAGER')){
 
-        id=authController.getUserId(req.body.id);
+        var idToken = req.headers['idtoken']
+        id=authController.getUserId(idToken);
 
         Actor.findById(id, function(err,actor2){
 
@@ -207,14 +208,11 @@ exports.create_an_actor_authenticated = function(req,res){
                                                     
                                             }
                     });
-                                            
-                                            
-                }else{
-
+                                                                 
+            }else{
                     res.status(403).send("The user is not authorized");
-
-                }
-                });
+            }
+        });
 
     }else{
         new_actor.save(function(err, actor) {
@@ -231,18 +229,14 @@ exports.create_an_actor_authenticated = function(req,res){
 };
 
 
-exports.update_an_actor_authenticated = function(req,res){
-    //Check that the user is the proper actor and if not: res.status(403); "an access token is valid, but requires more privileges"
-    Actor.findById(req.params.actorId, async function(err, actor) {
-        if (err){
-          res.send(err);
-        }
-        else{
-          console.log('actor: '+actor);
-          var idToken = req.headers['idtoken'];//WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
+exports.update_an_actor_authenticated =  async function(req,res){
+    
+
+          var idToken = req.headers['idtoken'];//WE NEED the FireBase custom token in the req.header['idToken'] to find the actor id
           var authenticatedUserId = await authController.getUserId(idToken);
 
-            if (authenticatedUserId == actor.actorId){//if the actor is trying to modify himself:
+            //Check that the user is the proper actor and if not: res.status(403); "an access token is valid, but requires more privileges"
+            if (authenticatedUserId == req.params.actorId){//if the actor is trying to modify himself:
 
                     var actor_body=req.body;
                     var promise_hash = new Promise((resolve,reject)=>{
@@ -269,15 +263,10 @@ exports.update_an_actor_authenticated = function(req,res){
                             
                             Actor.findOneAndUpdate({_id: req.params.actorId}, actor_body, {new: true}, function(err, actor) {
                                 if (err){
-                                if(err.name=='ValidationError') {
-                                    res.status(422).send(err);
-                                }
-                                else{
-                        
+                                    
                                     res.status(500).send(err);
                                 }
                                 
-                                }
                                 else{
                                     res.send(actor);
                                     res.status(200);
@@ -292,7 +281,5 @@ exports.update_an_actor_authenticated = function(req,res){
             } else{
               res.status(403).send('The Actor is trying to update an Actor that is not himself!');
             }    
-        }
-    });
     
 };

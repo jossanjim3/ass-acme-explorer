@@ -50,5 +50,4 @@ module.exports = function(app) {
 	 * 
 	*/
 	app.route('/v2/dataWareHouse/latest')
-	.get(authController.verifyUser(["ADMINISTRATOR"]),dataWareHouse.last_indicator);
-};
+	.get(authController.verifyUser(["ADMINISTRATOR"]),dataWareHouse.last_indicator);};

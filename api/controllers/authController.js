@@ -64,7 +64,6 @@ exports.verifyUser = function(requiredRoles) {
     console.log('idToken: '+idToken);
 
     admin.auth().verifyIdToken(idToken).then(function(decodedToken) {
-        //console.log('entra en el then de verifyIdToken: ');
 
         var uid = decodedToken.uid;
         var auth_time = decodedToken.auth_time;

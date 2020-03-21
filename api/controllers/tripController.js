@@ -97,8 +97,8 @@ exports.search_trips = function(req,res){
     if(req.query.sortedBy){
       sort+=req.query.sortedBy;
     }
-    console.log("Query: "+query.toString()+" Skip:" + skip+" Limit:" + limit+" Sort:" + sort);
-    console.log(query);
+    //console.log("Query: "+query.toString()+" Skip:" + skip+" Limit:" + limit+" Sort:" + sort);
+    //console.log(query);
     if(!error){
         Trip.find(query)
         .sort(sort)
@@ -106,14 +106,14 @@ exports.search_trips = function(req,res){
         .limit(limit)
         .lean()
         .exec(function(err, trips){
-      console.log('Start searching trips');
+      //console.log('Start searching trips');
       if (err){
         res.send(err);
       }
       else{
         res.json(trips);
       }
-      console.log('End searching trips');
+      //console.log('End searching trips');
     });
     }
 }
