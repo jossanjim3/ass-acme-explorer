@@ -81,15 +81,24 @@ describe("API Testing for Applications", () => {
     done();
   });
 
-  it("Get all applications", (done) => {
+  it("Get all applications",  function (done) {
+    
+    this.timeout(10000); // 10 second timeout only for this test
+
     chai
       .request(app)
       .get("/v1/applications")
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect('Content-Type', /json/);
-        if (err) done(err);
-        else done();
+        if (err) {
+          done(err);
+        } else {
+          appIdTmp = res.body._id;
+          //console.log(appIdTmp);          
+          done();
+          
+        }
       });
   });
 
