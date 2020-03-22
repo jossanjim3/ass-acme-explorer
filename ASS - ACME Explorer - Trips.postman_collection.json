@@ -1,0 +1,260 @@
+{
+	"info": {
+		"_postman_id": "621a6592-da74-43be-b825-80d6f4686c58",
+		"name": "ASS - ACME Explorer - Trips",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET trips",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/trips",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"trips"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST a trip",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Viaje a hawai\",\n    \"description\": \"Viaje paradisiaco para disfrutar de la naturaleza y el mar\",\n    \"price\": 400,\n    \"requeriments\": [\"Ser mayor de edad\", \"No se permite fumar\"],\n    \"startDate\": \"2020-12-09\",\n    \"endDate\": \"2020-12-16\",\n    \"stages\": [\n    \t\t{\n    \t\t\t\"title\": \"Buceo\",\n    \t\t\t\"description\": \"Buceo al rededor de las islas, para comprobar la naturaleza marina.\",\n    \t\t\t\"price\": 200\n    \t\t},\n    \t\t{\n    \t\t\t\"title\": \"Surf\",\n    \t\t\t\"description\": \"Surf en playas hawaianas\",\n    \t\t\t\"price\": 200\n    \t\t}\n    \t],\n    \"manager\": \"5e47fcb3aed9531440793134\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/v1/trips",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"trips"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST a trip without title",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"Viaje paradisiaco para disfrutar de la naturaleza y el mar\",\n    \"price\": 400,\n    \"requeriments\": [\"Ser mayor de edad\", \"No se permite fumar\"],\n    \"startDate\": \"2020-12-09\",\n    \"endDate\": \"2020-12-16\",\n    \"stages\": [\n    \t\t{\n    \t\t\t\"title\": \"Buceo\",\n    \t\t\t\"description\": \"Buceo al rededor de las islas, para comprobar la naturaleza marina.\",\n    \t\t\t\"price\": 200\n    \t\t},\n    \t\t{\n    \t\t\t\"title\": \"Surf\",\n    \t\t\t\"description\": \"Surf en playas hawaianas\",\n    \t\t\t\"price\": 200\n    \t\t}\n    \t],\n    \"manager\": \"5e47fcb3aed9531440793134\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/v1/trips",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"trips"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Trips Search by a Keyword",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/trips/search?keyword=hawai",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"trips",
+						"search"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": "hawai"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET a trip by ticker",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/trips/200216-LJPX",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"trips",
+						"200216-LJPX"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a Trip by ticker",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Viaje a hawai bombai\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/v1/trips/200216-LJPX",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"trips",
+						"200216-LJPX"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a Trip by ticker",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/trips/200216-LJPX",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"trips",
+						"200216-LJPX"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Publish a trip by ticker",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/trips/200216-WCNN/publish",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"trips",
+						"200216-WCNN",
+						"publish"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cancel an trip",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"reasonCancel\": \"No hay suficientes participantes para hacer el viaje\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/v1/trips/200216-WCNN/cancel",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"trips",
+						"200216-WCNN",
+						"cancel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Trips of a Manager",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/trips/manager/5e47fcb3aed9531440793134",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"trips",
+						"manager",
+						"5e47fcb3aed9531440793134"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
