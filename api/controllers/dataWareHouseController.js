@@ -127,9 +127,9 @@ function getCubeDataByDates(pairMonthYear, table){
   const inPeriod = ((point) => {
     return (
       //Checking if month and year are past the actual month, or the month where we start to consider.
-      (point[1] <= pairMonthYear[0][1] && point[2] < pairMonthYear[0][0]) &&
+      (point[1] < pairMonthYear[0][1] || (point[1] == pairMonthYear[0][1] && point[2] <= pairMonthYear[0][0])) &&
       //Checking if we do not go further than 36 months, or those introduced.
-      (point[1] >= pairMonthYear[1][1] && point[2] > pairMonthYear[1][0])
+      (point[1] > pairMonthYear[1][1] || (point[1] == pairMonthYear[1][1] && point[2] >= pairMonthYear[1][0]))
     )
   });
 
@@ -150,8 +150,8 @@ function getCubeDataByUser(userEmail, table){
    */ 
 function obtainingPairMonthYear(monthsBackwards){
   var today = new Date();
-  var actualMonth = today.getMonth();
-  var actualYear = today.getYear();
+  var actualMonth = today.getMonth() + 1;
+  var actualYear = today.getFullYear();
 
   var year = actualYear;
   var month = actualMonth - monthsBackwards;
@@ -160,6 +160,7 @@ function obtainingPairMonthYear(monthsBackwards){
     month += 12;
     --year;
   }
+
   return [month, year];
 }
 
