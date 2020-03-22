@@ -63,7 +63,7 @@ var getInformationCube = function(callback){
     {
       $group: {
         _id: {explorer: "$explorer.email", year: {$year: "$createdAt"}, month: {$month: "$createdAt"}},
-        totalSpent: {$sum: "$trip.price"}
+        totalSpent: {$sum: {$arrayElemAt: ["$trip.price", 0 ]}}
       }
     }
   ], function(err, res){
@@ -127,9 +127,9 @@ function getCubeDataByDates(pairMonthYear, table){
   const inPeriod = ((point) => {
     return (
       //Checking if month and year are past the actual month, or the month where we start to consider.
-      (point[1] < pairMonthYear[0][0] && point[2] < pairMonthYear[0][1]) &&
+      (point[1] <= pairMonthYear[0][1] && point[2] < pairMonthYear[0][0]) &&
       //Checking if we do not go further than 36 months, or those introduced.
-      (point[1] > pairMonthYear[1][0] && point[2] > pairMonthYear[1][1])
+      (point[1] >= pairMonthYear[1][1] && point[2] > pairMonthYear[1][0])
     )
   });
 
@@ -263,13 +263,6 @@ exports.getCubeDataByComparisonAndMonths = function(req, res){
   });
 }
 
-/*function getCubeDataByIntervalYears(){
-
-}
-
-function getCubeDataByComparisonMoney(){
-
-}*/
 /*------------------Cubo(End)---------------------------------*/
 
 
@@ -283,6 +276,7 @@ var CronTime = require('cron').CronTime;
 //'*/10 * * * * *' cada 10 segundos
 //'* * * * * *' cada segundo
 var rebuildPeriod = '*/10 * * * * *';  //El que se usará por defecto
+var rebuildPeriodForCube = '0 0 0 */1 * *';  //'0 0 0 */1 * *' Correct period. Once every midnight 00:00 AM.
 var computeDataWareHouseJob;
 var cubeComputation;
 
@@ -291,7 +285,7 @@ exports.rebuildPeriod = function(req, res) {
   rebuildPeriod = req.query.rebuildPeriod;
   computeDataWareHouseJob.setTime(new CronTime(rebuildPeriod));
   computeDataWareHouseJob.start();
-  cubeComputation.setTime(new CronTime(rebuildPeriod));
+  cubeComputation.setTime(new CronTime(rebuildPeriodForCube));
   cubeComputation.start();
 
   res.json(req.query.rebuildPeriod);
@@ -335,7 +329,7 @@ function createDataWareHouseJob(){
       });
     }, null, true, 'Europe/Madrid');
 
-    cubeComputation = new CronJob(rebuildPeriod,  function() { //'0 0 0 */1 * *' Correct period. Once every midnight 00:00 AM.
+    cubeComputation = new CronJob(rebuildPeriodForCube,  function() { 
       async.parallel([
         getInformationCube
       ], function (err, result) {
@@ -351,8 +345,7 @@ function createDataWareHouseJob(){
               new_cube.cube = creatingCube(result[0]);
               new_cube.points = new_cube.cube.points;
               new_cube.data = new_cube.cube.data;
-              //new_cube.data.map(dato => console.log(new_cube.data.indexOf(dato)));
-              // ToDo: Quitar el id del cubo, que parece cambiar y no se deja cambiar. new_cube._id
+
               new_cube.save(function(err, cube){
                 if(err){
                   console.log("Err on saving cube: " + err);
@@ -363,15 +356,6 @@ function createDataWareHouseJob(){
               });
             }
           });
-          /*
-          Cube.updateOne({idCubo: 1}, new_cube, {upsert: true}, function(err, cube){
-            if (err){
-              console.log("Error saving cube: " + err);
-            }
-            else{
-              console.log("new Cube succesfully saved. Date: " + new Date());
-            }
-          });*/
         }
       });
     }, null, true, 'Europe/Madrid');
