@@ -27,6 +27,17 @@ module.exports = function(app) {
 	app.route('/v1/dataWareHouse/latest')
 	.get(dataWareHouse.last_indicator);
 
+	app.route('/v1/dataWareHouse/latest/cube/:emailUser/:startingMonth/:endingMonth')
+		.get(dataWareHouse.getCubeDataByIntervalMonths);
+
+	app.route('/v1/dataWareHouse/latest/cube/byCondition/:condition/:amount/:startingMonth/:endingMonth')
+		.get(dataWareHouse.getCubeDataByComparisonAndMonths);
+
+	app.route('/v1/dataWareHouse/latest/cube')
+		.get(dataWareHouse.getCube);
+	/*app.route('/v1/dataWareHouse/latest/cube/:emailUsuario/:intervalo')
+		.get(dataWareHouse.getCubeDataByInterval);*/
+
 	/*** V2 ***/
 	/**
 	 * Get a list of all indicators or post a new computation period for rebuilding
@@ -50,4 +61,5 @@ module.exports = function(app) {
 	 * 
 	*/
 	app.route('/v2/dataWareHouse/latest')
-	.get(authController.verifyUser(["ADMINISTRATOR"]),dataWareHouse.last_indicator);};
+	.get(authController.verifyUser(["ADMINISTRATOR"]),dataWareHouse.last_indicator);
+};

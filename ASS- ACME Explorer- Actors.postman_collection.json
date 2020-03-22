@@ -565,7 +565,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/v1/storage/fs?dbURL=mongodb://myUser:myUserPassword@localhost:27017/ACME-Explorer&collection=actors&sourceFile=/Users/Carlo/Documents/Máster ISCDG/ACS/\\Proyecto\\ASS-ACME-Explorer-2020/generated.json&mongooseModel=Actors&parseString=*",
+					"raw": "http://localhost:8080/v1/storage/fs?dbURL=mongodb://myUser:myUserPassword@localhost:27017/ACME-Explorer&collection=actors&sourceFile=/Users/Carlo/Documents/Máster ISCDG/ACS/\\Proyecto\\ASS-ACME-Explorer-2020/CargaMasivaJson/actorsMassiveLoad.json&mongooseModel=Actors&parseString=*",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -587,7 +587,7 @@
 						},
 						{
 							"key": "sourceFile",
-							"value": "/Users/Carlo/Documents/Máster ISCDG/ACS/\\Proyecto\\ASS-ACME-Explorer-2020/generated.json"
+							"value": "/Users/Carlo/Documents/Máster ISCDG/ACS/\\Proyecto\\ASS-ACME-Explorer-2020/CargaMasivaJson/actorsMassiveLoad.json"
 						},
 						{
 							"key": "mongooseModel",
