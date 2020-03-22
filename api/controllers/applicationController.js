@@ -134,54 +134,62 @@ exports.update_an_application = function(req,res){
             }
 
         } else {
-            var statusApp = appli.status;
-            // if the application status is Pending -> DUE 
-            // if the application status is Due -> Accepted
-            // en el frontend se controla si es la vista de manager o de explorer
-            
-            if (statusApp == "PENDING") {
-                appli.status = "DUE";
 
-                // save the new status
-                appli.save(function(err, appli) {
-                    if (err){
-                        if(err.name=='ValidationError') {
-                            res.status(422).send(err);
+            if (appli != null) {
+
+                var statusApp = appli.status;
+                // if the application status is Pending -> DUE 
+                // if the application status is Due -> Accepted
+                // en el frontend se controla si es la vista de manager o de explorer
+                
+                if (statusApp == "PENDING") {
+                    appli.status = "DUE";
+
+                    // save the new status
+                    appli.save(function(err, appli) {
+                        if (err){
+                            if(err.name=='ValidationError') {
+                                res.status(422).send(err);
+                            }
+                            else{
+                                res.status(500).send(err);
+                            }
                         }
                         else{
-                            res.status(500).send(err);
+                            res.status(201);
+                            res.json(appli);
                         }
-                    }
-                    else{
-                        res.status(201);
-                        res.json(appli);
-                    }
-                });  
-                
-            } else if (statusApp == "DUE"){
-                appli.status = "ACCEPTED";
+                    });  
+                    
+                } else if (statusApp == "DUE"){
+                    appli.status = "ACCEPTED";
 
-                // save the new status
-                appli.save(function(err, appli) {
-                    if (err){
-                        if(err.name=='ValidationError') {
-                            res.status(422).send(err);
+                    // save the new status
+                    appli.save(function(err, appli) {
+                        if (err){
+                            if(err.name=='ValidationError') {
+                                res.status(422).send(err);
+                            }
+                            else{
+                                res.status(500).send(err);
+                            }
                         }
                         else{
-                            res.status(500).send(err);
+                            res.status(201);
+                            res.json(appli);
                         }
-                    }
-                    else{
-                        res.status(201);
-                        res.json(appli);
-                    }
-                });  
-                
+                    });  
+                    
+                } else {
+                    res.status(403);
+                    res.json("It is not possible to update the application status!");
+                    
+                }
+
             } else {
-                res.status(403);
-                res.json("It is not possible to update the application status!");
-                
-            } 
+                res.status(403); 
+                res.send("Application cannot be updated. Application does not exist!");
+            }             
         }
     });
 };
@@ -213,21 +221,48 @@ exports.update_an_application_authorized = function(req,res){
 
         } else {
 
-            var idToken   = req.headers['idtoken'];
-            var user      = authController.getUser(idToken);
-            var userId    = user._id;
-            var roleApp   = user.role;
+            if (appli != null) {
 
-            var statusApp = appli.status;
-            // manager -> if the application status is Pending -> DUE 
-            // explorer -> if the application status is Due and pay -> Accepted
-            // en el frontend se controla si es la vista de manager o de explorer
+                var idToken   = req.headers['idtoken'];
+                var user      = authController.getUser(idToken);
+                var userId    = user._id;
+                var roleApp   = user.role;
 
-            // if the explorer that made the app is the user logued
-            if (appli.explorer === userId){
-                
-                if (statusApp == "DUE"  && roleApp == "EXPLORER"){ // check if the user logged has role explorer
-                    appli.status = "ACCEPTED";
+                var statusApp = appli.status;
+                // manager -> if the application status is Pending -> DUE 
+                // explorer -> if the application status is Due and pay -> Accepted
+                // en el frontend se controla si es la vista de manager o de explorer
+
+                // if the explorer that made the app is the user logued
+                if (appli.explorer === userId){
+                    
+                    if (statusApp == "DUE"  && roleApp == "EXPLORER"){ // check if the user logged has role explorer
+                        appli.status = "ACCEPTED";
+
+                        // save the new status
+                        appli.save(function(err, appli) {
+                            if (err){
+                                if(err.name=='ValidationError') {
+                                    res.status(422).send(err);
+                                }
+                                else{
+                                    res.status(500).send(err);
+                                }
+                            }
+                            else{
+                                res.status(201);
+                                res.json(appli);
+                            }
+                        });  
+                        
+                    } else {
+                        res.status(403);
+                        res.json("It is not possible to update the application status!");
+                        
+                    }
+
+                } else if (statusApp == "PENDING" && roleApp == "MANAGER") { // check if the user logged has role manager
+                    appli.status = "DUE";
 
                     // save the new status
                     appli.save(function(err, appli) {
@@ -247,33 +282,13 @@ exports.update_an_application_authorized = function(req,res){
                     
                 } else {
                     res.status(403);
-                    res.json("It is not possible to update the application status!");
-                    
+                    res.json("It is not possible to update the application status.");
                 }
-
-            } else if (statusApp == "PENDING" && roleApp == "MANAGER") { // check if the user logged has role manager
-                appli.status = "DUE";
-
-                // save the new status
-                appli.save(function(err, appli) {
-                    if (err){
-                        if(err.name=='ValidationError') {
-                            res.status(422).send(err);
-                        }
-                        else{
-                            res.status(500).send(err);
-                        }
-                    }
-                    else{
-                        res.status(201);
-                        res.json(appli);
-                    }
-                });  
                 
             } else {
-                res.status(403);
-                res.json("It is not possible to update the application status.");
-            }
+                res.status(403); 
+                res.send("Application cannot be updated. Application does not exist!");
+            } 
              
         }
     });
@@ -298,35 +313,17 @@ exports.cancel_an_application = function(req, res) {
             }
 
         } else {
-            var statusApp = appli.status;
-            // if the application status is Accepted -> Cancelled 
-            // if the application status is Pending -> Rejected
-            // en el frontend se controla si es la vista de manager o de explorer
-            
-            if (statusApp == "ACCEPTED") {
-                appli.status = "CANCELLED";
 
-                // save the new status
-                appli.save(function(err, appli) {
-                    if (err){
-                        if(err.name=='ValidationError') {
-                            res.status(422).send(err);
-                        }
-                        else{
-                            res.status(500).send(err);
-                        }
-                    }
-                    else{
-                        res.status(201);
-                        res.json(appli);
-                    }
-                });  
+            if (appli != null) {
+
+                var statusApp = appli.status;
+                // if the application status is Accepted -> Cancelled 
+                // if the application status is Pending -> Rejected
+                // en el frontend se controla si es la vista de manager o de explorer
                 
-            } else if (statusApp == "PENDING"){
-                appli.status = "REJECTED";
+                if (statusApp == "ACCEPTED") {
+                    appli.status = "CANCELLED";
 
-                if(req.body.reasonCancel != undefined && req.body.reasonCancel != ""){
-                    appli.reasonCancel = req.body.reasonCancel;
                     // save the new status
                     appli.save(function(err, appli) {
                         if (err){
@@ -343,81 +340,9 @@ exports.cancel_an_application = function(req, res) {
                         }
                     });  
                     
-                } else {
-                    res.status(403);
-                    res.json("Sorry, you must include the reason why!");
-                }
-                
-            } else {
-                res.status(403);
-                res.json("It is not possible to reject or cancel the application!");
-                
-            }               
-        }       
-    });
-};
-
-//----------------------------
-// /v2/applications/:applicationId/cancel
-//----------------------------
-
-// update an application status to rejected by manager or cancelled by explorer
-exports.cancel_an_application_authorized = function(req, res) {    
-
-    // check the application status
-    Application.findById(req.params.applicationId, function(err, appli) {
-        if (err){
-            if(err.name=='ValidationError') {
-                res.status(422).send(err);
-            }
-            else{
-                res.status(403); 
-                res.send("Application cannot be rejected/cancelled. Application does not exist!");
-            }
-
-        } else {
-            
-            var statusApp = appli.status;
-            // if the application status is Accepted -> Cancelled 
-            // if the application status is Pending -> Rejected
-            // en el frontend se controla si es la vista de manager o de explorer
-            
-            var idToken = req.headers['idtoken'];
-            var user    = authController.getUser(idToken);
-            var userId  = user._id;
-            var role    = user.role;
-            
-            // if user logged == user application => is an explorer si o si
-            if (appli.explorer === userId && role == "EXPLORER"){
-
-                if (statusApp == "ACCEPTED") {
-                    appli.status = "CANCELLED";
-    
-                    // save the new status
-                    appli.save(function(err, appli) {
-                        if (err){
-                            if(err.name=='ValidationError') {
-                                res.status(422).send(err);
-                            }
-                            else{
-                                res.status(500).send(err);
-                            }
-                        }
-                        else{
-                            res.status(201);
-                            res.json(appli);
-                        }
-                    });  
-                } else {
-                    res.status(403);
-                    res.json("Sorry, you can't cancel the application!");
-                }
-                
-            // omly managers can reject application with status pending
-            } else if (statusApp == "PENDING" && role == "MANAGER"){
-
+                } else if (statusApp == "PENDING"){
                     appli.status = "REJECTED";
-    
+
                     if(req.body.reasonCancel != undefined && req.body.reasonCancel != ""){
                         appli.reasonCancel = req.body.reasonCancel;
                         // save the new status
@@ -440,11 +365,114 @@ exports.cancel_an_application_authorized = function(req, res) {
                         res.status(403);
                         res.json("Sorry, you must include the reason why!");
                     }
+                    
+                } else {
+                    res.status(403);
+                    res.json("It is not possible to reject or cancel the application!");
+                    
+                } 
+            } else {
+                res.status(403); 
+                res.send("Application cannot be rejected/cancelled. Application does not exist!");
+            }                          
+        }       
+    });
+};
+
+//----------------------------
+// /v2/applications/:applicationId/cancel
+//----------------------------
+
+// update an application status to rejected by manager or cancelled by explorer
+exports.cancel_an_application_authorized = function(req, res) {    
+
+    // check the application status
+    Application.findById(req.params.applicationId, function(err, appli) {
+        if (err){
+            if(err.name=='ValidationError') {
+                res.status(422).send(err);
+            }
+            else{
+                
+            }
+
+        } else {
+            
+            if (appli != null) {
+
+                var statusApp = appli.status;
+                // if the application status is Accepted -> Cancelled 
+                // if the application status is Pending -> Rejected
+                // en el frontend se controla si es la vista de manager o de explorer
+                
+                var idToken = req.headers['idtoken'];
+                var user    = authController.getUser(idToken);
+                var userId  = user._id;
+                var role    = user.role;
+                
+                // if user logged == user application => is an explorer si o si
+                if (appli.explorer === userId && role == "EXPLORER"){
+
+                    if (statusApp == "ACCEPTED") {
+                        appli.status = "CANCELLED";
+        
+                        // save the new status
+                        appli.save(function(err, appli) {
+                            if (err){
+                                if(err.name=='ValidationError') {
+                                    res.status(422).send(err);
+                                }
+                                else{
+                                    res.status(500).send(err);
+                                }
+                            }
+                            else{
+                                res.status(201);
+                                res.json(appli);
+                            }
+                        });  
+                    } else {
+                        res.status(403);
+                        res.json("Sorry, you can't cancel the application!");
+                    }
+                    
+                // omly managers can reject application with status pending
+                } else if (statusApp == "PENDING" && role == "MANAGER"){
+
+                        appli.status = "REJECTED";
+        
+                        if(req.body.reasonCancel != undefined && req.body.reasonCancel != ""){
+                            appli.reasonCancel = req.body.reasonCancel;
+                            // save the new status
+                            appli.save(function(err, appli) {
+                                if (err){
+                                    if(err.name=='ValidationError') {
+                                        res.status(422).send(err);
+                                    }
+                                    else{
+                                        res.status(500).send(err);
+                                    }
+                                }
+                                else{
+                                    res.status(201);
+                                    res.json(appli);
+                                }
+                            });  
+                            
+                        } else {
+                            res.status(403);
+                            res.json("Sorry, you must include the reason why!");
+                        }
+
+                } else {
+                    res.status(403);
+                    res.json("It is not possible to reject or cancel the application!");               
+                } 
 
             } else {
-                res.status(403);
-                res.json("It is not possible to reject or cancel the application!");               
-            }  
+                res.status(403); 
+                res.send("Application cannot be rejected/cancelled. Application does not exist!");
+            }
 
         }       
     });
