@@ -287,7 +287,7 @@ var computeDataWareHouseJob;
 var cubeComputation;
 
 exports.rebuildPeriod = function(req, res) {
-  console.log('Updating rebuild period. Request: period:'+req.query.rebuildPeriod);
+  //console.log('Updating rebuild period. Request: period:'+req.query.rebuildPeriod);
   rebuildPeriod = req.query.rebuildPeriod;
   computeDataWareHouseJob.setTime(new CronTime(rebuildPeriod));
   computeDataWareHouseJob.start();
@@ -301,7 +301,7 @@ function createDataWareHouseJob(){
       computeDataWareHouseJob = new CronJob(rebuildPeriod,  function() {
       
       var new_dataWareHouse = new DataWareHouse();
-      console.log('Cron job submitted. Rebuild period: '+rebuildPeriod);
+      //console.log('Cron job submitted. Rebuild period: '+rebuildPeriod);
       async.parallel([
         computeTripsPerManager,
         computeApplicationsPerTrip,
