@@ -12,7 +12,13 @@ var Trip = mongoose.model('Trips');
 // /v1/applications
 //----------------------------
 
-// list all the applications
+/** 
+ * list all the applications
+ *
+ * @section applications
+ * @type get
+ * @url /v1/applications
+ */
 exports.list_all_applications = function(req,res){
     Application.find({},function(err, applis){
         if(err){
@@ -23,7 +29,14 @@ exports.list_all_applications = function(req,res){
     });
 };
 
-// create an applicaction
+/** 
+ * create an applicaction
+ *   RequiredRoles: to be an Explorer
+ *
+ * @section applications
+ * @type post
+ * @url /v1/applications
+ */
 exports.create_an_application = function(req,res){
     
     var explorer = undefined;
@@ -107,7 +120,14 @@ exports.create_an_application = function(req,res){
 // /v1/applications/:applicationId
 //----------------------------
 
-// read an application  
+/** 
+ * read an application 
+ *   RequiredRoles: to be an Explorer or Manager
+ *
+ * @section applications
+ * @type get
+ * @url /v1/applications/:applicationId
+ */ 
 exports.read_an_application = function(req,res){
     Application.findById(req.params.applicationId, function(err, application){
         if(err){
@@ -118,7 +138,14 @@ exports.read_an_application = function(req,res){
     })
 };
 
-// update an application status
+/** 
+ *  update an application status
+ *   RequiredRoles: to be an Explorer or Manager
+ *
+ * @section applications
+ * @type put
+ * @url /v1/applications/:applicationId
+ */ 
 exports.update_an_application = function(req,res){
 
     //console.log(req.params.applicationId);
@@ -194,7 +221,14 @@ exports.update_an_application = function(req,res){
     });
 };
 
-// delete an application. Currently an application cannot be deleted!
+/** 
+ *  delete an application. Currently an application cannot be deleted!
+ *   RequiredRoles: to be an Explorer or Manager
+ *
+ * @section applications
+ * @type delete
+ * @url /v1/applications/:applicationId
+ */ 
 exports.delete_an_application = function(req,res){
     // an application cannot be deleted
     res.status(403).send("An application cannot be deleted!");
@@ -204,6 +238,14 @@ exports.delete_an_application = function(req,res){
 // /v2/applications/:applicationId
 //----------------------------
 
+/** 
+ *  update an application status authorized
+ *   RequiredRoles: to be an Explorer or Manager
+ *
+ * @section applications
+ * @type put
+ * @url /v2/applications/:applicationId
+ */  
 exports.update_an_application_authorized = function(req,res){
 
     //console.log(req.params.applicationId);
@@ -298,7 +340,14 @@ exports.update_an_application_authorized = function(req,res){
 // /v1/applications/:applicationId/cancel
 //----------------------------
 
-// update an application status to rejected by manager or cancelled by explorer
+/** 
+ *  cancel an application
+ *   RequiredRoles: to be an Explorer or Manager
+ *
+ * @section applications
+ * @type put
+ * @url /v1/applications/:applicationId/cancel
+ */ 
 exports.cancel_an_application = function(req, res) {    
 
     // check the application status
@@ -383,8 +432,14 @@ exports.cancel_an_application = function(req, res) {
 // /v2/applications/:applicationId/cancel
 //----------------------------
 
-// update an application status to rejected by manager or cancelled by explorer
-exports.cancel_an_application_authorized = function(req, res) {    
+/** 
+ *  cancel an application authorized
+ *   RequiredRoles: to be an Explorer or Manager
+ *
+ * @section applications
+ * @type put
+ * @url /v2/applications/:applicationId/cancel
+ */ exports.cancel_an_application_authorized = function(req, res) {    
 
     // check the application status
     Application.findById(req.params.applicationId, function(err, appli) {
@@ -482,7 +537,14 @@ exports.cancel_an_application_authorized = function(req, res) {
 // /v1/applications/users/:userId
 //----------------------------
 
-// list applications that explorers have made
+/** 
+ *  list applications that explorers have made
+ *   RequiredRoles: to be an Explorer or Manager
+ *
+ * @section applications
+ * @type get
+ * @url /v1/applications/users/:userId
+ */ 
 exports.list_all_my_applications = function(req, res) {
     var user_id = req.params.userId;
 
@@ -501,7 +563,14 @@ exports.list_all_my_applications = function(req, res) {
 // /v1/applications/trips/:tripId
 //----------------------------
 
-// list applications from a trip
+/** 
+ *  list applications from a trip
+ *   RequiredRoles: to be an Explorer or Manager
+ *
+ * @section applications
+ * @type get
+ * @url /v1/applications/trips/:tripId
+ */
 exports.list_all_trip_applications = function(req, res) {
     var trip_id = req.params.tripId;
 
