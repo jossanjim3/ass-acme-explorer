@@ -186,24 +186,35 @@ function getCubeDataByInterval(startingMonth, endingMonth){
 
 exports.getCubeDataByIntervalMonths = function(req, res){
   var promise = new Promise(function(resolve, reject){
-    var cube_prom = getCubeDataByInterval(req.params.startingMonth, req.params.endingMonth);
-    cube_prom.then((cube,err)=>{
-      console.log(cube.rows);
-      cube = getCubeDataByUser(req.params.emailUser, cube);
-      console.log(cube.rows);
-      if(cube !== null){
-        var sol = new Table({
-          dimensions: cube.dimensions,
-          fields: cube.fields,
-          points: cube.points,
-          data: cube.data
-        });
-        resolve(sol);
-      }
-      else{
-        reject("Cubo nulo");
-      }
-    })
+    if(Number(req.params.startingMonth) > Number(req.params.endingMonth)){
+      reject("Incorrect period. The starting month must be lower than the ending month.");
+    }
+    else if (req.params.startingMonth < 1){
+      reject("Incorrect starting month. This one must be greater or equal to 1.");
+    }
+    else if ((req.params.endingMonth > 36)){
+      reject("Incorrect ending month. This one must be lower or equal to 36.");
+    }
+    else{
+      var cube_prom = getCubeDataByInterval(req.params.startingMonth, req.params.endingMonth);
+      cube_prom.then((cube,err)=>{
+        console.log(cube.rows);
+        cube = getCubeDataByUser(req.params.emailUser, cube);
+        console.log(cube.rows);
+        if(cube !== null){
+          var sol = new Table({
+            dimensions: cube.dimensions,
+            fields: cube.fields,
+            points: cube.points,
+            data: cube.data
+          });
+          resolve(sol);
+        }
+        else{
+          reject("Cubo nulo");
+        }
+      });
+    }
   });
   promise.then((cube)=>{
     var jsonToReturn = {structure: cube, values: cube.rows}
@@ -230,30 +241,44 @@ exports.getCubeDataByComparisonAndMonths = function(req, res){
   const initialValue = [0];
 
   var promise = new Promise(function(resolve, reject){
-    var cube_prom = getCubeDataByInterval(req.params.startingMonth, req.params.endingMonth);
-    cube_prom.then((cube,err)=>{
+    if(Number(req.params.startingMonth) > Number(req.params.endingMonth)){
+      reject("Incorrect period. The starting month must be lower than the ending month.");
+    }
+    else if (req.params.startingMonth < 1){
+      reject("Incorrect starting month. This one must be greater or equal to 1.");
+    }
+    else if ((req.params.endingMonth > 36)){
+      reject("Incorrect ending month. This one must be lower or equal to 36.");
+    }
+    else{
+      var cube_prom = getCubeDataByInterval(req.params.startingMonth, req.params.endingMonth);
+      cube_prom.then((cube,err)=>{
 
-      if(!(req.params.condition in map)){
-        reject("Comparison operator not valid. Valid ones: gte, gt, eq, lte, lt.");
-      }
-      else{
-        comparisonOperator = req.params.condition;
-        let cubeRolledUp = cube.rollup('explorer', ['totalSpent'], summation, initialValue);
-        comparisonFunction = map[comparisonOperator];
-        let cubeRolledUpFiltered = cubeRolledUp.rows.filter((row) => {
-          return comparisonFunction(row[1]);
-        });
-        console.log(cubeRolledUpFiltered);
-        
-        if(cubeRolledUpFiltered !== null){
-          sol = cubeRolledUpFiltered;
-          resolve(sol);
+        if(!(req.params.condition in map)){
+          reject("Comparison operator not valid. Valid ones: gte, gt, eq, lte, lt.");
+        }
+        else if(amount < 0){
+          reject("Amount must be a positive quantity.");
         }
         else{
-          reject("Cubo nulo");
+          comparisonOperator = req.params.condition;
+          let cubeRolledUp = cube.rollup('explorer', ['totalSpent'], summation, initialValue);
+          comparisonFunction = map[comparisonOperator];
+          let cubeRolledUpFiltered = cubeRolledUp.rows.filter((row) => {
+            return comparisonFunction(row[1]);
+          });
+          console.log(cubeRolledUpFiltered);
+          
+          if(cubeRolledUpFiltered !== null){
+            sol = cubeRolledUpFiltered;
+            resolve(sol);
+          }
+          else{
+            reject("Cubo nulo");
+          }
         }
-      }
-    })
+      });
+    }
   });
   promise.then((cube)=>{
     var jsonToReturn = {structure: cube, values: cube.rows}
