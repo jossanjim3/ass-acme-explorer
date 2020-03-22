@@ -25,69 +25,80 @@ exports.list_all_applications = function(req,res){
 
 // create an applicaction
 exports.create_an_application = function(req,res){
-    var new_appli = new Application(req.body);
+    
     var explorer = undefined;
     var trip = undefined;
     
     // check if the actor exists
-    Actor.findById(req.body.explorer, function(err, actor){
+    Actor.findOne({_id: req.body.explorer}, function(err, actor){
         if(err){
             //res.status(500).send(err);
             res.status(403);
             res.json("Application cannot be created. Actor does not exist!");
         } else {
             explorer = actor;
-            //console.log(explorer.role);
             
-            // Check if the actor is an Explorer  
-            if (explorer.role == "EXPLORER" ) {
+            if (explorer != null){
+                // Check if the actor is an Explorer  
+                if (explorer.role == "EXPLORER" ) {
 
-                // check if the trip exists
-                Trip.findById(req.body.trip, function(err, tripp){
-                    if(err){
-                        //res.status(500).send(err);
-                        res.status(403);
-                        res.json("Application cannot be created. Trips does not exist!");
+                    // check if the trip exists
+                    Trip.findById(req.body.trip, function(err, tripp){
+                        if(err){
+                            //res.status(500).send(err);
+                            res.status(403);
+                            res.json("Application cannot be created. Trips does not exist!");
 
-                    } else {
-                        trip = tripp;
-                        //console.log(trip);
+                        } else {
+                            trip = tripp;
+                            
+                            if (trip != null) {
+                                // Check if the trip has been published and is not started or cancelled
+                                if (trip.isPublished && trip.reasonCancel == undefined && trip.startDate > new Date()){                            
 
-                        // Check if the trip has been published and is not started or cancelled
-                        if (trip.isPublished && trip.reasonCancel == undefined && trip.startDate > new Date()){
+                                    // create the application
+                                    var new_appli = new Application(req.body);
 
-                            // create the application
-                            new_appli.save(function(err, appli) {
-                                if (err){
-                                    if(err.name=='ValidationError') {
-                                        res.status(422).send(err);
-                                    }
-                                    else{
-                                        res.status(500).send(err);
-                                    }
+                                    new_appli.save(function(err, appli) {
+                                        if (err){
+                                            if(err.name=='ValidationError') {
+                                                res.status(422).send(err);
+                                            }
+                                            else{
+                                                res.status(500).send(err);
+                                            }
+                                        }
+                                        else{
+                                            res.json(appli);
+                                        }
+                                    });
+                                } else if (!trip.isPublished) {
+                                    res.status(403);
+                                    res.json("Application cannot be created. The trip is not published yet!");
+                                } else if (trip.reasonCancel != undefined){
+                                    res.status(403);
+                                    res.json("Application cannot be created. The trip has been cancelled!");
+                                } else if (trip.startDate <= new Date()){
+                                    res.status(403);
+                                    res.json("Application cannot be created. The trip has already started!");
                                 }
-                                else{
-                                    res.json(appli);
-                                }
-                            });
-                        } else if (!trip.isPublished) {
-                            res.status(403);
-                            res.json("Application cannot be created. The trip is not published yet!");
-                        } else if (trip.reasonCancel != undefined){
-                            res.status(403);
-                            res.json("Application cannot be created. The trip has been cancelled!");
-                        } else if (trip.startDate <= new Date()){
-                            res.status(403);
-                            res.json("Application cannot be created. The trip has already started!");
+                            } else {
+                                res.status(403);
+                                res.json("Application cannot be created. Trips does not exist!");
+                            }                            
+
                         }
+                    })
 
-                    }
-                })
-
+                } else {
+                    res.status(403);
+                    res.json("Application cannot be created. The actor is not an explorer!");
+                }
             } else {
                 res.status(403);
-                res.json("Application cannot be created. The actor is not an explorer!");
+                res.json("Application cannot be created. Actor does not exist!");
             }
+            
         }
     })        
 };
