@@ -20,6 +20,7 @@ describe("Tests on finder", () => {
             });
         });
         it("Get finder by explorerID, unexistent", done => {
+            this.timeout(5000);
             chai
             .request(app)
             .get(route + "/explorers" + "/aaaaaaaaaaaaaaaaaaaaaaaa")
@@ -31,6 +32,7 @@ describe("Tests on finder", () => {
     });
     describe("PUT or CREATE", () => {
         it("Create finder", done =>{
+            this.timeout(5000);
             chai
             .request(app)
             .put(route + explorers + "/" + idExplorer)
@@ -44,6 +46,7 @@ describe("Tests on finder", () => {
             });
         });
         it("Read finder, because no changes were made", done =>{
+            this.timeout(5000);
             chai
             .request(app)
             .put(route + explorers + "/" + idExplorer)
@@ -57,6 +60,7 @@ describe("Tests on finder", () => {
             });
         });
         it("Updates finder, because a change was made", done =>{
+            this.timeout(5000);
             chai
             .request(app)
             .put(route + explorers + "/" + idExplorer)
@@ -70,6 +74,7 @@ describe("Tests on finder", () => {
             });
         });
         it("Updates finder, no parameters, should work", done => {
+            this.timeout(5000);
             chai
             .request(app)
             .put(route + explorers + "/" + idExplorer)
@@ -80,6 +85,7 @@ describe("Tests on finder", () => {
             });
         })
         it("Invalid combination of dates introduced, expect error", done => {
+            this.timeout(5000);
             chai
             .request(app)
             .put(route + explorers + "/" + idExplorer)
@@ -94,6 +100,7 @@ describe("Tests on finder", () => {
             });
         });
         it("Invalid combination of prices introduced, expect error", done => {
+            this.timeout(5000);
             chai
             .request(app)
             .put(route + explorers + "/" + idExplorer)

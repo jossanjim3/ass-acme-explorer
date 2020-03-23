@@ -57,6 +57,7 @@ var timestampUnderLimit = function(finder){
     return new Promise((resolve,reject)=>{
         configModel.findOne({}, (err, config) => {
             var currentTime = new Date();
+            console.log(finder.timestamp);
             var timeToCompare = new Date(finder.timestamp);
     
             maxTimeAResultIsStored = config.max_number_hours_finder_stored;
@@ -116,19 +117,20 @@ exports.finder_of_actor = function(req, res){
             res.status(500).send(err);
         }
         else{
-            console.log(finder !== null);
-            console.log(timestampUnderLimit(finder));
-            timestampUnderLimit(finder).then((timestampCheck,err) => {
-                if(finder !== null && timestampCheck) {
-                    console.log("Llego a devolver");
-                    res.status(200).json(finder);
-                }
-                else{
-                    console.log("No se encuentra resultado");
-                    res.status(200).json([]);
-                }
-            });
-            
+            if(finder !== null){
+                timestampUnderLimit(finder).then((timestampCheck,err) => {
+                    console.log(finder);
+                    console.log(finder !== null)
+                    if(timestampCheck) {
+                        console.log("Llego a devolver");
+                        res.status(200).json(finder);
+                    }
+                    else{
+                        console.log("No se encuentra resultado");
+                        res.status(200).json([]);
+                    }
+                });
+            }
         }
     });
 }
@@ -140,15 +142,16 @@ exports.update_finder = function(req, res) {
     }).then(response => {
         return response.json();
     }).then(finder => {
-        console.log(finder);
-        console.log(req.body);
         var equalityBetweenFinderAndBody = checkEquality(finder, req.body);
         console.log("Tercera comparacion: " + attrToCheck.every(equalityBetweenFinderAndBody))
-        if(timestampUnderLimit(finder) && 
-            attrToCheck.every(equalityBetweenFinderAndBody)){
-            
-            console.log("Devolviendo finder almacenado.");
-            res.status(200).json(finder);
+        if(attrToCheck.every(equalityBetweenFinderAndBody)){
+            timestampUnderLimit(finder).then((timestampCheck,err) => {
+                if(timestampCheck && 
+                attrToCheck.every(equalityBetweenFinderAndBody)){
+                    console.log("Devolviendo finder almacenado.");
+                    res.status(200).json(finder);
+                }
+            });
         }
         else{
             var urlForFinder = extractUrl(req.body);
@@ -239,13 +242,16 @@ exports.finder_of_actor_auth = function(req, res){
                     res.status(500).send(err);
                 }
                 else{
-                    if(timestampUnderLimit(finder)) {
-                        res.status(200).json(finder);
-                    }
-                    else{
-                        console.log("No se encuentra resultado");
-                        res.status(200).json([]);
-                    }
+                    timestampUnderLimit(finder).then((timestampCheck,err) => {
+                        if(finder !== null && timestampCheck) {
+                            console.log("Llego a devolver");
+                            res.status(200).json(finder);
+                        }
+                        else{
+                            console.log("No se encuentra resultado");
+                            res.status(200).json([]);
+                        }
+                    });
                 }
             });
         }
@@ -278,12 +284,10 @@ exports.update_finder_auth = function(req, res) {
                 }).then(finder => {
                     var equalityBetweenFinderAndBody = checkEquality(finder, req.body);
                     console.log("Tercera comparacion: " + attrToCheck.every(equalityBetweenFinderAndBody))
-                    if(finder !== null &&
-                        timestampUnderLimit(finder) && 
+                    timestampUnderLimit(finder).then((timestampCheck,err) => {
+                        if(timestampCheck && 
                         attrToCheck.every(equalityBetweenFinderAndBody)){
-
-                        console.log("Finder: " + finder);
-                        console.log("Llego a devolver el anterior");
+                        console.log("Devolviendo finder almacenado.");
                         res.status(200).json(finder);
                     }
                     else{
@@ -293,29 +297,38 @@ exports.update_finder_auth = function(req, res) {
                         }).then(response => {
                             return response.json();
                         }).then(trips =>{
-                            var trips_results_finder = trips.slice(0, maxNumberTrips)
-                                .map((trip)=>transformToFinderTripSchema(trip));
+                            if(trips.hasOwnProperty("name")){
+                                res.status(400).send(trips);
+                            }
+                            else{
+                                configModel.findOne({}, (err, config) => {
+                                    maxNumberTrips = config.max_number_trips_results;
+                                    var trips_results_finder = trips.slice(0, maxNumberTrips)
+                                        .map((trip)=>transformToFinderTripSchema(trip));
 
-                            var newFinder = new Finder.FinderModel(req.body);
-                            newFinder.explorer = req.params.actorId;
-                            newFinder.results = trips_results_finder;
-                            Finder.FinderModel.deleteOne({explorer: req.params.actorId}, function(err, finder){
-                                if(err){
-                                    res.status(500).send(err);
-                                }
-                                else{
-                                    newFinder.save(function(err, finder){
+                                    var newFinder = new Finder.FinderModel(req.body);
+                                    newFinder.explorer = req.params.actorId;
+                                    newFinder.results = trips_results_finder;
+                                    Finder.FinderModel.deleteOne({explorer: req.params.actorId}, function(err, finder){
                                         if(err){
                                             res.status(500).send(err);
                                         }
                                         else{
-                                            res.status(201).send(finder);
+                                            newFinder.save(function(err, finder){
+                                                if(err){
+                                                    res.status(500).send(err);
+                                                }
+                                                else{
+                                                    res.status(201).send(finder);
+                                                }
+                                            });
                                         }
                                     });
-                                }
-                            });
+                                });
+                            }
                         });
                     }
+                });
                 });
             }
             else{
