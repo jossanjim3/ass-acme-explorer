@@ -8,6 +8,7 @@ var express = require('express'),
  fs=require('fs'),
  Actor = require('./api/models/actorModel'),
  Application = require('./api/models/applicationModel'),
+ Poi = require('./api/models/poiModel'),
  Trip = require('./api/models/tripModel'),
  DataWareHouse = require('./api/models/dataWareHouseModel'),
  Finder = require('./api/models/finderModel'),
@@ -75,6 +76,7 @@ var routesStorage = require('./api/routes/storageRoutes');
 var routesDataWareHouse = require('./api/routes/dataWareHouseRoutes');
 var routesConfig = require('./api/routes/configRoutes');
 var routesCargaMasiva = require('./api/routes/cargaMasivaRoutes');
+var routesPois = require('./api/routes/poiRoutes');
 
 routesActors(app);
 routesApplications(app);
@@ -86,6 +88,7 @@ routesStorage(app);
 routesDataWareHouse(app);
 routesConfig(app);
 routesCargaMasiva(app);
+routesPois(app);
 
 
 console.log("Connecting DB to: " + mongoDBURI);
