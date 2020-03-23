@@ -22,7 +22,7 @@ describe("Tests on finder", () => {
         it("Get finder by explorerID, unexistent", done => {
             chai
             .request(app)
-            .get(route + "/explorers" + "/5e4d890645dd27745b5f6aaa")
+            .get(route + "/explorers" + "/aaaaaaaaaaaaaaaaaaaaaaaa")
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 done();

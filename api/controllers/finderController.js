@@ -54,15 +54,17 @@ function transformToFinderTripSchema(trip){
 const attrToCheck = ["keyword", "minDate", "maxDate", "minPrice", "maxPrice"];
 
 var timestampUnderLimit = function(finder){
-    var currentTime = new Date();
-    var timeToCompare = new Date(finder.timestamp);
+    return new Promise((resolve,reject)=>{
+        configModel.findOne({}, (err, config) => {
+            var currentTime = new Date();
+            var timeToCompare = new Date(finder.timestamp);
     
-    configModel.findOne({}, (err, config) => {
-        maxTimeAResultIsStored = config.max_number_hours_finder_stored;
-        timeToCompare = timeToCompare.setHours(timeToCompare.getHours() + maxTimeAResultIsStored);
-        console.log("Comparacion: " + timeToCompare + " y " + currentTime.getTime());
-
-        return (timeToCompare > currentTime.getTime());
+            maxTimeAResultIsStored = config.max_number_hours_finder_stored;
+            timeToCompare = timeToCompare.setHours(timeToCompare.getHours() + maxTimeAResultIsStored);
+            console.log("Comparacion: " + timeToCompare + " y " + currentTime.getTime());
+    
+            resolve(timeToCompare > currentTime.getTime());
+        });
     });
 
 }
@@ -70,8 +72,7 @@ var timestampUnderLimit = function(finder){
 var checkEquality = function(finder, body){
     return function(attr){
         if(body[attr] === undefined && finder[attr] === null){
-            return true
-            
+            return true;
         }
         else{
             if(attr === "minDate" || attr === "maxDate"){
@@ -86,23 +87,6 @@ var checkEquality = function(finder, body){
     }
 }
 
-function fetchOperation(service){
-    return function(operation, parameters = []){
-        for(element in parameters){
-            service += "/" + element;
-        }
-        console.log(service);
-        fetch(service,{
-            method: operation,
-        }).then(response => {
-            return response.json();  
-        }).then(json => {
-            return json;
-        });
-    }
-}
-
-var actorService = fetchOperation("http://localhost:" + (process.env.PORT || 8080) + "/v1/actors");
 
 /*-----------------Metodos para V1------------------------*/
 exports.all_finders = function(req, res){
@@ -132,13 +116,19 @@ exports.finder_of_actor = function(req, res){
             res.status(500).send(err);
         }
         else{
-            if(finder !== null && timestampUnderLimit(finder)) {
-                res.status(200).json(finder);
-            }
-            else{
-                console.log("No se encuentra resultado");
-                res.status(200).json([]);
-            }
+            console.log(finder !== null);
+            console.log(timestampUnderLimit(finder));
+            timestampUnderLimit(finder).then((timestampCheck,err) => {
+                if(finder !== null && timestampCheck) {
+                    console.log("Llego a devolver");
+                    res.status(200).json(finder);
+                }
+                else{
+                    console.log("No se encuentra resultado");
+                    res.status(200).json([]);
+                }
+            });
+            
         }
     });
 }
@@ -150,6 +140,8 @@ exports.update_finder = function(req, res) {
     }).then(response => {
         return response.json();
     }).then(finder => {
+        console.log(finder);
+        console.log(req.body);
         var equalityBetweenFinderAndBody = checkEquality(finder, req.body);
         console.log("Tercera comparacion: " + attrToCheck.every(equalityBetweenFinderAndBody))
         if(timestampUnderLimit(finder) && 
