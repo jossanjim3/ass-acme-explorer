@@ -8,6 +8,9 @@ var fetch = require('node-fetch');
 
 const authController = require('./authController');
 
+const configModel = require('../models/configModel');
+
+
 var maxNumberTrips = 10;
 var maxTimeAResultIsStored = 1;
 
@@ -54,10 +57,14 @@ var timestampUnderLimit = function(finder){
     var currentTime = new Date();
     var timeToCompare = new Date(finder.timestamp);
     
-    timeToCompare = timeToCompare.setHours(timeToCompare.getHours() + maxTimeAResultIsStored);
-    console.log("Comparacion: " + timeToCompare + " y " + currentTime.getTime());
+    configModel.findOne({}, (err, config) => {
+        maxTimeAResultIsStored = config.max_number_hours_finder_stored;
+        timeToCompare = timeToCompare.setHours(timeToCompare.getHours() + maxTimeAResultIsStored);
+        console.log("Comparacion: " + timeToCompare + " y " + currentTime.getTime());
 
-    return (timeToCompare > currentTime.getTime());
+        return (timeToCompare > currentTime.getTime());
+    });
+
 }
 
 var checkEquality = function(finder, body){
@@ -162,26 +169,29 @@ exports.update_finder = function(req, res) {
                     res.status(400).send(trips);
                 }
                 else{
-                    var trips_results_finder = trips.slice(0, maxNumberTrips)
-                    .map((trip)=>transformToFinderTripSchema(trip));
+                    configModel.findOne({}, (err, config) => {
+                        maxNumberTrips = config.max_number_trips_results;
+                        var trips_results_finder = trips.slice(0, maxNumberTrips)
+                            .map((trip)=>transformToFinderTripSchema(trip));
 
-                    var newFinder = new Finder.FinderModel(req.body);
-                    newFinder.explorer = req.params.actorId;
-                    newFinder.results = trips_results_finder;
-                    Finder.FinderModel.deleteOne({explorer: req.params.actorId}, function(err, finder){
-                        if(err){
-                            res.status(500).send(err);
-                        }
-                        else{
-                            newFinder.save(function(err, finder){
-                                if(err){
-                                    res.status(500).send(err);
-                                }
-                                else{
-                                    res.status(201).send(finder);
-                                }
-                            });
-                        }
+                        var newFinder = new Finder.FinderModel(req.body);
+                        newFinder.explorer = req.params.actorId;
+                        newFinder.results = trips_results_finder;
+                        Finder.FinderModel.deleteOne({explorer: req.params.actorId}, function(err, finder){
+                            if(err){
+                                res.status(500).send(err);
+                            }
+                            else{
+                                newFinder.save(function(err, finder){
+                                    if(err){
+                                        res.status(500).send(err);
+                                    }
+                                    else{
+                                        res.status(201).send(finder);
+                                    }
+                                });
+                            }
+                        });
                     });
                 }
             });
